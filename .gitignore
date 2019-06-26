@@ -2,4 +2,10 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
-/botToken.json
+/userDictionary.json
+/platformsList.json
+/adminRole.json
+/.vs
+/node_modules
+/package-lock.json
+/authentication.json

@@ -19,6 +19,7 @@ class PlatformData {
     }
 }
 
+
 var helpOverloads = ["help"];
 var convertOverloads = ["convert"];
 var countdownOverloads = ["countdown"];
@@ -43,7 +44,7 @@ client.on('ready', () => {
         if (error) {
             console.log(error);
         } else {
-            Object.assign(adminRole, JSON.parse(adminRoleInput));
+            adminRole = adminRoleInput;
         }
     });
 
@@ -510,4 +511,12 @@ function SavePlatformsList() {
 }
 
 
-client.login("NTg1MzM2MjE2MjYyODAzNDU2.XQVSew.ysyvtRI2LFOmrbMZ9GJRk-ZyAEg")
+const authentication = require('./authentication.json');
+fs.readFile("authentication.json", (error, botTokenInput) => {
+    if (error) {
+        console.log(error);
+    } else {
+        Object.assign(authentication, botTokenInput);
+    }
+});
+client.login(authentication.token);

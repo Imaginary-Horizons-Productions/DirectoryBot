@@ -28,6 +28,7 @@ var recordOverloads = ["record", "log"];
 var lookupOverloads = ["lookup"];
 var deleteOverloads = ["delete", "remove", "clear"];
 var platformsOverloads = ["platforms"];
+var creditsOverloads = ["credits", "about"];
 var setadminroleOverloads = ["setadminrole"];
 var newplatformOverloads = ["newplatform"];
 var removeplatformOverloads = ["removeplatform"];
@@ -106,7 +107,9 @@ client.on('message', (receivedMessage) => {
                 } else if (deleteOverloads.includes(arguments["words"][0])) {
                     deleteCommand(arguments, receivedMessage);
                 } else if (platformsOverloads.includes(arguments["words"][0])) {
-                    platformsCommand(arguments, receivedMessage);
+                    platformsCommand(receivedMessage);
+                } else if (creditsOverloads.includes(arguments["words"][0])) {
+                    creditsCommand(receivedMessage);
                 } else if (setadminroleOverloads.includes(arguments["words"][0])) {
                     setAdminRoleCommand(arguments, receivedMessage);
                 } else if (newplatformOverloads.includes(arguments["words"][0])) {
@@ -387,12 +390,24 @@ function deleteCommand(arguments, receivedMessage) {
 }
 
 
-function platformsCommand(arguments, receivedMessage) {
+function platformsCommand(receivedMessage) {
     text = "DirectoryBot is currently tracking: "
     for (var i = 0; i < Object.keys(platformsList).length; i++) {
         text += Object.keys(platformsList)[i] + ", "
     }
     receivedMessage.channel.send(text)
+}
+
+
+function creditsCommand(receivedMessage) { //TODO update patreon & github links
+    receivedMessage.author.send(`Version 0.1 <GITHUB LINK GOES HERE>\n\
+__Design & Engineering__\n\
+Nathaniel Tseng ( <@106122478715150336> | <https://twitter.com/Archainis> )\n\
+\n\
+__Engineering__\n\
+Lucas Ensign ( <@112785244733628416> | <https://twitter.com/SillySalamndr> )\n\
+\n\
+***DirectoryBot** supporters from Patreon: <PATREON LINK GOES HERE> `);
 }
 
 

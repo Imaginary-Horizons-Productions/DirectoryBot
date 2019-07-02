@@ -83,40 +83,40 @@ client.on('message', (receivedMessage) => {
             });
             messageArray = messageArray.slice(1);
             var arguments = {
-                "userMentions": FilterMentions(messageArray, receivedMessage.guild),
-                "roleMentions": fetchRoleMentions(messageArray),
-                "words": fetchArgs(messageArray) // First element is usually primary command
+                "userMentions": filterMentions(messageArray, receivedMessage.guild),
+                "roleMentions": filterRoleMentions(messageArray),
+                "words": filterWords(messageArray) // First element is usually primary command
             };
 
 
 
             if (arguments["words"].length > 0) {
                 if (helpOverloads.includes(arguments["words"][0])) {
-                    HelpCommand(arguments, receivedMessage);
+                    helpCommand(arguments, receivedMessage);
                 } else if (convertOverloads.includes(arguments["words"][0])) {
-                    ConvertCommand(arguments, receivedMessage);
+                    convertCommand(arguments, receivedMessage);
                 } else if (countdownOverloads.includes(arguments["words"][0])) {
-                    CountdownCommand(arguments, receivedMessage);
+                    countdownCommand(arguments, receivedMessage);
                 } else if (multistreamOverloads.includes(arguments["words"][0])) {
-                    MultistreamCommand(arguments, receivedMessage);
+                    multistreamCommand(arguments, receivedMessage);
                 } else if (recordOverloads.includes(arguments["words"][0])) {
-                    RecordCommand(arguments, receivedMessage);
+                    recordCommand(arguments, receivedMessage);
                 } else if (lookupOverloads.includes(arguments["words"][0])) {
-                    LookupCommand(arguments, receivedMessage);
+                    lookupCommand(arguments, receivedMessage);
                 } else if (deleteOverloads.includes(arguments["words"][0])) {
-                    DeleteCommand(arguments, receivedMessage);
+                    deleteCommand(arguments, receivedMessage);
                 } else if (platformsOverloads.includes(arguments["words"][0])) {
-                    PlatformsCommand(arguments, receivedMessage);
+                    platformsCommand(arguments, receivedMessage);
                 } else if (setadminroleOverloads.includes(arguments["words"][0])) {
-                    SetAdminRoleCommand(arguments, receivedMessage);
+                    setAdminRoleCommand(arguments, receivedMessage);
                 } else if (newplatformOverloads.includes(arguments["words"][0])) {
-                    NewPlatformCommand(arguments, receivedMessage);
+                    newPlatformCommand(arguments, receivedMessage);
                 } else if (removeplatformOverloads.includes(arguments["words"][0])) {
-                    RemovePlatformCommand(arguments, receivedMessage);
+                    removePlatformCommand(arguments, receivedMessage);
                 } else if (setplatformroleOverloads.includes(arguments["words"][0])) {
-                    SetPlatformRoleCommand(arguments, receivedMessage);
+                    setPlatformRoleCommand(arguments, receivedMessage);
                 } else if (Object.keys(platformsList).includes(arguments["words"][0])) {
-                    LookupCommand(arguments, receivedMessage);
+                    lookupCommand(arguments, receivedMessage);
                 } else {//TODO convert command shortcut if input starts with a time
                     receivedMessage.channel.send(`**DirectoryBot** doesn't have ${arguments["words"][0]} as one of its commands. Please check for typos or use \`@DirectoryBot help.\``)
                 }
@@ -129,7 +129,7 @@ client.on('message', (receivedMessage) => {
 //TODO weekly stream schedule updates
 
 
-function HelpCommand(arguments, receivedMessage) {
+function helpCommand(arguments, receivedMessage) {
     if (arguments["words"].length - 1 == 0) {
         receivedMessage.channel.send("Here are all of **DirectoryBot**'s commands:\n\
 *convert*\n\
@@ -213,7 +213,7 @@ Syntax: `@DirectoryBot setplatformrole (platform) (role)`")
 }
 
 
-function ConvertCommand(arguments, receivedMessage) {
+function convertCommand(arguments, receivedMessage) {
     var timeText = "";
     var startTimezone = "";
     var resultTimezone;
@@ -267,7 +267,7 @@ function ConvertCommand(arguments, receivedMessage) {
 }
 
 
-function CountdownCommand(arguments, receivedMessage) {
+function countdownCommand(arguments, receivedMessage) {
     var timeText = "";
     for (var i = 0; i < arguments["words"].length; i++) {
         if (arguments["words"][i] != "countdown") {
@@ -285,7 +285,7 @@ function CountdownCommand(arguments, receivedMessage) {
 }
 
 
-function MultistreamCommand(arguments, receivedMessage) {
+function multistreamCommand(arguments, receivedMessage) {
     var url = "https://multistre.am/";
     var layout = arguments["words"][1];
 
@@ -304,15 +304,15 @@ function MultistreamCommand(arguments, receivedMessage) {
 }
 
 
-function RecordCommand(arguments, receivedMessage) {
+function recordCommand(arguments, receivedMessage) {
     var platform = arguments["words"][1].toLowerCase();
     var friendcode = arguments["words"][2];
 
     if (Object.keys(platformsList).includes(platform)) { // Early out if platform is not being tracked
-        MakeNewUserEntryIfNeeded(receivedMessage.author);
+        instantiateUserEntry(receivedMessage.author);
         userDictionary[receivedMessage.author.id][platform].value = friendcode;
-        SyncUserPlatformRole(receivedMessage.member, platform);
-        SaveUserDictionary();
+        syncUserRolePlatform(receivedMessage.member, platform);
+        saveUserDictionary();
         receivedMessage.author.send(`${receivedMessage.guild}'s **DirectoryBot** has recorded your ${platform} ${platformsList[platform].term} as ${friendcode}.`);
     } else {
         receivedMessage.author.send(`${receivedMessage.guild}'s **DirectoryBot** is not currently tracking a platform named ${platform}.`);
@@ -320,7 +320,7 @@ function RecordCommand(arguments, receivedMessage) {
 }
 
 
-function LookupCommand(arguments, receivedMessage) {
+function lookupCommand(arguments, receivedMessage) {
     var user = arguments["userMentions"][0].user;
 
     if (!user.bot) {
@@ -347,7 +347,7 @@ function LookupCommand(arguments, receivedMessage) {
 }
 
 
-function DeleteCommand(arguments, receivedMessage) {
+function deleteCommand(arguments, receivedMessage) {
     var platform = arguments["words"][1].toLowerCase();
 
     if (arguments["userMentions"].length == 1) {
@@ -358,8 +358,8 @@ function DeleteCommand(arguments, receivedMessage) {
                 if (userDictionary[target.id] != null && userDictionary[target.id][platform].value != null) {
                     userDictionary[target.id][platform] = new FriendCode();
                     target.send(`Your ${platformsList[platform].term} for ${receivedMessage.guild}'s **DirectoryBot** has been removed.`); //TODO allow a reason to be passed
-                    SyncUserPlatformRole(target, platform);
-                    SaveUserDictionary();
+                    syncUserRolePlatform(target, platform);
+                    saveUserDictionary();
                     receivedMessage.author.send(`You have removed ${target}'s ${platform} ${platformsList[platform].term} from ${receivedMessage.guild}'s **DirectoryBot**.`);
                 } else {
                     receivedMessage.author.send(`${target} does not have a ${platform} ${platformsList[platform].term} recorded in ${receivedMessage.guild}'s **DirectoryBot**.`);
@@ -375,8 +375,8 @@ function DeleteCommand(arguments, receivedMessage) {
             if (userDictionary[receivedMessage.author.id] != null && userDictionary[receivedMessage.author.id][platform].value != null) {
                 userDictionary[receivedMessage.author.id][platform] = new FriendCode();
                 receivedMessage.author.send(`You have removed your ${platform} ${platformsList[platform].term} from ${receivedMessage.guild}'s **DirectoryBot**.`);
-                SyncUserPlatformRole(receivedMessage.member, platform);
-                SaveUserDictionary();
+                syncUserRolePlatform(receivedMessage.member, platform);
+                saveUserDictionary();
             } else {
                 receivedMessage.author.send(`You do not currently have a ${platform} ${platformsList[platform].term} recorded in ${receivedMessage.guild}'s **DirectoryBot**.`);
             }
@@ -387,7 +387,7 @@ function DeleteCommand(arguments, receivedMessage) {
 }
 
 
-function PlatformsCommand(arguments, receivedMessage) {
+function platformsCommand(arguments, receivedMessage) {
     text = "DirectoryBot is currently tracking: "
     for (var i = 0; i < Object.keys(platformsList).length; i++) {
         text += Object.keys(platformsList)[i] + ", "
@@ -396,18 +396,18 @@ function PlatformsCommand(arguments, receivedMessage) {
 }
 
 
-function SetAdminRoleCommand(arguments, receivedMessage) {
+function setAdminRoleCommand(arguments, receivedMessage) {
     if (arguments["roleMentions"].length > 0) {
         adminRole = arguments["roleMentions"][0];
         receivedMessage.author.send(`Changing the admin role for ${receivedMessage.guild}'s **DirectoryBot** has succeeded.`);
-        SaveAdminRole();
+        saveAdminRole();
     } else {
         receivedMessage.author.send(`Please mention a role to set the ${receivedMessage.guild}'s **DirectoryBot** admin role to.`);
     }
 }
 
 
-function NewPlatformCommand(arguments, receivedMessage) {
+function newPlatformCommand(arguments, receivedMessage) {
     if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(adminRole)) {
         if (arguments["words"].length > 2) {
             receivedMessage.author.send("Please declare new platforms one at a time.");
@@ -418,7 +418,7 @@ function NewPlatformCommand(arguments, receivedMessage) {
                 if (!platformsList[arguments["words"][1]]) {
                     platformsList[arguments["words"][1]] = new PlatformData();
                     receivedMessage.author.send(arguments["words"][1] + " has been added to the list of platforms that **DirectoryBot** is tracking.");
-                    SavePlatformsList();
+                    savePlatformsList();
                 } else {
                     receivedMessage.author.send(`A platform for ${arguments["words"][1]} already exists.`)
                 }
@@ -430,7 +430,7 @@ function NewPlatformCommand(arguments, receivedMessage) {
 }
 
 
-function RemovePlatformCommand(arguments, receivedMessage) {
+function removePlatformCommand(arguments, receivedMessage) {
     if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(adminRole)) {
         if (Object.keys(platformsList).includes(arguments["words"][1])) {
             platformsList.splice(Object.keys(platformsList).indexOf(arguments["words"][1]), 1);
@@ -438,7 +438,7 @@ function RemovePlatformCommand(arguments, receivedMessage) {
                 delete userDictionary[user][arguments["words"][1]];
             })
             receivedMessage.author.send(`${arguments["words"][1]} has been removed from ${receivedMessage.guild}'s **DirectoryBot**'s platforms.`);
-            SavePlatformsList();
+            savePlatformsList();
         }
     } else {
         receivedMessage.author.send("You need a role with administrator privileges or the role " + receivedMessage.guild.roles.get(adminRole) + " to remove platforms.");
@@ -446,20 +446,20 @@ function RemovePlatformCommand(arguments, receivedMessage) {
 }
 
 
-function SetPlatformRoleCommand(arguments, receivedMessage) {
+function setPlatformRoleCommand(arguments, receivedMessage) {
     var role = arguments['roleMentions'][0];
     var platform = arguments['words'][1];
 
     platformsList[platform].role = role;
-    SavePlatformsList();
+    savePlatformsList();
     Object.keys(userDictionary).forEach(user => {
-        SyncUserPlatformRole(receivedMessage.guild.members.get(user), platform);
+        syncUserRolePlatform(receivedMessage.guild.members.get(user), platform);
     })
-    SaveUserDictionary();
+    saveUserDictionary();
     receivedMessage.author.send(`**DirectoryBot** will now add @${receivedMessage.guild.roles.get(role).name} to users who set a ${platform.term} for ${platform} in ${receivedMessage.guild}.`);
 }
 
-function FilterMentions(messageArray, guild) { // Fetch user mentions
+function filterMentions(messageArray, guild) { // Fetch user mentions
     var mentionArray = [];
     for (var i = 0; i < messageArray.length; i += 1) {
         if (/<@!*[0-9]+>/.test(messageArray[i])) {
@@ -470,7 +470,7 @@ function FilterMentions(messageArray, guild) { // Fetch user mentions
     return mentionArray;
 }
 
-function fetchRoleMentions(msgArray) { // Fetch role mention snowflakes
+function filterRoleMentions(msgArray) { // Fetch role mention snowflakes
     var mentionArray = [];
     for (var i = 0; i < msgArray.length; i += 1) {
         if (/<@&[0-9]+>/.test(msgArray[i])) {
@@ -480,7 +480,7 @@ function fetchRoleMentions(msgArray) { // Fetch role mention snowflakes
     return mentionArray;
 }
 
-function fetchArgs(msgArray) { // Fetch arguments that are not mentions
+function filterWords(msgArray) { // Fetch arguments that are not mentions
     var argArray = [];
     for (var i = 0; i < msgArray.length; i += 1) {
         if (!/<@[!&]*[0-9]+>/.test(msgArray[i])) {
@@ -490,7 +490,7 @@ function fetchArgs(msgArray) { // Fetch arguments that are not mentions
     return argArray;
 }
 
-function MakeNewUserEntryIfNeeded(user) {
+function instantiateUserEntry(user) {
     if (!userDictionary[user.id]) {
         userDictionary[user.id] = new Object();
         Object.keys(platformsList).forEach((platformInList) => {
@@ -499,7 +499,7 @@ function MakeNewUserEntryIfNeeded(user) {
     }
 }
 
-function SyncUserPlatformRole(member, platform) {
+function syncUserRolePlatform(member, platform) {
     if (userDictionary[member.id] && userDictionary[member.id] != null) {
         if (platformsList[platform].role) {
             if (userDictionary[member.id][platform].value == null) {
@@ -511,7 +511,7 @@ function SyncUserPlatformRole(member, platform) {
     }
 }
 
-function SaveAdminRole() {
+function saveAdminRole() {
     fs.writeFile('adminRole.json', adminRole, 'utf8', (error) => {
         if (error) {
             console.log(error);
@@ -519,7 +519,7 @@ function SaveAdminRole() {
     })
 }
 
-function SaveUserDictionary() {
+function saveUserDictionary() {
     fs.writeFile('userDictionary.json', JSON.stringify(userDictionary), 'utf8', (error) => {
         if (error) {
             console.log(error);
@@ -527,7 +527,7 @@ function SaveUserDictionary() {
     })
 }
 
-function SavePlatformsList() {
+function savePlatformsList() {
     fs.writeFile('platformsList.json', JSON.stringify(platformsList), 'utf8', (error) => {
         if (error) {
             console.log(error);

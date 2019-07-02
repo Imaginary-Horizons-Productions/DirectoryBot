@@ -28,6 +28,7 @@ var recordOverloads = ["record", "log"];
 var lookupOverloads = ["lookup"];
 var deleteOverloads = ["delete", "remove", "clear"];
 var platformsOverloads = ["platforms"];
+var setadminroleOverloads = ["setadminrole"];
 var newplatformOverloads = ["newplatform"];
 var removeplatformOverloads = ["removeplatform"];
 var setplatformroleOverloads = ["setplatformrole"];
@@ -113,7 +114,7 @@ client.on('message', (receivedMessage) => {
                 } else if (removeplatformOverloads.includes(arguments["words"][0])) {
                     RemovePlatformCommand(arguments, receivedMessage);
                 } else if (setplatformroleOverloads.includes(arguments["words"][0])) {
-                    SavePlatformsList();
+                    SetPlatformRoleCommand(arguments, receivedMessage);
                 } else if (Object.keys(platformsList).includes(arguments["words"][0])) {
                     LookupCommand(arguments, receivedMessage);
                 } else {//TODO convert command shortcut if input starts with a time
@@ -309,10 +310,10 @@ function RecordCommand(arguments, receivedMessage) {
 
     if (Object.keys(platformsList).includes(platform)) { // Early out if platform is not being tracked
         MakeNewUserEntryIfNeeded(receivedMessage.author);
-        //TODO ask if user wants to overwrite or add to entry array (reaction option menu?)
         userDictionary[receivedMessage.author.id][platform].value = friendcode;
-        receivedMessage.author.send(`${receivedMessage.guild}'s **DirectoryBot** has recorded your ${platform} ${platformsList[platform].term} as ${friendcode}.`);
+        SyncUserPlatformRole(receivedMessage.member, platform);
         SaveUserDictionary();
+        receivedMessage.author.send(`${receivedMessage.guild}'s **DirectoryBot** has recorded your ${platform} ${platformsList[platform].term} as ${friendcode}.`);
     } else {
         receivedMessage.author.send(`${receivedMessage.guild}'s **DirectoryBot** is not currently tracking a platform named ${platform}.`);
     }
@@ -352,33 +353,35 @@ function DeleteCommand(arguments, receivedMessage) {
     if (arguments["userMentions"].length == 1) {
         if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(adminRole)) {
             if (Object.keys(platformsList).includes(platform)) {
-                var user = arguments["userMentions"][0].user;
+                var target = arguments["userMentions"][0];
 
-                if (userDictionary[user.id] != null && userDictionary[user.id][platform].value != null) {
-                    userDictionary[user.id][platform] = new FriendCode();
-                    receivedMessage.author.send(`You have removed ${user}'s ${platformsList[platform].term} for ${platform} from ${receivedMessage.guild}'s **DirectoryBot**.`);
-                    user.send(`Your ${platformsList[platform].term} for ${receivedMessage.guild}'s **DirectoryBot** has been removed.`); //TODO allow a reason to be passed
+                if (userDictionary[target.id] != null && userDictionary[target.id][platform].value != null) {
+                    userDictionary[target.id][platform] = new FriendCode();
+                    target.send(`Your ${platformsList[platform].term} for ${receivedMessage.guild}'s **DirectoryBot** has been removed.`); //TODO allow a reason to be passed
+                    SyncUserPlatformRole(target, platform);
                     SaveUserDictionary();
+                    receivedMessage.author.send(`You have removed ${target}'s ${platform} ${platformsList[platform].term} from ${receivedMessage.guild}'s **DirectoryBot**.`);
                 } else {
-                    receivedMessage.author.send(`${user} does not have a ${platformsList[platform].term} for ${platform} recorded in ${receivedMessage.guild}'s **DirectoryBot**.`);
+                    receivedMessage.author.send(`${target} does not have a ${platform} ${platformsList[platform].term} recorded in ${receivedMessage.guild}'s **DirectoryBot**.`);
                 }
             } else {
                 receivedMessage.author.send(`You need a role with administrator privileges or the role ${receivedMessage.guild.roles.get(adminRole)} to remove ${platformsList[platform].term}s for others.`);
             }
         } else {
-            receivedMessage.author.send(`${receivedMessage.guild}'s **DirectoryBot** is not currently tracking ${platform} ${platformsList[platform].term}s.`)
+            receivedMessage.author.send(`${receivedMessage.guild}'s **DirectoryBot** is not currently tracking ${platform}.`)
         }
     } else {
         if (Object.keys(platformsList).includes(platform)) {
             if (userDictionary[receivedMessage.author.id] != null && userDictionary[receivedMessage.author.id][platform].value != null) {
                 userDictionary[receivedMessage.author.id][platform] = new FriendCode();
-                receivedMessage.author.send(`You have removed your ${platformsList[platform].term} for ${platform} from ${receivedMessage.guild}'s **DirectoryBot**.`);
+                receivedMessage.author.send(`You have removed your ${platform} ${platformsList[platform].term} from ${receivedMessage.guild}'s **DirectoryBot**.`);
+                SyncUserPlatformRole(receivedMessage.member, platform);
                 SaveUserDictionary();
             } else {
-                receivedMessage.author.send(`You do not currently have a ${platformsList[platform].term} for ${platform} recorded in ${receivedMessage.guild}'s **DirectoryBot**.`);
+                receivedMessage.author.send(`You do not currently have a ${platform} ${platformsList[platform].term} recorded in ${receivedMessage.guild}'s **DirectoryBot**.`);
             }
         } else {
-            receivedMessage.author.send(`${receivedMessage.guild}'s **DirectoryBot** is not currently tracking ${platform} ${platformsList[platform].term}s.`)
+            receivedMessage.author.send(`${receivedMessage.guild}'s **DirectoryBot** is not currently tracking ${platform}.`)
         }
     }
 }
@@ -406,7 +409,7 @@ function SetAdminRoleCommand(arguments, receivedMessage) {
 
 function NewPlatformCommand(arguments, receivedMessage) {
     if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(adminRole)) {
-        if (arguments["words"].length > 2) {//TODO consider if creating more than one platform at a time should be supported
+        if (arguments["words"].length > 2) {
             receivedMessage.author.send("Please declare new platforms one at a time.");
         } else {
             if (arguments["words"].length <= 1) {
@@ -440,6 +443,20 @@ function RemovePlatformCommand(arguments, receivedMessage) {
     } else {
         receivedMessage.author.send("You need a role with administrator privileges or the role " + receivedMessage.guild.roles.get(adminRole) + " to remove platforms.");
     }
+}
+
+
+function SetPlatformRoleCommand(arguments, receivedMessage) {
+    var role = arguments['roleMentions'][0];
+    var platform = arguments['words'][1];
+
+    platformsList[platform].role = role;
+    SavePlatformsList();
+    Object.keys(userDictionary).forEach(user => {
+        SyncUserPlatformRole(receivedMessage.guild.members.get(user), platform);
+    })
+    SaveUserDictionary();
+    receivedMessage.author.send(`**DirectoryBot** will now add @${receivedMessage.guild.roles.get(role).name} to users who set a ${platform.term} for ${platform} in ${receivedMessage.guild}.`);
 }
 
 function FilterMentions(messageArray, guild) { // Fetch user mentions
@@ -482,8 +499,16 @@ function MakeNewUserEntryIfNeeded(user) {
     }
 }
 
-function SyncUserRoles() {
-
+function SyncUserPlatformRole(member, platform) {
+    if (userDictionary[member.id] && userDictionary[member.id] != null) {
+        if (platformsList[platform].role) {
+            if (userDictionary[member.id][platform].value == null) {
+                member.removeRole(platformsList[platform].role);
+            } else {
+                member.addRole(platformsList[platform].role);
+            }
+        }
+    }
 }
 
 function SaveAdminRole() {

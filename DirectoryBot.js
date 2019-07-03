@@ -29,12 +29,12 @@ var lookupOverloads = ["lookup"];
 var deleteOverloads = ["delete", "remove", "clear"];
 var platformsOverloads = ["platforms"];
 var creditsOverloads = ["credits", "about"];
-var setadminroleOverloads = ["setadminrole"];
+var setoproleOverloads = ["setoprole"];
 var newplatformOverloads = ["newplatform"];
 var removeplatformOverloads = ["removeplatform"];
 var setplatformroleOverloads = ["setplatformrole"];
 
-var adminRole = "564275998515003392";
+var opRole = "564275998515003392";
 var userDictionary = new Object();
 var platformsList = { "timezone": new PlatformData("default"), "twitch": new PlatformData("username") };
 
@@ -42,11 +42,11 @@ var platformsList = { "timezone": new PlatformData("default"), "twitch": new Pla
 client.on('ready', () => {
     client.user.setActivity("\"@DirectoryBot help\"", { type: "LISTENING" });
 
-    fs.readFile("adminRole.json", (error, adminRoleInput) => {
+    fs.readFile("opRole.json", (error, opRoleInput) => {
         if (error) {
             console.log(error);
         } else {
-            adminRole = adminRoleInput;
+            opRole = opRoleInput;
         }
     });
 
@@ -110,8 +110,8 @@ client.on('message', (receivedMessage) => {
                     platformsCommand(receivedMessage);
                 } else if (creditsOverloads.includes(arguments["words"][0])) {
                     creditsCommand(receivedMessage);
-                } else if (setadminroleOverloads.includes(arguments["words"][0])) {
-                    setAdminRoleCommand(arguments, receivedMessage);
+                } else if (setoproleOverloads.includes(arguments["words"][0])) {
+                    setOpRoleCommand(arguments, receivedMessage);
                 } else if (newplatformOverloads.includes(arguments["words"][0])) {
                     newPlatformCommand(arguments, receivedMessage);
                 } else if (removeplatformOverloads.includes(arguments["words"][0])) {
@@ -134,83 +134,85 @@ client.on('message', (receivedMessage) => {
 
 function helpCommand(arguments, receivedMessage) {
     if (arguments["words"].length - 1 == 0) {
-        receivedMessage.channel.send("Here are all of **DirectoryBot**'s commands:\n\
-*convert*\n\
-*countdown*\n\
-*multistream*\n\
-*record*\n\
-*lookup*\n\
-*clear*\n\
-*platforms*\n\
+        receivedMessage.channel.send(`Here are all of **DirectoryBot**'s commands:\n\
+*convert* - Convert a time to someone else's timezone or a given timezone\n\
+*countdown* - How long until the given time\n\
+*multistream* - Generate a multistream link for the given users\n\
+*platforms* - Which games/services/information are currently tracked by **DirectoryBot**\n\
+*record* - Record your information for a platform\n\
+*lookup* - Look up someone else's information if they've recorded it\n\
+*delete* - Remove your information for a platform\n\
+*credits* - Version info and contributors\n\
 (and *help*).\n\
-You can type `@directorybot help` followed by one of those for specific instructions. If you are looking for admin commands, type `@DirectoryBot help admin`.")
-    } else if (arguments["words"][1] == "admin") {
-        if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(adminRole)) {
-            receivedMessage.author.send("The admin commands are as follows:\n\
-*newplatform*\n\
-*removeplatform*\n\
-*setplatformrole*\n\
-*clear* for other users")
+You can type \`@directorybot help\` followed by one of those for specific instructions. If you are looking for operator commands, type \`@DirectoryBot help op\`.`);
+    } else if (arguments["words"][1] == "admin" || arguments["words"][1] == "op" || arguments["words"][1] == "operator") {
+        if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(opRole)) {
+            receivedMessage.author.send(`The operator commands are as follows:\n\
+*newplatform* - Start tracking a new game/service/information\n\
+*removeplatform* - Stop tracking a given game/service/information\n\
+*setplatformrole* - Automatically add the given role to users who record information for the given platform\n\
+*delete* for other users`);
         } else {
-            receivedMessage.author.send("You need a role with administrator privileges or the role " + receivedMessage.guild.roles.get(adminRole) + " to view the admin commands.");
+            receivedMessage.author.send(`You need a role with administrator privileges or the role " + receivedMessage.guild.roles.get(opRole) + " to view the operator commands.`);
         }
-    } else if (arguments["words"][1] == "convert") {
-        receivedMessage.channel.send("The *convert* command calculates a time for a given user. For best results, place timezones between parentheses ( <- these things -> ).\n\
-Syntax: `@DirectoryBot convert (time) in (starting timezone) for (user)`\n\
+    } else if (convertOverloads.includes(arguments["words"][1])) {
+        receivedMessage.channel.send(`The *convert* command calculates a time for a given user. For best results, place timezones between parentheses.\n\
+Syntax: \`@DirectoryBot convert (time) in (starting timezone) for (user)\`\n\
 \n\
 The command can also be used to switch a time to a given timezone.\n\
-Syntax: `@DirectoryBot convert (time) in (starting timezone) to (resulting timezone)`\n\
+Syntax: \`@DirectoryBot convert (time) in (starting timezone) to (resulting timezone)\`\n\
 \n\
-If you omit the starting timezone, the bot will assume you mean the timezone you've recorded for your \"timezone\" platform.")
-    } else if (arguments["words"][1] == "countdown") {
-        receivedMessage.channel.send("The *countdown* command states the time until the given time.\n\
-Syntax: `@DirectoryBot countdown (time) (timezone)")
-    } else if (arguments["words"][1] == "multistream") {
-        receivedMessage.channel.send("The *multistream* command generates a link to watch multiple streams simultaneously. Optionally, you can enter the layout number last if you want to specify that.\n\
-Syntax: `@DirectoryBot multistream (user1) (user2)... (layout)")
-    } else if (arguments["words"][1] == "add") {
-        receivedMessage.channel.send("The *add* command records your friend code (or timezone) for the given platform so that people can ask the bot for it.\n\
-Syntax: `@DirectoryBot add (platform) (code)")
-    } else if (arguments["words"][1] == "lookup") { //TODO "@DirectoryBot friendcode platform" to list everyones' codes for that platform
-        receivedMessage.channel.send("The *lookup* command gives the information associted with the given user for the given platform.\n\
-Syntax: `@DirectoryBot lookup (user) (platform)")
-    } else if (arguments["words"][1] == "clear") {
-        receivedMessage.channel.send("The *clear* command deletes your friend code for the specified platform.\n\
-Syntax: `@DirectoryBot clear (platform)")
-        if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(adminRole)) {
-            receivedMessage.author.send("Admins can use the *clear* command to delete friend codes for other users.\n\
-Syntax: `@DirectoryBot clear (user) (platform)")
+If you omit the starting timezone, the bot will assume you mean the timezone you've recorded for the \"timezone\" platform.`);
+    } else if (countdownOverloads.includes(arguments["words"][1])) {
+        receivedMessage.channel.send(`The *countdown* command states the time until the given time.\n\
+Syntax: \`@DirectoryBot countdown (time) (timezone)\``);
+    } else if (multistreamOverloads.includes(arguments["words"][1])) {
+        receivedMessage.channel.send(`The *multistream* command generates a link to watch multiple streams simultaneously. Optionally, you can enter the layout number last if you want to specify that.\n\
+Syntax: \`@DirectoryBot multistream (user1) (user2)... (layout)\``);
+    } else if (recordOverloads.includes(arguments["words"][1])) {
+        receivedMessage.channel.send(`The *record* command adds the code information you gave for the given platform so that the bot can use that information and people can ask the bot for it.\n\
+Syntax: \`@DirectoryBot record (platform) (code)\``);
+    } else if (lookupOverloads.includes(arguments["words"][1])) { //TODO "@DirectoryBot friendcode platform" to list everyones' codes for that platform
+        receivedMessage.channel.send(`The *lookup* command tells you the information associted with the given user for the given platform.\n\
+Syntax: \`@DirectoryBot lookup (user) (platform)\``);
+    } else if (deleteOverloads.includes(arguments["words"][1])) {
+        receivedMessage.channel.send(`The *delete* command removes your information for the given platform.\n\
+Syntax: \`@DirectoryBot delete (platform)\``);
+        if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(opRole)) {
+            receivedMessage.author.send(`Operators can use the *delete* command to remove information for other users.\n\
+Syntax: \`@DirectoryBot clear (user) (platform)\``);
         }
-    } else if (arguments["words"][1] == "platforms") { //TODO list platforms
-        receivedMessage.channel.send("The *platforms* command lists all the platforms **DirectoryBot** is currently tracking friend codes for.\n\
-Syndax: `@DirectoryBot platforms")
-    } else if (arguments["words"][1] == "setadminrole") {
-        if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(adminRole)) {
-            receivedMessage.author.send("The *setadminrole* command updates the admin role for **DirectoryBot**. Users with this role use admin features of this bot without serverwide administrator priviledges.\n\
-Syndax: `@DirectoryBot setadminrole (role)")
+    } else if (platformsOverloads.includes(arguments["words"][1])) {
+        platformsCommand(receivedMessage);
+    } else if (creditsOverloads.includes(arguments["words"][1])) {
+        creditsCommand(receivedMessage);
+    } else if (setoproleOverloads.includes(arguments["words"][1])) {
+        if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(opRole)) {
+            receivedMessage.author.send(`The *setoprole* command updates the operator role for **DirectoryBot**. Users with this role use operator features of this bot without serverwide administrator privileges.\n\
+Syntax: \`@DirectoryBot setoprole (role)\``);
         } else {
-            receivedMessage.author.send("You need a role with administrator privileges or the role " + receivedMessage.guild.roles.get(adminRole) + " to view the admin commands.");
+            receivedMessage.author.send(`You need a role with administrator privileges or the role ${receivedMessage.guild.roles.get(opRole)} to view operator commands.`);
         }
-    } else if (arguments["words"][1] == "newplatform") {
-        if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(adminRole)) {
-            receivedMessage.author.send("The *newplatform* command adds a new platform to the list of platforms **DirectoryBot** is tracks friend codes for.\n\
-Syntax: `@DirectoryBot newplatform (name of new platform)`")
+    } else if (newplatformOverloads.includes(arguments["words"][1])) {
+        if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(opRole)) {
+            receivedMessage.author.send(`The *newplatform* command specifies a new game/service/information for **DirectoryBot** to track for users.\n\
+Syntax: \`@DirectoryBot newplatform (new game/service)\``);
         } else {
-            receivedMessage.author.send("You need a role with administrator privileges or the role " + receivedMessage.guild.roles.get(adminRole) + " to view the admin commands.");
+            receivedMessage.author.send(`You need a role with administrator privileges or the role ${receivedMessage.guild.roles.get(opRole)} to view operator commands.`);
         }
-    } else if (arguments["words"][1] == "removeplatform") {
-        if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(adminRole)) {
-            receivedMessage.author.send("The *removeplatforms* command removes the specified platform from the list of platforms **DirectoryBot** is tracks friend codes for.\n\
-Syntax: `@DirectoryBot removeplatform (name of platform to remove)`")
+    } else if (removeplatformOverloads.includes(arguments["words"][1])) {
+        if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(opRole)) {
+            receivedMessage.author.send(`The *removeplatform* command specifies a platform for **DirectoryBot** to stop tracking.\n\
+Syntax: \`@DirectoryBot removeplatform (platform to remove)\``)
         } else {
-            receivedMessage.author.send("You need a role with administrator privileges or the role " + receivedMessage.guild.roles.get(adminRole) + " to view the admin commands.");
+            receivedMessage.author.send(`You need a role with administrator privileges or the role ${receivedMessage.guild.roles.get(opRole)} to view operator commands.`);
         }
-    } else if (arguments["words"][1] == "setplatformrole") {
-        if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(adminRole)) {
-            receivedMessage.author.send("The *setplatformrole* command associates the given role and platform. Anyone who records information for that role will be automatically given the associated role.\n\
-Syntax: `@DirectoryBot setplatformrole (platform) (role)`")
+    } else if (setplatformroleOverloads.includes(arguments["words"][1])) {
+        if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(opRole)) {
+            receivedMessage.author.send(`The *setplatformrole* command associates the given role and platform. Anyone who records information for that platform will be automatically given the associated role.\n\
+Syntax: \`@DirectoryBot setplatformrole (platform) (role)\``)
         } else {
-            receivedMessage.author.send("You need a role with administrator privileges or the role " + receivedMessage.guild.roles.get(adminRole) + " to view the admin commands.");
+            receivedMessage.author.send(`You need a role with administrator privileges or the role ${receivedMessage.guild.roles.get(opRole)} to view operator commands.`);
         }
     }
 }
@@ -354,7 +356,7 @@ function deleteCommand(arguments, receivedMessage) {
     var platform = arguments["words"][1].toLowerCase();
 
     if (arguments["userMentions"].length == 1) {
-        if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(adminRole)) {
+        if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(opRole)) {
             if (Object.keys(platformsList).includes(platform)) {
                 var target = arguments["userMentions"][0];
 
@@ -368,7 +370,7 @@ function deleteCommand(arguments, receivedMessage) {
                     receivedMessage.author.send(`${target} does not have a ${platform} ${platformsList[platform].term} recorded in ${receivedMessage.guild}'s **DirectoryBot**.`);
                 }
             } else {
-                receivedMessage.author.send(`You need a role with administrator privileges or the role ${receivedMessage.guild.roles.get(adminRole)} to remove ${platformsList[platform].term}s for others.`);
+                receivedMessage.author.send(`You need a role with administrator privileges or the role ${receivedMessage.guild.roles.get(opRole)} to remove ${platformsList[platform].term}s for others.`);
             }
         } else {
             receivedMessage.author.send(`${receivedMessage.guild}'s **DirectoryBot** is not currently tracking ${platform}.`)
@@ -391,11 +393,7 @@ function deleteCommand(arguments, receivedMessage) {
 
 
 function platformsCommand(receivedMessage) {
-    text = "DirectoryBot is currently tracking: "
-    for (var i = 0; i < Object.keys(platformsList).length; i++) {
-        text += Object.keys(platformsList)[i] + ", "
-    }
-    receivedMessage.channel.send(text)
+    receivedMessage.channel.send(`**DirectoryBot** is currently tracking: ${Object.keys(platformsList)}`);
 }
 
 
@@ -411,19 +409,19 @@ Lucas Ensign ( <@112785244733628416> | <https://twitter.com/SillySalamndr> )\n\
 }
 
 
-function setAdminRoleCommand(arguments, receivedMessage) {
+function setOpRoleCommand(arguments, receivedMessage) {
     if (arguments["roleMentions"].length > 0) {
-        adminRole = arguments["roleMentions"][0];
-        receivedMessage.author.send(`Changing the admin role for ${receivedMessage.guild}'s **DirectoryBot** has succeeded.`);
-        saveAdminRole();
+        opRole = arguments["roleMentions"][0];
+        receivedMessage.author.send(`Changing the operator role for ${receivedMessage.guild}'s **DirectoryBot** has succeeded.`);
+        saveOpRole();
     } else {
-        receivedMessage.author.send(`Please mention a role to set the ${receivedMessage.guild}'s **DirectoryBot** admin role to.`);
+        receivedMessage.author.send(`Please mention a role to set the ${receivedMessage.guild}'s **DirectoryBot** operator role to.`);
     }
 }
 
 
 function newPlatformCommand(arguments, receivedMessage) {
-    if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(adminRole)) {
+    if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(opRole)) {
         if (arguments["words"].length > 2) {
             receivedMessage.author.send("Please declare new platforms one at a time.");
         } else {
@@ -440,13 +438,13 @@ function newPlatformCommand(arguments, receivedMessage) {
             }
         }
     } else {
-        receivedMessage.author.send("You need a role with administrator privileges or the role " + receivedMessage.guild.roles.get(adminRole) + " to add new platforms.");
+        receivedMessage.author.send("You need a role with administrator privileges or the role " + receivedMessage.guild.roles.get(opRole) + " to add new platforms.");
     }
 }
 
 
 function removePlatformCommand(arguments, receivedMessage) {
-    if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(adminRole)) {
+    if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(opRole)) {
         if (Object.keys(platformsList).includes(arguments["words"][1])) {
             platformsList.splice(Object.keys(platformsList).indexOf(arguments["words"][1]), 1);
             Object.keys(userDictionary).forEach(user => {
@@ -456,7 +454,7 @@ function removePlatformCommand(arguments, receivedMessage) {
             savePlatformsList();
         }
     } else {
-        receivedMessage.author.send("You need a role with administrator privileges or the role " + receivedMessage.guild.roles.get(adminRole) + " to remove platforms.");
+        receivedMessage.author.send("You need a role with administrator privileges or the role " + receivedMessage.guild.roles.get(opRole) + " to remove platforms.");
     }
 }
 
@@ -526,8 +524,8 @@ function syncUserRolePlatform(member, platform) {
     }
 }
 
-function saveAdminRole() {
-    fs.writeFile('adminRole.json', adminRole, 'utf8', (error) => {
+function saveOpRole() {
+    fs.writeFile('opRole.json', opRole, 'utf8', (error) => {
         if (error) {
             console.log(error);
         }

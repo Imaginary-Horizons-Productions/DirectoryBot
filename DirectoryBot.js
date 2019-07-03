@@ -172,7 +172,7 @@ Syntax: \`@DirectoryBot multistream (user1) (user2)... (layout)\``);
     } else if (recordOverloads.includes(arguments["words"][1])) {
         receivedMessage.channel.send(`The *record* command adds the code information you gave for the given platform so that the bot can use that information and people can ask the bot for it.\n\
 Syntax: \`@DirectoryBot record (platform) (code)\``);
-    } else if (lookupOverloads.includes(arguments["words"][1])) { //TODO "@DirectoryBot friendcode platform" to list everyones' codes for that platform
+    } else if (lookupOverloads.includes(arguments["words"][1])) {
         receivedMessage.channel.send(`The *lookup* command tells you the information associted with the given user for the given platform.\n\
 Syntax: \`@DirectoryBot lookup (user) (platform)\``);
     } else if (deleteOverloads.includes(arguments["words"][1])) {
@@ -326,28 +326,46 @@ function recordCommand(arguments, receivedMessage) {
 
 
 function lookupCommand(arguments, receivedMessage) {
-    var user = arguments["userMentions"][0].user;
+    if (arguments["userMentions"].length == 1) {
+        var user = arguments["userMentions"][0].user;
 
-    if (!user.bot) {
-        var platform;
+        if (!user.bot) {
+            if (lookupOverloads.includes(arguments["words"][0])) {
+                var platform = arguments["words"][1].toLowerCase();
+            } else {
+                var platform = arguments["words"][0].toLowerCase();
+            }
 
-        if (lookupOverloads.includes(arguments["words"][0])) {
-            platform = arguments["words"][1].toLowerCase();
+            if (Object.keys(platformsList).includes(platform)) {
+                if (userDictionary[user.id] == null || userDictionary[user.id][platform].value == null) {
+                    receivedMessage.channel.send(`${user} has not set a ${platform} ${platformsList[platform].term} in this server's **DirectoryBot** yet.`);
+                } else {
+                    receivedMessage.author.send(`${user}'s ${platform} ${platformsList[platform].term} is ${userDictionary[user.id][platform].value}.`);
+                }
+            } else {
+                receivedMessage.author.send(`${receivedMessage.guild}'s **DirectoryBot** is not currently tracking ${platform} ${platformsList[platform].term}s.`);
+            }
         } else {
-            platform = arguments["words"][0].toLowerCase();
+            receivedMessage.channel.send(`${user} is a bot. Though bots do not have friend codes, Imaginary Horizons Productions, for one, welcomes our coming robot overlords.`);
+        }
+    } else {
+        if (lookupOverloads.includes(arguments["words"][0])) {
+            var platform = arguments["words"][1].toLowerCase();
+        } else {
+            var platform = arguments["words"][0].toLowerCase();
         }
 
         if (Object.keys(platformsList).includes(platform)) {
-            if (userDictionary[user.id] == null || userDictionary[user.id][platform].value == null) {
-                receivedMessage.channel.send(`${user} has not set a ${platformsList[platform].term} for ${platform} in this server's **DirectoryBot** yet.`);
-            } else {
-                receivedMessage.author.send(`${user}'s ${platformsList[platform].term} for ${platform} is ${userDictionary[user.id][platform].value}.`);
-            }
+            var text = `Here are all the ${platform} ${platformsList[platform].term} in ${receivedMessage.guild}'s **DirectoryBot**:\n`;
+            Object.keys(userDictionary).forEach(user => {
+                if (userDictionary[user][platform].value != null) {
+                    text += receivedMessage.guild.members.get(user).displayName + ": " + userDictionary[user][platform].value + "\n";
+                }
+            })
+            receivedMessage.author.send(text);
         } else {
-            receivedMessage.author.send(`${receivedMessage.guild}'s **DirectoryBot** is not currently tracking ${platform} ${platformsList[platform].term}s.`);
+            receivedMessage.author.send(`${receivedMessage.guild}'s **DirectoryBot** is not currently tracking ${platform}.`);
         }
-    } else {
-        receivedMessage.channel.send(`${user} is a bot. Though bots do not have friend codes, Imaginary Horizons Productions, for one, welcomes our coming robot overlords.`);
     }
 }
 

@@ -35,7 +35,7 @@ var removeplatformOverloads = ["removeplatform"];
 var setplatformroleOverloads = ["setplatformrole"];
 
 var opRole = "564275998515003392";
-var userDictionary = new Object();
+var userDictionary = {};
 var platformsList = { "timezone": new PlatformData("default"), "twitch": new PlatformData("username") };
 
 
@@ -302,7 +302,7 @@ function multistreamCommand(arguments, receivedMessage) {
         url += userDictionary[arguments["userMentions"][i].id]["twitch"].value + "/";
     }
     if (layout) {
-        url += "layout" + layout + "/";
+        url += "layout" + layout;
     }
 
     receivedMessage.channel.send(`Here's the multistream link: ${url}`);
@@ -349,14 +349,16 @@ function lookupCommand(arguments, receivedMessage) {
             receivedMessage.channel.send(`${user} is a bot. Though bots do not have friend codes, Imaginary Horizons Productions, for one, welcomes our coming robot overlords.`);
         }
     } else {
+        var platform = "";
+
         if (lookupOverloads.includes(arguments["words"][0])) {
-            var platform = arguments["words"][1].toLowerCase();
+            platform = arguments["words"][1].toLowerCase();
         } else {
-            var platform = arguments["words"][0].toLowerCase();
+            platform = arguments["words"][0].toLowerCase();
         }
 
         if (Object.keys(platformsList).includes(platform)) {
-            var text = `Here are all the ${platform} ${platformsList[platform].term} in ${receivedMessage.guild}'s **DirectoryBot**:\n`;
+            var text = `Here are all the ${platform} ${platformsList[platform].term}s in ${receivedMessage.guild}'s **DirectoryBot**:\n`;
             Object.keys(userDictionary).forEach(user => {
                 if (userDictionary[user][platform].value != null) {
                     text += receivedMessage.guild.members.get(user).displayName + ": " + userDictionary[user][platform].value + "\n";

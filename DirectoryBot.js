@@ -38,6 +38,8 @@ var opRole = "564275998515003392";
 var userDictionary = {};
 var platformsList = { "timezone": new PlatformData("default"), "twitch": new PlatformData("username") };
 
+var antiSpam = [];
+var commandLimit = 3;
 
 client.on('ready', () => {
     client.user.setActivity("\"@DirectoryBot help\"", { type: "LISTENING" });
@@ -71,60 +73,70 @@ client.on('ready', () => {
 
 client.on('message', (receivedMessage) => {
     if (receivedMessage.author == client.user) {
-        return
+        return;
     }
 
-    //TODO anti-spam
+    var recentInteractions = 0;
 
-    if (receivedMessage.mentions.users.has("585336216262803456")) { // DirectoryBot's Discord snowflake is: 585336216262803456
-        var splitMessage = receivedMessage.content.split(" ");
-        if (splitMessage[0].replace(/\D/g, "") == "585336216262803456") {
-            var messageArray = splitMessage.filter(function (element) {
-                return element != "";
-            });
-            messageArray = messageArray.slice(1);
-            var arguments = {
-                "userMentions": filterMentions(messageArray, receivedMessage.guild),
-                "roleMentions": filterRoleMentions(messageArray),
-                "words": filterWords(messageArray) // First element is usually primary command
-            };
+    antiSpam.forEach(user => {
+        if (user == receivedMessage.user.id) {
+            recentInteractions++;
+        }
+    })
 
+    if (recentInteractions > commandLimit) {
+        if (receivedMessage.mentions.users.has("585336216262803456")) { // DirectoryBot's Discord snowflake is: 585336216262803456
+            var splitMessage = receivedMessage.content.split(" ");
+            if (splitMessage[0].replace(/\D/g, "") == "585336216262803456") {
+                var messageArray = splitMessage.filter(function (element) {
+                    return element != "";
+                });
+                messageArray = messageArray.slice(1);
+                var arguments = {
+                    "userMentions": filterMentions(messageArray, receivedMessage.guild),
+                    "roleMentions": filterRoleMentions(messageArray),
+                    "words": filterWords(messageArray) // First element is usually primary command
+                };
 
-
-            if (arguments["words"].length > 0) {
-                if (helpOverloads.includes(arguments["words"][0])) {
-                    helpCommand(arguments, receivedMessage);
-                } else if (convertOverloads.includes(arguments["words"][0])) {
-                    convertCommand(arguments, receivedMessage);
-                } else if (countdownOverloads.includes(arguments["words"][0])) {
-                    countdownCommand(arguments, receivedMessage);
-                } else if (multistreamOverloads.includes(arguments["words"][0])) {
-                    multistreamCommand(arguments, receivedMessage);
-                } else if (recordOverloads.includes(arguments["words"][0])) {
-                    recordCommand(arguments, receivedMessage);
-                } else if (lookupOverloads.includes(arguments["words"][0])) {
-                    lookupCommand(arguments, receivedMessage);
-                } else if (deleteOverloads.includes(arguments["words"][0])) {
-                    deleteCommand(arguments, receivedMessage);
-                } else if (platformsOverloads.includes(arguments["words"][0])) {
-                    platformsCommand(receivedMessage);
-                } else if (creditsOverloads.includes(arguments["words"][0])) {
-                    creditsCommand(receivedMessage);
-                } else if (setoproleOverloads.includes(arguments["words"][0])) {
-                    setOpRoleCommand(arguments, receivedMessage);
-                } else if (newplatformOverloads.includes(arguments["words"][0])) {
-                    newPlatformCommand(arguments, receivedMessage);
-                } else if (removeplatformOverloads.includes(arguments["words"][0])) {
-                    removePlatformCommand(arguments, receivedMessage);
-                } else if (setplatformroleOverloads.includes(arguments["words"][0])) {
-                    setPlatformRoleCommand(arguments, receivedMessage);
-                } else if (Object.keys(platformsList).includes(arguments["words"][0])) {
-                    lookupCommand(arguments, receivedMessage);
-                } else {//TODO convert command shortcut if input starts with a time
-                    receivedMessage.channel.send(`**DirectoryBot** doesn't have ${arguments["words"][0]} as one of its commands. Please check for typos or use \`@DirectoryBot help.\``)
+                if (arguments["words"].length > 0) {
+                    if (helpOverloads.includes(arguments["words"][0])) {
+                        helpCommand(arguments, receivedMessage);
+                    } else if (convertOverloads.includes(arguments["words"][0])) {
+                        convertCommand(arguments, receivedMessage);
+                    } else if (countdownOverloads.includes(arguments["words"][0])) {
+                        countdownCommand(arguments, receivedMessage);
+                    } else if (multistreamOverloads.includes(arguments["words"][0])) {
+                        multistreamCommand(arguments, receivedMessage);
+                    } else if (recordOverloads.includes(arguments["words"][0])) {
+                        recordCommand(arguments, receivedMessage);
+                    } else if (lookupOverloads.includes(arguments["words"][0])) {
+                        lookupCommand(arguments, receivedMessage);
+                    } else if (deleteOverloads.includes(arguments["words"][0])) {
+                        deleteCommand(arguments, receivedMessage);
+                    } else if (platformsOverloads.includes(arguments["words"][0])) {
+                        platformsCommand(receivedMessage);
+                    } else if (creditsOverloads.includes(arguments["words"][0])) {
+                        creditsCommand(receivedMessage);
+                    } else if (setoproleOverloads.includes(arguments["words"][0])) {
+                        setOpRoleCommand(arguments, receivedMessage);
+                    } else if (newplatformOverloads.includes(arguments["words"][0])) {
+                        newPlatformCommand(arguments, receivedMessage);
+                    } else if (removeplatformOverloads.includes(arguments["words"][0])) {
+                        removePlatformCommand(arguments, receivedMessage);
+                    } else if (setplatformroleOverloads.includes(arguments["words"][0])) {
+                        setPlatformRoleCommand(arguments, receivedMessage);
+                    } else if (Object.keys(platformsList).includes(arguments["words"][0])) {
+                        lookupCommand(arguments, receivedMessage);
+                    } else {//TODO convert command shortcut if input starts with a time
+                        receivedMessage.channel.send(`**DirectoryBot** doesn't have ${arguments["words"][0]} as one of its commands. Please check for typos or use \`@DirectoryBot help.\``)
+                    }
+                    var timeoutID = antiSpam.setTimeout(antiSpam.shift(), 5000);
+                    antiSpam.push(receivedMessage.user.id);
                 }
             }
         }
+    } else {
+        receivedMessage.author.send(`To prevent excessive messaging, users are unable to enter more than ${commandLimit} commands in 5 seconds.`);
     }
 })
 
@@ -491,6 +503,7 @@ function setPlatformRoleCommand(arguments, receivedMessage) {
     saveUserDictionary();
     receivedMessage.author.send(`**DirectoryBot** will now add @${receivedMessage.guild.roles.get(role).name} to users who set a ${platform.term} for ${platform} in ${receivedMessage.guild}.`);
 }
+
 
 function filterMentions(messageArray, guild) { // Fetch user mentions
     var mentionArray = [];

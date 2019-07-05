@@ -1,8 +1,9 @@
 const Discord = require('discord.js');
 const { DateTime } = require("luxon");
-const client = new Discord.Client();
 const fs = require('fs');
 var chrono = require('chrono-node');
+var encrypter = require('crypto-js');
+const client = new Discord.Client();
 
 class FriendCode {
     constructor(input = null) {
@@ -42,32 +43,37 @@ var antiSpam = [];
 var commandLimit = 3;
 
 client.on('ready', () => {
+    fs.readFile("encryptionKey.txt", 'utf8', (error, keyInput) => {
+        if (error) {
+            console.log(error);
+        } else {
+            fs.readFile("opRole.txt", 'utf8', (error, opRoleInput) => {
+                if (error) {
+                    console.log(error);
+                } else {
+                    opRole = encrypter.AES.decrypt(opRoleInput, keyInput).toString(encrypter.enc.Utf8);
+                }
+            });
+
+            fs.readFile("userDictionary.txt", 'utf8', (error, userDictionaryInput) => {
+                if (error) {
+                    console.log(error);
+                } else {
+                    Object.assign(userDictionary, JSON.parse(encrypter.AES.decrypt(userDictionaryInput, keyInput).toString(encrypter.enc.Utf8)));
+                }
+            });
+
+            fs.readFile("platformsList.txt", 'utf8', (error, platformsListInput) => {
+                if (error) {
+                    console.log(error);
+                } else {
+                    Object.assign(platformsList, JSON.parse(encrypter.AES.decrypt(platformsListInput, keyInput).toString(encrypter.enc.Utf8)));
+                }
+            });
+        }
+    })
+
     client.user.setActivity("\"@DirectoryBot help\"", { type: "LISTENING" });
-
-    fs.readFile("opRole.json", (error, opRoleInput) => {
-        if (error) {
-            console.log(error);
-        } else {
-            opRole = opRoleInput;
-        }
-    });
-
-    fs.readFile("userDictionary.json", (error, userDictionaryInput) => {
-        if (error) {
-            console.log(error);
-        } else {
-            Object.assign(userDictionary, JSON.parse(userDictionaryInput));
-        }
-    });
-
-    fs.readFile("platformsList.json", (error, platformsListInput) => {
-        if (error) {
-            console.log(error);
-        } else {
-            Object.assign(platformsList, JSON.parse(platformsListInput));
-        }
-    });
-
     console.log("Connected as " + client.user.tag);
 })
 
@@ -79,7 +85,7 @@ client.on('message', (receivedMessage) => {
     var recentInteractions = 0;
 
     antiSpam.forEach(user => {
-        if (user == receivedMessage.user) {
+        if (user == receivedMessage.author.id) {
             recentInteractions++;
         }
     })
@@ -131,8 +137,9 @@ client.on('message', (receivedMessage) => {
                         receivedMessage.channel.send(`**DirectoryBot** doesn't have ${arguments["words"][0]} as one of its commands. Please check for typos or use \`@DirectoryBot help.\``)
                     }
 
-                    antiSpam.push(receivedMessage.user);
-                    setTimeout(antiSpam.shift, 5000);
+                    antiSpam.push(receivedMessage.author.id);
+                    console.log(antiSpam);
+                    setTimeout(function () { antiSpam.shift(); }, 5000); //BUG shift not actually happening
                 }
             }
         }
@@ -264,7 +271,7 @@ function convertCommand(arguments, receivedMessage) {
         }
     }
     if (startTimezone == "") {
-        if (!userDictionary[receivedMessage.author.id] && !userDictionary[receivedMessage.author.id]["timezone"].value) {
+        if (userDictionary[receivedMessage.author.id] && userDictionary[receivedMessage.author.id]["timezone"].value) {
             startTimezone = userDictionary[receivedMessage.author.id]["timezone"].value;
         } else {
             receivedMessage.author.send(`Please either specifiy a timezone or record your default with \`@DirectoryBot record timezone (timezone)\`.`);
@@ -350,7 +357,7 @@ function lookupCommand(arguments, receivedMessage) {
             }
 
             if (Object.keys(platformsList).includes(platform)) {
-                if (!!userDictionary[user.id] || !!userDictionary[user.id][platform].value) {
+                if (!userDictionary[user.id] || !userDictionary[user.id][platform].value) {
                     receivedMessage.channel.send(`${user} has not set a ${platform} ${platformsList[platform].term} in this server's **DirectoryBot** yet.`);
                 } else {
                     receivedMessage.author.send(`${user}'s ${platform} ${platformsList[platform].term} is ${userDictionary[user.id][platform].value}.`);
@@ -373,7 +380,7 @@ function lookupCommand(arguments, receivedMessage) {
         if (Object.keys(platformsList).includes(platform)) {
             var text = `Here are all the ${platform} ${platformsList[platform].term}s in ${receivedMessage.guild}'s **DirectoryBot**:\n`;
             Object.keys(userDictionary).forEach(user => {
-                if (!userDictionary[user][platform].value) {
+                if (userDictionary[user][platform].value) {
                     text += receivedMessage.guild.members.get(user).displayName + ": " + userDictionary[user][platform].value + "\n";
                 }
             })
@@ -393,7 +400,7 @@ function deleteCommand(arguments, receivedMessage) {
             if (Object.keys(platformsList).includes(platform)) {
                 var target = arguments["userMentions"][0];
 
-                if (!userDictionary[target.id] && !userDictionary[target.id][platform].value) {
+                if (userDictionary[target.id] && userDictionary[target.id][platform].value) {
                     userDictionary[target.id][platform] = new FriendCode();
                     target.send(`Your ${platformsList[platform].term} for ${receivedMessage.guild}'s **DirectoryBot** has been removed.`); //TODO allow a reason to be passed
                     syncUserRolePlatform(target, platform);
@@ -410,7 +417,7 @@ function deleteCommand(arguments, receivedMessage) {
         }
     } else {
         if (Object.keys(platformsList).includes(platform)) {
-            if (!userDictionary[receivedMessage.author.id] && !userDictionary[receivedMessage.author.id][platform].value) {
+            if (userDictionary[receivedMessage.author.id] && userDictionary[receivedMessage.author.id][platform].value) {
                 userDictionary[receivedMessage.author.id][platform] = new FriendCode();
                 receivedMessage.author.send(`You have removed your ${platform} ${platformsList[platform].term} from ${receivedMessage.guild}'s **DirectoryBot**.`);
                 syncUserRolePlatform(receivedMessage.member, platform);
@@ -443,7 +450,7 @@ Lucas Ensign ( <@112785244733628416> | <https://twitter.com/SillySalamndr> )\n\
 
 
 function setOpRoleCommand(arguments, receivedMessage) {
-    if (arguments["roleMentions"].length > 0) {
+    if (arguments["roleMentions"].length > 0) { //TODO consider early out if trying to set opRole to current opRole
         opRole = arguments["roleMentions"][0];
         receivedMessage.author.send(`Changing the operator role for ${receivedMessage.guild}'s **DirectoryBot** has succeeded.`);
         saveOpRole();
@@ -547,44 +554,62 @@ function instantiateUserEntry(user) {
 }
 
 function syncUserRolePlatform(member, platform) {
-    if (!userDictionary[member.id] && userDictionary[member.id]) {
+    if (userDictionary[member.id]) {
         if (platformsList[platform].role) {
-            if (!!userDictionary[member.id][platform].value) {
-                member.removeRole(platformsList[platform].role);
-            } else {
+            if (userDictionary[member.id][platform].value) {
                 member.addRole(platformsList[platform].role);
+            } else {
+                member.removeRole(platformsList[platform].role);
             }
         }
     }
 }
 
 function saveOpRole() {
-    fs.writeFile('opRole.json', opRole, 'utf8', (error) => {
+    fs.readFile("encryptionKey.txt", 'utf8', (error, keyInput) => {
         if (error) {
             console.log(error);
+        } else {
+            fs.writeFile('opRole.txt', encrypter.AES.encrypt(opRole, keyInput).toString(), 'utf8', (error) => {
+                if (error) {
+                    console.log(error);
+                }
+            })
         }
     })
 }
 
 function saveUserDictionary() {
-    fs.writeFile('userDictionary.json', JSON.stringify(userDictionary), 'utf8', (error) => {
+    fs.readFile("encryptionKey.txt", 'utf8', (error, keyInput) => {
         if (error) {
             console.log(error);
+        } else {
+            fs.writeFile('userDictionary.txt', encrypter.AES.encrypt(JSON.stringify(userDictionary), keyInput).toString(), 'utf8', (error) => {
+                if (error) {
+                    console.log(error);
+                }
+            })
         }
     })
 }
 
 function savePlatformsList() {
-    fs.writeFile('platformsList.json', JSON.stringify(platformsList), 'utf8', (error) => {
+    fs.readFile("encryptionKey.txt", 'utf8', (error, keyInput) => {
         if (error) {
             console.log(error);
+        } else {
+            fs.writeFile('platformsList.txt', encrypter.AES.encrypt(JSON.stringify(platformsList), keyInput).toString(), 'utf8', (error) => {
+                if (error) {
+                    console.log(error);
+                }
+            })
         }
     })
 }
 
 
 const authentication = require('./authentication.json');
-fs.readFile("authentication.json", (error, botTokenInput) => {
+fs.readFile("authentication.json", 'utf8', (error, botTokenInput) => {
     if (error) {
         console.log(error);
     } else {

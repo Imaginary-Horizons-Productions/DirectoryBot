@@ -79,12 +79,12 @@ client.on('message', (receivedMessage) => {
     var recentInteractions = 0;
 
     antiSpam.forEach(user => {
-        if (user == receivedMessage.user.id) {
+        if (user == receivedMessage.user) {
             recentInteractions++;
         }
     })
 
-    if (recentInteractions > commandLimit) {
+    if (recentInteractions < commandLimit) {
         if (receivedMessage.mentions.users.has("585336216262803456")) { // DirectoryBot's Discord snowflake is: 585336216262803456
             var splitMessage = receivedMessage.content.split(" ");
             if (splitMessage[0].replace(/\D/g, "") == "585336216262803456") {
@@ -130,8 +130,9 @@ client.on('message', (receivedMessage) => {
                     } else {//TODO convert command shortcut if input starts with a time
                         receivedMessage.channel.send(`**DirectoryBot** doesn't have ${arguments["words"][0]} as one of its commands. Please check for typos or use \`@DirectoryBot help.\``)
                     }
-                    var timeoutID = antiSpam.setTimeout(antiSpam.shift(), 5000);
-                    antiSpam.push(receivedMessage.user.id);
+
+                    antiSpam.push(receivedMessage.user);
+                    setTimeout(antiSpam.shift, 5000);
                 }
             }
         }
@@ -262,8 +263,8 @@ function convertCommand(arguments, receivedMessage) {
             }
         }
     }
-    if (startTimezone == "" || startTimezone == null) {
-        if (userDictionary[receivedMessage.author.id] != null && userDictionary[receivedMessage.author.id]["timezone"].value != null) {
+    if (startTimezone == "") {
+        if (!userDictionary[receivedMessage.author.id] && !userDictionary[receivedMessage.author.id]["timezone"].value) {
             startTimezone = userDictionary[receivedMessage.author.id]["timezone"].value;
         } else {
             receivedMessage.author.send(`Please either specifiy a timezone or record your default with \`@DirectoryBot record timezone (timezone)\`.`);
@@ -349,7 +350,7 @@ function lookupCommand(arguments, receivedMessage) {
             }
 
             if (Object.keys(platformsList).includes(platform)) {
-                if (userDictionary[user.id] == null || userDictionary[user.id][platform].value == null) {
+                if (!!userDictionary[user.id] || !!userDictionary[user.id][platform].value) {
                     receivedMessage.channel.send(`${user} has not set a ${platform} ${platformsList[platform].term} in this server's **DirectoryBot** yet.`);
                 } else {
                     receivedMessage.author.send(`${user}'s ${platform} ${platformsList[platform].term} is ${userDictionary[user.id][platform].value}.`);
@@ -372,7 +373,7 @@ function lookupCommand(arguments, receivedMessage) {
         if (Object.keys(platformsList).includes(platform)) {
             var text = `Here are all the ${platform} ${platformsList[platform].term}s in ${receivedMessage.guild}'s **DirectoryBot**:\n`;
             Object.keys(userDictionary).forEach(user => {
-                if (userDictionary[user][platform].value != null) {
+                if (!userDictionary[user][platform].value) {
                     text += receivedMessage.guild.members.get(user).displayName + ": " + userDictionary[user][platform].value + "\n";
                 }
             })
@@ -392,7 +393,7 @@ function deleteCommand(arguments, receivedMessage) {
             if (Object.keys(platformsList).includes(platform)) {
                 var target = arguments["userMentions"][0];
 
-                if (userDictionary[target.id] != null && userDictionary[target.id][platform].value != null) {
+                if (!userDictionary[target.id] && !userDictionary[target.id][platform].value) {
                     userDictionary[target.id][platform] = new FriendCode();
                     target.send(`Your ${platformsList[platform].term} for ${receivedMessage.guild}'s **DirectoryBot** has been removed.`); //TODO allow a reason to be passed
                     syncUserRolePlatform(target, platform);
@@ -409,7 +410,7 @@ function deleteCommand(arguments, receivedMessage) {
         }
     } else {
         if (Object.keys(platformsList).includes(platform)) {
-            if (userDictionary[receivedMessage.author.id] != null && userDictionary[receivedMessage.author.id][platform].value != null) {
+            if (!userDictionary[receivedMessage.author.id] && !userDictionary[receivedMessage.author.id][platform].value) {
                 userDictionary[receivedMessage.author.id][platform] = new FriendCode();
                 receivedMessage.author.send(`You have removed your ${platform} ${platformsList[platform].term} from ${receivedMessage.guild}'s **DirectoryBot**.`);
                 syncUserRolePlatform(receivedMessage.member, platform);
@@ -546,9 +547,9 @@ function instantiateUserEntry(user) {
 }
 
 function syncUserRolePlatform(member, platform) {
-    if (userDictionary[member.id] && userDictionary[member.id] != null) {
+    if (!userDictionary[member.id] && userDictionary[member.id]) {
         if (platformsList[platform].role) {
-            if (userDictionary[member.id][platform].value == null) {
+            if (!!userDictionary[member.id][platform].value) {
                 member.removeRole(platformsList[platform].role);
             } else {
                 member.addRole(platformsList[platform].role);

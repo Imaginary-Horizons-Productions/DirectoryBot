@@ -6,6 +6,6 @@
 /node_modules
 /package-lock.json
 /authentication.json
-/adminRole.json
+/opRole.json
 /userDictionary.json
 /platformsList.json

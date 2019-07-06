@@ -29,7 +29,7 @@ var recordOverloads = ["record", "log"];
 var lookupOverloads = ["lookup"];
 var deleteOverloads = ["delete", "remove", "clear"];
 var platformsOverloads = ["platforms"];
-var creditsOverloads = ["credits", "about"];
+var creditsOverloads = ["credits", "creditz", "about"];
 var setoproleOverloads = ["setoprole"];
 var newplatformOverloads = ["newplatform"];
 var removeplatformOverloads = ["removeplatform"];
@@ -78,7 +78,7 @@ client.on('ready', () => {
 })
 
 client.on('message', (receivedMessage) => {
-    if (receivedMessage.author == client.user) {
+    if (receivedMessage.author == client.user || !receivedMessage.guild) {
         return;
     }
 
@@ -138,8 +138,7 @@ client.on('message', (receivedMessage) => {
                     }
 
                     antiSpam.push(receivedMessage.author.id);
-                    console.log(antiSpam);
-                    setTimeout(function () { antiSpam.shift(); }, 5000); //BUG shift not actually happening
+                    setTimeout(function () { antiSpam.shift(); }, 5000);
                 }
             }
         }
@@ -438,14 +437,14 @@ function platformsCommand(receivedMessage) {
 
 
 function creditsCommand(receivedMessage) { //TODO update patreon & github links
-    receivedMessage.author.send(`Version 0.1 <GITHUB LINK GOES HERE>\n\
+    receivedMessage.author.send(`Version 0.1 <https://github.com/ntseng/DirectoryBot>\n\
 __Design & Engineering__\n\
 Nathaniel Tseng ( <@106122478715150336> | <https://twitter.com/Archainis> )\n\
 \n\
 __Engineering__\n\
 Lucas Ensign ( <@112785244733628416> | <https://twitter.com/SillySalamndr> )\n\
 \n\
-***DirectoryBot** supporters from Patreon: <PATREON LINK GOES HERE> `);
+**DirectoryBot** supporters from Patreon: https://www.patreon.com/imaginaryhorizonsproductions `);
 }
 
 

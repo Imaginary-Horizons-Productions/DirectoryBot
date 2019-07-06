@@ -1,7 +1,7 @@
 const { DateTime } = require("luxon");
 var chrono = require('chrono-node');
 
-exports.convertCommand = function (arguments, receivedMessage) {
+exports.convertCommand = function (arguments, receivedMessage, userDictionary) {
     var timeText = "";
     var startTimezone = "";
     var resultTimezone;

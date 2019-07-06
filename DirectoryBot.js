@@ -157,7 +157,7 @@ client.on('message', (receivedMessage) => {
                     setTimeout(function () { antiSpam.shift(); }, 5000);
                 }
             } else {
-                receivedMessage.author.send(`To prevent excessive messaging, users are unable to enter more than ${commandLimit} commands in 5 seconds.`);
+                receivedMessage.author.send(`To prevent excessive messaging, users are unable to enter more than ${commandLimit} commands in 5 seconds. You can use \`@DirectoryBot lookup (platform)\` to look up everyone's information for the given platform at once.`);
             }
         }
     }
@@ -211,9 +211,6 @@ client.on('guildDelete', (guildID) => {
     //})
 })
 
-//TODO going live notification
-//TODO weekly stream schedule updates
-
 
 function helpCommand(arguments, receivedMessage) {
     var opRole = guildDictionary[receivedMessage.guild.id].opRole;
@@ -259,7 +256,9 @@ Syntax: \`@DirectoryBot multistream (user1) (user2)... (layout)\``);
 Syntax: \`@DirectoryBot record (platform) (code)\``);
     } else if (lookupOverloads.includes(arguments["words"][1])) {
         receivedMessage.channel.send(`The *lookup* command tells you the information associted with the given user for the given platform.\n\
-Syntax: \`@DirectoryBot lookup (user) (platform)\``);
+Syntax: \`@DirectoryBot lookup (user) (platform)\`\n\
+If you leave out the user mention, **DirectoryBot** will instead tell you everyone's information for that platform instead.\n\
+Syntax: \`@DirectoryBot lookup (platform)`);
     } else if (deleteOverloads.includes(arguments["words"][1])) {
         receivedMessage.channel.send(`The *delete* command removes your information for the given platform.\n\
 Syntax: \`@DirectoryBot delete (platform)\``);

@@ -15,3 +15,6 @@ exports.multistreamCommand = function (arguments, receivedMessage, userDictionar
 
     receivedMessage.channel.send(`Here's the multistream link: ${url}`);
 }
+
+//TODO going live notification
+//TODO weekly stream schedule updates

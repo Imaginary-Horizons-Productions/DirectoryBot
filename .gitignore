@@ -6,7 +6,6 @@
 /node_modules
 /package-lock.json
 /authentication.json
-/opRole.txt
-/userDictionary.txt
-/platformsList.txt
+/guildsList.json
 /encryptionKey.txt
+/data

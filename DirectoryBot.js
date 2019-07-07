@@ -10,8 +10,8 @@ class GuildSpecifics {
     constructor() {
         this.userDictionary = {};
         this.platformsList = {};
-        this.platformsList.timezone = new PlatformData("default");
-        this.platformsList.twitch = new PlatformData("username");
+        this.platformsList["timezone"] = new PlatformData("default");
+        this.platformsList["twitch"] = new PlatformData("username");
         this.opRole = "";
     }
 }
@@ -167,8 +167,8 @@ client.on('message', (receivedMessage) => {
 })
 
 
-client.on('guildCreate', (guildID) => {
-    guildsList.push(guildID);
+client.on('guildCreate', (guild) => {
+    guildsList.push(guild.id);
 
     var guildsListOutput = { "list": guildsList };
 
@@ -191,8 +191,8 @@ client.on('guildCreate', (guildID) => {
 })
 
 
-client.on('guildDelete', (guildID) => {
-    guildsList.splice(guildsList.indexOf(guildID), 1);
+client.on('guildDelete', (guild) => {
+    guildsList.splice(guildsList.indexOf(guild.id), 1);
 
     var guildsListOutput = { "list": guildsList };
 
@@ -345,6 +345,7 @@ function lookupCommand(arguments, receivedMessage) {
                     receivedMessage.author.send(`${user}'s ${platform} ${platformsList[platform].term} is ${userDictionary[user.id][platform].value}.`);
                 }
             } else {
+                console.log(platformsList);
                 receivedMessage.author.send(`${receivedMessage.guild}'s **DirectoryBot** is not currently tracking ${platform} ${platformsList[platform].term}s.`);
             }
         } else {
@@ -419,9 +420,9 @@ function deleteCommand(arguments, receivedMessage) {
 
 
 function platformsCommand(receivedMessage) {
-    var platformsList = guildDictionary[receivedMessage.guild.id].platformsList;
+    var processedText = Object.keys(guildDictionary[receivedMessage.guild.id].platformsList).toString().replace(/,/g, ', ');
 
-    receivedMessage.channel.send(`**DirectoryBot** is currently tracking: ${Object.keys(platformsList)}`);
+    receivedMessage.channel.send(`**DirectoryBot** is currently tracking: ${processedText}`);
 }
 
 

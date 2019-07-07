@@ -7,10 +7,12 @@ var twitchModule = require('./DirectoryBot_TwitchModule.js');
 const client = new Discord.Client();
 
 class GuildSpecifics {
-    constructor(usersInput, platformsInput = { "timezone": new PlatformData("default"), "twitch": new PlatformData("username") }, opRoleInput) {
-        this.userDictionary = usersInput;
-        this.platformsList = platformsInput;
-        this.opRole = opRoleInput;
+    constructor() {
+        this.userDictionary = {};
+        this.platformsList = {};
+        this.platformsList.timezone = new PlatformData("default");
+        this.platformsList.twitch = new PlatformData("username");
+        this.opRole = "";
     }
 }
 
@@ -121,6 +123,7 @@ client.on('message', (receivedMessage) => {
                 };
 
                 if (arguments["words"].length > 0) {
+                    instantiateGuildEntry(receivedMessage.guild.id);
                     if (helpOverloads.includes(arguments["words"][0])) {
                         helpCommand(arguments, receivedMessage);
                     } else if (convertOverloads.includes(arguments["words"][0])) {
@@ -214,7 +217,7 @@ client.on('guildDelete', (guildID) => {
 
 function helpCommand(arguments, receivedMessage) {
     var opRole = guildDictionary[receivedMessage.guild.id].opRole;
-
+ 
     if (arguments["words"].length - 1 == 0) {
         receivedMessage.channel.send(`Here are all of **DirectoryBot**'s commands:\n\
 *convert* - Convert a time to someone else's timezone or a given timezone\n\
@@ -415,7 +418,9 @@ function deleteCommand(arguments, receivedMessage) {
 }
 
 
-function platformsCommand(receivedMessage, platformsList) {
+function platformsCommand(receivedMessage) {
+    var platformsList = guildDictionary[receivedMessage.guild.id].platformsList;
+
     receivedMessage.channel.send(`**DirectoryBot** is currently tracking: ${Object.keys(platformsList)}`);
 }
 
@@ -548,6 +553,15 @@ function filterWords(msgArray) { // Fetch arguments that are not mentions
     return argArray;
 }
 
+function instantiateGuildEntry(guildID) {
+    if (!guildDictionary[guildID]) {
+        guildDictionary[guildID] = new GuildSpecifics();
+        saveOpRole(guildID);
+        savePlatformsList(guildID);
+        saveUserDictionary(guildID);
+    }
+}
+
 function instantiateUserEntry(user, guildID) {
     if (!guildDictionary[guildID].userDictionary[user.id]) {
         guildDictionary[guildID].userDictionary[user.id] = new Object();
@@ -570,11 +584,18 @@ function syncUserRolePlatform(member, platform, guildID) {
 }
 
 function saveOpRole(guildID) {
+    fs.exists('data', exists => {
+        !exists ? fs.mkdirSync('data') : {};
+    })
+    fs.exists('data/' + guildID, exists => {
+        !exists ? fs.mkdirSync('data/' + guildID) : {};
+    })
+
     fs.readFile(`encryptionKey.txt`, 'utf8', (error, keyInput) => {
         if (error) {
             console.log(error);
         } else {
-            fs.writeFile(`./data/${guildID}/opRole.txt`, encrypter.AES.encrypt(opRole, keyInput).toString(), 'utf8', (error) => {
+            fs.writeFile(`./data/${guildID}/opRole.txt`, encrypter.AES.encrypt(guildDictionary[guildID].opRole, keyInput).toString(), 'utf8', (error) => {
                 if (error) {
                     console.log(error);
                 }
@@ -584,11 +605,18 @@ function saveOpRole(guildID) {
 }
 
 function saveUserDictionary(guildID) {
+    fs.exists('data', exists => {
+        !exists ? fs.mkdirSync('data') : {};
+    })
+    fs.exists('data/' + guildID, exists => {
+        !exists ? fs.mkdirSync('data/' + guildID) : {};
+    })
+
     fs.readFile("encryptionKey.txt", 'utf8', (error, keyInput) => {
         if (error) {
             console.log(error);
         } else {
-            fs.writeFile(`./data/${guildID}/userDictionary.txt`, encrypter.AES.encrypt(JSON.stringify(userDictionary), keyInput).toString(), 'utf8', (error) => {
+            fs.writeFile(`./data/${guildID}/userDictionary.txt`, encrypter.AES.encrypt(JSON.stringify(guildDictionary[guildID].userDictionary), keyInput).toString(), 'utf8', (error) => {
                 if (error) {
                     console.log(error);
                 }
@@ -598,11 +626,18 @@ function saveUserDictionary(guildID) {
 }
 
 function savePlatformsList(guildID) {
+    fs.exists('data', exists => {
+        !exists ? fs.mkdirSync('data') : {};
+    })
+    fs.exists('data/' + guildID, exists => {
+        !exists ? fs.mkdirSync('data/' + guildID) : {};
+    })
+
     fs.readFile("encryptionKey.txt", 'utf8', (error, keyInput) => {
         if (error) {
             console.log(error);
         } else {
-            fs.writeFile(`./data/${guildID}/platformsList.txt`, encrypter.AES.encrypt(JSON.stringify(platformsList), keyInput).toString(), 'utf8', (error) => {
+            fs.writeFile(`./data/${guildID}/platformsList.txt`, encrypter.AES.encrypt(JSON.stringify(guildDictionary[guildID].platformsList), keyInput).toString(), 'utf8', (error) => {
                 if (error) {
                     console.log(error);
                 }

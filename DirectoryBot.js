@@ -584,10 +584,10 @@ function syncUserRolePlatform(member, platform, guildID) {
 }
 
 function saveOpRole(guildID) {
-    fs.exists('data', exists => {
+    fs.exists('./data', exists => {
         !exists ? fs.mkdirSync('data') : {};
     })
-    fs.exists('data/' + guildID, exists => {
+    fs.exists('./data/' + guildID, exists => {
         !exists ? fs.mkdirSync('data/' + guildID) : {};
     })
 
@@ -605,10 +605,10 @@ function saveOpRole(guildID) {
 }
 
 function saveUserDictionary(guildID) {
-    fs.exists('data', exists => {
+    fs.exists('./data', exists => {
         !exists ? fs.mkdirSync('data') : {};
     })
-    fs.exists('data/' + guildID, exists => {
+    fs.exists('./data/' + guildID, exists => {
         !exists ? fs.mkdirSync('data/' + guildID) : {};
     })
 
@@ -626,10 +626,10 @@ function saveUserDictionary(guildID) {
 }
 
 function savePlatformsList(guildID) {
-    fs.exists('data', exists => {
+    fs.exists('./data', exists => {
         !exists ? fs.mkdirSync('data') : {};
     })
-    fs.exists('data/' + guildID, exists => {
+    fs.exists('./data/' + guildID, exists => {
         !exists ? fs.mkdirSync('data/' + guildID) : {};
     })
 

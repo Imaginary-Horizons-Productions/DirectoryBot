@@ -465,8 +465,8 @@ function newPlatformCommand(arguments, receivedMessage) {
             if (arguments["words"].length <= 1) {
                 receivedMessage.author.send("Please provide a name for the new platform.");
             } else {
-                if (!platformsList[arguments["words"][1]]) {
-                    platformsList[arguments["words"][1]] = new PlatformData();
+                if (!platformsList[arguments["words"][1].toLowerCase()]) {
+                    platformsList[arguments["words"][1].toLowerCase()] = new PlatformData();
                     receivedMessage.author.send(arguments["words"][1] + " has been added to the list of platforms that **DirectoryBot** is tracking.");
                     savePlatformsList(receivedMessage.guild.id);
                 } else {
@@ -585,10 +585,10 @@ function syncUserRolePlatform(member, platform, guildID) {
 
 function saveOpRole(guildID) {
     fs.exists('./data', exists => {
-        !exists ? fs.mkdirSync('data') : {};
+        !exists ? fs.mkdirSync('./data') : {};
     })
     fs.exists('./data/' + guildID, exists => {
-        !exists ? fs.mkdirSync('data/' + guildID) : {};
+        !exists ? fs.mkdirSync('./data/' + guildID) : {};
     })
 
     fs.readFile(`encryptionKey.txt`, 'utf8', (error, keyInput) => {
@@ -606,10 +606,10 @@ function saveOpRole(guildID) {
 
 function saveUserDictionary(guildID) {
     fs.exists('./data', exists => {
-        !exists ? fs.mkdirSync('data') : {};
+        !exists ? fs.mkdirSync('./data') : {};
     })
     fs.exists('./data/' + guildID, exists => {
-        !exists ? fs.mkdirSync('data/' + guildID) : {};
+        !exists ? fs.mkdirSync('./data/' + guildID) : {};
     })
 
     fs.readFile("encryptionKey.txt", 'utf8', (error, keyInput) => {
@@ -627,10 +627,10 @@ function saveUserDictionary(guildID) {
 
 function savePlatformsList(guildID) {
     fs.exists('./data', exists => {
-        !exists ? fs.mkdirSync('data') : {};
+        !exists ? fs.mkdirSync('./data') : {};
     })
     fs.exists('./data/' + guildID, exists => {
-        !exists ? fs.mkdirSync('data/' + guildID) : {};
+        !exists ? fs.mkdirSync('./data/' + guildID) : {};
     })
 
     fs.readFile("encryptionKey.txt", 'utf8', (error, keyInput) => {

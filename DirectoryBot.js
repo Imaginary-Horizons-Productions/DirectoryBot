@@ -7,12 +7,10 @@ var twitchModule = require('./DirectoryBot_TwitchModule.js');
 const client = new Discord.Client();
 
 class GuildSpecifics {
-    constructor() {
-        this.userDictionary = {};
-        this.platformsList = {};
-        this.platformsList["timezone"] = new PlatformData("default");
-        this.platformsList["twitch"] = new PlatformData("username");
-        this.opRole = "";
+    constructor(userDictionaryInput, platformsListInput, opRoleInput) {
+        this.userDictionary = userDictionaryInput;
+        this.platformsList = platformsListInput;
+        this.opRole = opRoleInput;
     }
 }
 
@@ -57,36 +55,35 @@ client.on('ready', () => {
         if (error) {
             console.log(error);
         } else {
-            guildsList.forEach(guild => {
+            guildsList.forEach(guildID => {
                 var opRoleLoaded = "";
                 var userDictionaryLoaded = {};
                 var platformsListLoaded = {};
 
-                fs.readFile(`./data/${guild}/opRole.txt`, 'utf8', (error, opRoleInput) => {
+                fs.readFile(`./data/${guildID}/opRole.txt`, 'utf8', (error, opRoleInput) => {
                     if (error) {
                         console.log(error);
                     } else {
                         opRoleLoaded = encrypter.AES.decrypt(opRoleInput, keyInput).toString(encrypter.enc.Utf8);
+
+                        fs.readFile(`./data/${guildID}/userDictionary.txt`, 'utf8', (error, userDictionaryInput) => {
+                            if (error) {
+                                console.log(error);
+                            } else {
+                                Object.assign(userDictionaryLoaded, JSON.parse(encrypter.AES.decrypt(userDictionaryInput, keyInput).toString(encrypter.enc.Utf8)));
+
+                                fs.readFile(`./data/${guildID}/platformsList.txt`, 'utf8', (error, platformsListInput) => {
+                                    if (error) {
+                                        console.log(error);
+                                    } else {
+                                        Object.assign(platformsListLoaded, JSON.parse(encrypter.AES.decrypt(platformsListInput, keyInput).toString(encrypter.enc.Utf8)));
+                                        guildDictionary[guildID] = new GuildSpecifics(userDictionaryLoaded, platformsListLoaded, opRoleLoaded);
+                                    }
+                                });
+                            }
+                        });
                     }
                 });
-
-                fs.readFile(`./data/${guild}/userDictionary.txt`, 'utf8', (error, userDictionaryInput) => {
-                    if (error) {
-                        console.log(error);
-                    } else {
-                        Object.assign(userDictionaryLoaded, JSON.parse(encrypter.AES.decrypt(userDictionaryInput, keyInput).toString(encrypter.enc.Utf8)));
-                    }
-                });
-
-                fs.readFile(`./data/${guild}/platformsList.txt`, 'utf8', (error, platformsListInput) => {
-                    if (error) {
-                        console.log(error);
-                    } else {
-                        Object.assign(platformsListLoaded, JSON.parse(encrypter.AES.decrypt(platformsListInput, keyInput).toString(encrypter.enc.Utf8)));
-                    }
-                });
-
-                guildDictionary[guild] = new GuildSpecifics(userDictionaryLoaded, platformsListLoaded, opRoleLoaded);
             })
         }
     })
@@ -123,7 +120,7 @@ client.on('message', (receivedMessage) => {
                 };
 
                 if (arguments["words"].length > 0) {
-                    instantiateGuildEntry(receivedMessage.guild.id);
+                    instantiateGuildSpecifics(receivedMessage.guild.id);
                     if (helpOverloads.includes(arguments["words"][0])) {
                         helpCommand(arguments, receivedMessage);
                     } else if (convertOverloads.includes(arguments["words"][0])) {
@@ -313,7 +310,7 @@ function recordCommand(arguments, receivedMessage) {
     var friendcode = arguments["words"][2];
 
     if (Object.keys(platformsList).includes(platform)) { // Early out if platform is not being tracked
-        instantiateUserEntry(receivedMessage.author, receivedMessage.guild.id);
+        instantiateUserSpecifics(receivedMessage.author, receivedMessage.guild.id);
         userDictionary[receivedMessage.author.id][platform].value = friendcode;
         syncUserRolePlatform(receivedMessage.member, platform, receivedMessage.guild.id);
         saveUserDictionary(receivedMessage.guild.id);
@@ -420,6 +417,7 @@ function deleteCommand(arguments, receivedMessage) {
 
 
 function platformsCommand(receivedMessage) {
+    console.log(guildDictionary);
     var processedText = Object.keys(guildDictionary[receivedMessage.guild.id].platformsList).toString().replace(/,/g, ', ');
 
     receivedMessage.channel.send(`**DirectoryBot** is currently tracking: ${processedText}`);
@@ -554,7 +552,7 @@ function filterWords(msgArray) { // Fetch arguments that are not mentions
     return argArray;
 }
 
-function instantiateGuildEntry(guildID) {
+function instantiateGuildSpecifics(guildID) {
     if (!guildDictionary[guildID]) {
         guildDictionary[guildID] = new GuildSpecifics();
         saveOpRole(guildID);
@@ -563,7 +561,7 @@ function instantiateGuildEntry(guildID) {
     }
 }
 
-function instantiateUserEntry(user, guildID) {
+function instantiateUserSpecifics(user, guildID) {
     if (!guildDictionary[guildID].userDictionary[user.id]) {
         guildDictionary[guildID].userDictionary[user.id] = new Object();
         Object.keys(guildDictionary[guildID].platformsList).forEach((platformInList) => {
@@ -599,6 +597,7 @@ function saveOpRole(guildID) {
             fs.writeFile(`./data/${guildID}/opRole.txt`, encrypter.AES.encrypt(guildDictionary[guildID].opRole, keyInput).toString(), 'utf8', (error) => {
                 if (error) {
                     console.log(error);
+                    console.log("Saved op role: " + guildDictionary[guildID].opRole);
                 }
             })
         }
@@ -621,6 +620,7 @@ function saveUserDictionary(guildID) {
                 if (error) {
                     console.log(error);
                 }
+                console.log("Saved user dictionary: " + guildDictionary[guildID].userDictionary);
             })
         }
     })
@@ -642,6 +642,7 @@ function savePlatformsList(guildID) {
                 if (error) {
                     console.log(error);
                 }
+                console.log("Saved platforms list: " + guildDictionary[guildID].platformsList);
             })
         }
     })

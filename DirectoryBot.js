@@ -35,12 +35,13 @@ var convertOverloads = ["convert"];
 var countdownOverloads = ["countdown"];
 var multistreamOverloads = ["multistream", "multitwitch"];
 var recordOverloads = ["record", "log"];
+var sendOverloads = ["send", "tell"];
 var lookupOverloads = ["lookup"];
 var deleteOverloads = ["delete", "remove", "clear"];
 var platformsOverloads = ["platforms"];
 var creditsOverloads = ["credits", "creditz", "about"];
 var setoproleOverloads = ["setoprole"];
-var newplatformOverloads = ["newplatform"];
+var newplatformOverloads = ["newplatform", "addplatform"];
 var removeplatformOverloads = ["removeplatform"];
 var setplatformroleOverloads = ["setplatformrole"];
 
@@ -133,6 +134,8 @@ client.on('message', (receivedMessage) => {
                         recordCommand(arguments, receivedMessage);
                     } else if (lookupOverloads.includes(arguments["words"][0])) {
                         lookupCommand(arguments, receivedMessage);
+                    } else if (sendOverloads.includes(arguments["words"][0])) {
+                        sendCommand(arguments, receivedMessage);
                     } else if (deleteOverloads.includes(arguments["words"][0])) {
                         deleteCommand(arguments, receivedMessage);
                     } else if (platformsOverloads.includes(arguments["words"][0])) {
@@ -259,6 +262,9 @@ Syntax: \`@DirectoryBot record (platform) (code)\``);
 Syntax: \`@DirectoryBot lookup (user) (platform)\`\n\
 If you leave out the user mention, **DirectoryBot** will instead tell you everyone's information for that platform instead.\n\
 Syntax: \`@DirectoryBot lookup (platform)`);
+    } else if (sendOverloads.includes(arguments["words"][1])) {
+        receivedMessage.channel.send(`The *send* command sends your information on the given platform to the given user.\n\
+Syntax: \`@DirectoryBot send (platform) (user)\``);
     } else if (deleteOverloads.includes(arguments["words"][1])) {
         receivedMessage.channel.send(`The *delete* command removes your information for the given platform.\n\
 Syntax: \`@DirectoryBot delete (platform)\``);
@@ -372,6 +378,31 @@ function lookupCommand(arguments, receivedMessage) {
 }
 
 
+function sendCommand(arguments, receivedMessage) {
+    var userDictionary = guildDictionary[receivedMessage.guild.id].userDictionary;
+    var platformsList = guildDictionary[receivedMessage.guild.id].platformsList;
+
+    console.log(arguments["userMentions"]);
+    if (arguments["userMentions"].length >= 1) { //TODO check if self is mentioned
+        var platform = arguments["words"][1].toLowerCase();
+        if (platformsList.includes(platform)) {
+            instantiateUserSpecifics(receivedMessage.author, receivedMessage.guild.id);
+            if (userDictionary[receivedMessage.author.id] && userDictionary[receivedMessage.author.id][platform]) {
+                arguments["userMentions"].forEach(recipient => { //TODO possessive pronoun here
+                    recipient.send(`${receivedMessage.author.name} has sent you their ${platform} ${platform.term}. It is: ${userDictionary[receivedMessage.author.id][platform].value}`);
+                })
+            } else {
+                receivedMessage.author.send(`You have not set a ${platform} ${platform.term} in ${receivedMessage.guild}.`);
+            }
+        } else {
+            receivedMessage.author.send(`${platform} is not currently being tracked in ${receivedMessage.guild}.`)
+        }
+    } else {
+        receivedMessage.author.send(`Please mention someone to send your information to.`);
+    }
+}
+
+
 function deleteCommand(arguments, receivedMessage) {
     var userDictionary = guildDictionary[receivedMessage.guild.id].userDictionary;
     var platformsList = guildDictionary[receivedMessage.guild.id].platformsList;
@@ -397,35 +428,34 @@ function deleteCommand(arguments, receivedMessage) {
                 receivedMessage.author.send(`You need a role with administrator privileges or the role ${receivedMessage.guild.roles.get(opRole)} to remove ${platformsList[platform].term}s for others.`);
             }
         } else {
-            receivedMessage.author.send(`${receivedMessage.guild}'s **DirectoryBot** is not currently tracking ${platform}.`)
+            receivedMessage.author.send(`${platform} is not currently being tracked in ${receivedMessage.guild}.`)
         }
     } else {
         if (Object.keys(platformsList).includes(platform)) {
             if (userDictionary[receivedMessage.author.id] && userDictionary[receivedMessage.author.id][platform].value) {
                 userDictionary[receivedMessage.author.id][platform] = new FriendCode();
-                receivedMessage.author.send(`You have removed your ${platform} ${platformsList[platform].term} from ${receivedMessage.guild}'s **DirectoryBot**.`);
+                receivedMessage.author.send(`You have removed your ${platform} ${platformsList[platform].term} from ${receivedMessage.guild}.`);
                 syncUserRolePlatform(receivedMessage.member, platform, receivedMessage.guild.id);
                 saveUserDictionary(receivedMessage.guild.id);
             } else {
-                receivedMessage.author.send(`You do not currently have a ${platform} ${platformsList[platform].term} recorded in ${receivedMessage.guild}'s **DirectoryBot**.`);
+                receivedMessage.author.send(`You do not currently have a ${platform} ${platformsList[platform].term} recorded in ${receivedMessage.guild}.`);
             }
         } else {
-            receivedMessage.author.send(`${receivedMessage.guild}'s **DirectoryBot** is not currently tracking ${platform}.`)
+            receivedMessage.author.send(`${platform} is not currently being tracked in ${receivedMessage.guild}.`)
         }
     }
 }
 
 
 function platformsCommand(receivedMessage) {
-    console.log(guildDictionary);
     var processedText = Object.keys(guildDictionary[receivedMessage.guild.id].platformsList).toString().replace(/,/g, ', ');
 
     receivedMessage.channel.send(`**DirectoryBot** is currently tracking: ${processedText}`);
 }
 
 
-function creditsCommand(receivedMessage) { //TODO update patreon & github links
-    receivedMessage.author.send(`Version 0.1 <https://github.com/ntseng/DirectoryBot>\n\
+function creditsCommand(receivedMessage) {
+    receivedMessage.author.send(`Version B1.1.0 <https://github.com/ntseng/DirectoryBot>\n\
 __Design & Engineering__\n\
 Nathaniel Tseng ( <@106122478715150336> | <https://twitter.com/Archainis> )\n\
 \n\
@@ -440,7 +470,7 @@ function setOpRoleCommand(arguments, receivedMessage) {
     var opRole = guildDictionary[receivedMessage.guild.id].opRole;
 
     if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(opRole)) {
-        if (arguments["roleMentions"].length > 0) { //TODO consider early out if trying to set opRole to current opRole
+        if (arguments["roleMentions"].length > 0) { //TODO early out if trying to set opRole to current opRole
             guildDictionary[receivedMessage.guild.id].opRole = arguments["roleMentions"][0];
             receivedMessage.author.send(`Changing the operator role for ${receivedMessage.guild}'s **DirectoryBot** has succeeded.`);
             saveOpRole(receivedMessage.guild.id);
@@ -597,7 +627,6 @@ function saveOpRole(guildID) {
             fs.writeFile(`./data/${guildID}/opRole.txt`, encrypter.AES.encrypt(guildDictionary[guildID].opRole, keyInput).toString(), 'utf8', (error) => {
                 if (error) {
                     console.log(error);
-                    console.log("Saved op role: " + guildDictionary[guildID].opRole);
                 }
             })
         }
@@ -620,7 +649,6 @@ function saveUserDictionary(guildID) {
                 if (error) {
                     console.log(error);
                 }
-                console.log("Saved user dictionary: " + guildDictionary[guildID].userDictionary);
             })
         }
     })
@@ -642,7 +670,6 @@ function savePlatformsList(guildID) {
                 if (error) {
                     console.log(error);
                 }
-                console.log("Saved platforms list: " + guildDictionary[guildID].platformsList);
             })
         }
     })

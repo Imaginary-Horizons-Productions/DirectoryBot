@@ -1,4 +1,4 @@
-const { DateTime } = require("luxon");
+const { DateTime, IANAZone } = require("luxon");
 var chrono = require('chrono-node');
 
 exports.convertCommand = function (arguments, receivedMessage, userDictionary) {
@@ -37,20 +37,28 @@ exports.convertCommand = function (arguments, receivedMessage, userDictionary) {
         if (userDictionary[receivedMessage.author.id] && userDictionary[receivedMessage.author.id]["timezone"].value) {
             startTimezone = userDictionary[receivedMessage.author.id]["timezone"].value;
         } else {
-            receivedMessage.author.send(`Please either specifiy a timezone or record your default with \`@DirectoryBot record timezone (timezone)\`.`);
+            receivedMessage.author.send(`Please either specifiy a starting timezone or record your default with \`@DirectoryBot record timezone (timezone)\`.`);
             return;
         }
     }
     timeText += "(" + startTimezone + ")";
 
-    var inputTime = new chrono.parse(timeText); //BUG chrono misparses "9:00 PDT" as "9:00 PM"
-    var dateTimeObject = DateTime.fromJSDate(inputTime[0].start.date());
-    dateTimeObject.setZone(resultTimezone);
+    if (IANAZone.isValidZone(startTimezone)) {
+        if (IANAZone.isValidZone(resultTimezone)) {
+            var inputTime = new chrono.parse(timeText);
+            var dateTimeObject = DateTime.fromJSDate(inputTime[0].start.date());
+            var convertedDateTime = dateTimeObject.setZone(resultTimezone);
 
-    if (arguments["userMentions"].length == 1) {
-        receivedMessage.channel.send(`${arguments["words"][1]} in ${startTimezone} is ${dateTimeObject.toLocaleString(DateTime.TIME_SIMPLE)} for ${arguments["userMentions"][0]}.`);
+            if (arguments["userMentions"].length == 1) {
+                receivedMessage.channel.send(`${arguments["words"][1]} in ${startTimezone} is ${convertedDateTime.toLocaleString(DateTime.TIME_SIMPLE)} for ${arguments["userMentions"][0]}.`);
+            } else {
+                receivedMessage.channel.send(`${arguments["words"][1]} in ${startTimezone} is ${convertedDateTime.toLocaleString(DateTime.TIME_SIMPLE)} in ${resultTimezone}.`);
+            }
+        } else {
+            receivedMessage.author.send(`Please use the IANA timezone format for the result timezone. You can look up timezones here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones`);
+        }
     } else {
-        receivedMessage.channel.send(`${arguments["words"][1]} in ${startTimezone} is ${dateTimeObject.toLocaleString(DateTime.TIME_SIMPLE)} in ${resultTimezone}.`);
+        receivedMessage.author.send(`Please use the IANA timezone format for the starting timezone. You can look up timezones here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones`);
     }
 }
 
@@ -63,7 +71,7 @@ exports.countdownCommand = function (arguments, receivedMessage) {
         }
     }
 
-    var inputTime = new chrono.parse(timeText);
+    var inputTime = new chrono.parse(timeText); //BUG chrono doesn't parse IANA
     var dateTimeObject = DateTime.fromJSDate(inputTime[0].start.date());
     var countdown = dateTimeObject.diffNow("minutes").toString();
     countdown = countdown.replace(/[a-zA-Z]/g, '');

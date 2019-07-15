@@ -51,6 +51,24 @@ var guildDictionary = {};
 var antiSpam = [];
 var commandLimit = 3;
 
+fs.readFile("guildsList.json", 'utf8', (error, guildsListInput) => { //TODO encrypt guildsList
+    if (error) {
+        console.log(error);
+    } else {
+        guildsList = JSON.parse(guildsListInput)["list"];
+
+        fs.readFile("authentication.json", 'utf8', (error, authenticationInput) => {
+            if (error) {
+                console.log(error);
+            } else {
+                var authentication = {};
+                Object.assign(authentication, JSON.parse(authenticationInput));
+                client.login(authentication["token"]);
+            }
+        });
+    }
+});
+
 client.on('ready', () => {
     fs.readFile("encryptionKey.txt", 'utf8', (error, keyInput) => {
         if (error) {
@@ -98,9 +116,9 @@ client.on('message', (receivedMessage) => {
         return;
     }
 
-    if (receivedMessage.mentions.users.has("585336216262803456")) { // DirectoryBot's Discord snowflake is: 585336216262803456
+    if (receivedMessage.mentions.users.has(client.user.id)) {
         var splitMessage = receivedMessage.content.split(" ");
-        if (splitMessage[0].replace(/\D/g, "") == "585336216262803456") {
+        if (splitMessage[0].replace(/\D/g, "") == client.user.id) {
             var recentInteractions = 0;
 
             antiSpam.forEach(user => {
@@ -674,21 +692,3 @@ function savePlatformsList(guildID) {
         }
     })
 }
-
-fs.readFile("guildsList.json", 'utf8', (error, guildsListInput) => { //TODO encrypt guildsList
-    if (error) {
-        console.log(error);
-    } else {
-        guildsList = JSON.parse(guildsListInput)["list"];
-
-        fs.readFile("authentication.json", 'utf8', (error, authenticationInput) => {
-            if (error) {
-                console.log(error);
-            } else {
-                var authentication = {};
-                Object.assign(authentication, JSON.parse(authenticationInput));
-                client.login(authentication["token"]);
-            }
-        });
-    }
-});

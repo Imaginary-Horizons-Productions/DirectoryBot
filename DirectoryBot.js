@@ -37,6 +37,7 @@ var multistreamOverloads = ["multistream", "multitwitch"];
 var recordOverloads = ["record", "log"];
 var sendOverloads = ["send", "tell"];
 var lookupOverloads = ["lookup"];
+var whoisOverloads = ["whois"];
 var deleteOverloads = ["delete", "remove", "clear"];
 var platformsOverloads = ["platforms"];
 var creditsOverloads = ["credits", "creditz", "about"];
@@ -84,24 +85,24 @@ client.on('ready', () => {
                         console.log(error);
                     } else {
                         opRoleLoaded = encrypter.AES.decrypt(opRoleInput, keyInput).toString(encrypter.enc.Utf8);
+                    }
 
-                        fs.readFile(`./data/${guildID}/userDictionary.txt`, 'utf8', (error, userDictionaryInput) => {
+                    fs.readFile(`./data/${guildID}/userDictionary.txt`, 'utf8', (error, userDictionaryInput) => {
+                        if (error) {
+                            console.log(error);
+                        } else {
+                            Object.assign(userDictionaryLoaded, JSON.parse(encrypter.AES.decrypt(userDictionaryInput, keyInput).toString(encrypter.enc.Utf8)));
+                        }
+
+                        fs.readFile(`./data/${guildID}/platformsList.txt`, 'utf8', (error, platformsListInput) => {
                             if (error) {
                                 console.log(error);
                             } else {
-                                Object.assign(userDictionaryLoaded, JSON.parse(encrypter.AES.decrypt(userDictionaryInput, keyInput).toString(encrypter.enc.Utf8)));
-
-                                fs.readFile(`./data/${guildID}/platformsList.txt`, 'utf8', (error, platformsListInput) => {
-                                    if (error) {
-                                        console.log(error);
-                                    } else {
-                                        Object.assign(platformsListLoaded, JSON.parse(encrypter.AES.decrypt(platformsListInput, keyInput).toString(encrypter.enc.Utf8)));
-                                        guildDictionary[guildID] = new GuildSpecifics(userDictionaryLoaded, platformsListLoaded, opRoleLoaded);
-                                    }
-                                });
+                                Object.assign(platformsListLoaded, JSON.parse(encrypter.AES.decrypt(platformsListInput, keyInput).toString(encrypter.enc.Utf8)));
+                                guildDictionary[guildID] = new GuildSpecifics(userDictionaryLoaded, platformsListLoaded, opRoleLoaded);
                             }
                         });
-                    }
+                    });
                 });
             })
         }
@@ -154,6 +155,8 @@ client.on('message', (receivedMessage) => {
                         lookupCommand(arguments, receivedMessage);
                     } else if (sendOverloads.includes(arguments["words"][0])) {
                         sendCommand(arguments, receivedMessage);
+                    } else if (whoisOverloads.includes(arguments["words"][0])) {
+                        whoisCommand(arguments, receivedMessage);
                     } else if (deleteOverloads.includes(arguments["words"][0])) {
                         deleteCommand(arguments, receivedMessage);
                     } else if (platformsOverloads.includes(arguments["words"][0])) {
@@ -417,6 +420,18 @@ function sendCommand(arguments, receivedMessage) {
         }
     } else {
         receivedMessage.author.send(`Please mention someone to send your information to.`);
+    }
+}
+
+
+function whoisCommand(arguments, receivedMessage) {
+    var userDictionary = guildDictionary[receivedMessage.guild.id].userDictionary;
+    var platformsList = guildDictionary[receivedMessage.guild.id].platformsList;
+
+    if (arguments["words"].length >= 1) { //TODO did the user input a username?
+
+    } else {
+        
     }
 }
 

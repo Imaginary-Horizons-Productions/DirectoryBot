@@ -107,7 +107,6 @@ client.on('ready', () => {
 
                             guildDictionary[guildID] = new GuildSpecifics(userDictionaryLoaded, platformsListLoaded, opRoleLoaded);
                             if (newGuild) {
-                                console.log(newGuild);
                                 saveOpRole(guildID);
                                 savePlatformsList(guildID);
                                 saveUserDictionary(guildID);

@@ -7,7 +7,7 @@ var twitchModule = require('./DirectoryBot_TwitchModule.js');
 const client = new Discord.Client();
 
 class GuildSpecifics {
-    constructor(userDictionaryInput, platformsListInput, opRoleInput) {
+    constructor(userDictionaryInput = {}, platformsListInput = { "possessivepronoun": new PlatformData("preference"), "timezone": new PlatformData("default"), "twitch": new PlatformData() }, opRoleInput = "") {
         this.userDictionary = userDictionaryInput;
         this.platformsList = platformsListInput;
         this.opRole = opRoleInput;
@@ -79,7 +79,7 @@ client.on('ready', () => {
                 var newGuild = true;
                 var opRoleLoaded = "";
                 var userDictionaryLoaded = {};
-                var platformsListLoaded = { "possessivepronoun": new PlatformData("preference"), "timezone": new PlatformData("default"), "twitch": new PlatformData() };
+                var platformsListLoaded = {};
 
                 fs.readFile(`./data/${guildID}/opRole.txt`, 'utf8', (error, opRoleInput) => {
                     if (error) {
@@ -105,11 +105,10 @@ client.on('ready', () => {
                                 newGuild = false;
                             }
 
-                            guildDictionary[guildID] = new GuildSpecifics(userDictionaryLoaded, platformsListLoaded, opRoleLoaded);
                             if (newGuild) {
-                                saveOpRole(guildID);
-                                savePlatformsList(guildID);
-                                saveUserDictionary(guildID);
+                                newGuildEntry(guildID);
+                            } else {
+                                guildDictionary[guildID] = new GuildSpecifics(userDictionaryLoaded, platformsListLoaded, opRoleLoaded);
                             }
                         });
                     });
@@ -128,6 +127,10 @@ client.on('message', (receivedMessage) => {
     }
 
     if (receivedMessage.mentions.users.has(client.user.id)) {
+        if (!participatingGuildsIDs.includes(receivedMessage.guild.id)) {
+            guildCreate(receivedMessage.guild.id);
+        }
+
         var splitMessage = receivedMessage.content.split(" ");
         if (splitMessage[0].replace(/\D/g, "") == client.user.id) {
             var recentInteractions = 0;
@@ -205,26 +208,7 @@ client.on('message', (receivedMessage) => {
 
 
 client.on('guildCreate', (guild) => {
-    participatingGuildsIDs.push(guild.id);
-
-    var guildsListOutput = { "list": participatingGuildsIDs };
-
-    fs.writeFile(`guildsList.json`, JSON.stringify(guildsListOutput), 'utf8', (error) => {
-        if (error) {
-            console.log(error);
-        }
-    })
-    //fs.readFile(`encryptionKey.txt`, 'utf8', (error, keyInput) => {
-    //    if (error) {
-    //        console.log(error);
-    //    } else {
-    //        fs.writeFile(`./data/${guildID}/opRole.txt`, encrypter.AES.encrypt(opRole, keyInput).toString(), 'utf8', (error) => {
-    //            if (error) {
-    //                console.log(error);
-    //            }
-    //        })
-    //    }
-    //})
+    guildCreate(guild.id);
 })
 
 
@@ -361,7 +345,7 @@ function recordCommand(arguments, receivedMessage) {
         userDictionary[receivedMessage.author.id][platform].value = friendcode;
         syncUserRolePlatform(receivedMessage.member, platform, receivedMessage.guild.id);
         saveUserDictionary(receivedMessage.guild.id);
-        receivedMessage.author.send(`your ${platform} ${platformsList[platform].term} has been recorded as ${friendcode} in ${receivedMessage.guild}.`);
+        receivedMessage.author.send(`Your ${platform} ${platformsList[platform].term} has been recorded as ${friendcode} in ${receivedMessage.guild}.`);
     } else {
         receivedMessage.author.send(`${platform} is not currently being tracked in ${receivedMessage.guild}.`)
     }
@@ -642,16 +626,36 @@ function filterWords(msgArray) { // Fetch arguments that are not mentions
     return argArray;
 }
 
-function syncUserRolePlatform(member, platform, guildID) {
-    if (guildDictionary[guildID].userDictionary[member.id]) {
-        if (guildDictionary[guildID].platformsList[platform].role) {
-            if (guildDictionary[guildID].userDictionary[member.id][platform].value) {
-                member.addRole(guildDictionary[guildID].platformsList[platform].role);
-            } else {
-                member.removeRole(guildDictionary[guildID].platformsList[platform].role);
-            }
+function guildCreate(guildID) {
+    participatingGuildsIDs.push(guildID);
+
+    var guildsListOutput = { "list": participatingGuildsIDs };
+
+    newGuildEntry(guildID);
+
+    fs.writeFile(`guildsList.json`, JSON.stringify(guildsListOutput), 'utf8', (error) => {
+        if (error) {
+            console.log(error);
         }
-    }
+    })
+    //fs.readFile(`encryptionKey.txt`, 'utf8', (error, keyInput) => {
+    //    if (error) {
+    //        console.log(error);
+    //    } else {
+    //        fs.writeFile(`./data/${guildID}/opRole.txt`, encrypter.AES.encrypt(opRole, keyInput).toString(), 'utf8', (error) => {
+    //            if (error) {
+    //                console.log(error);
+    //            }
+    //        })
+    //    }
+    //})
+}
+
+function newGuildEntry(guildID) {
+    guildDictionary[guildID] = new GuildSpecifics();
+    saveOpRole(guildID);
+    savePlatformsList(guildID);
+    saveUserDictionary(guildID);
 }
 
 function saveOpRole(guildID) {
@@ -715,4 +719,16 @@ function savePlatformsList(guildID) {
             })
         }
     })
+}
+
+function syncUserRolePlatform(member, platform, guildID) {
+    if (guildDictionary[guildID].userDictionary[member.id]) {
+        if (guildDictionary[guildID].platformsList[platform].role) {
+            if (guildDictionary[guildID].userDictionary[member.id][platform].value) {
+                member.addRole(guildDictionary[guildID].platformsList[platform].role);
+            } else {
+                member.removeRole(guildDictionary[guildID].platformsList[platform].role);
+            }
+        }
+    }
 }

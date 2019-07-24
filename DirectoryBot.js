@@ -52,23 +52,29 @@ var guildDictionary = {};
 var antiSpam = [];
 var commandLimit = 3;
 
-fs.readFile("guildsList.json", 'utf8', (error, guildsListInput) => { //TODO encrypt guildsList
+fs.readFile(`encryptionKey.txt`, `utf8`, (error, keyInput) => {
     if (error) {
         console.log(error);
     } else {
-        participatingGuildsIDs = JSON.parse(guildsListInput)["list"];
-    }
+        fs.readFile("guildsList.txt", 'utf8', (error, guildsListInput) => {
+            if (error) {
+                console.log(error);
+            } else {
+                participatingGuildsIDs = JSON.parse(encrypter.AES.decrypt(guildsListInput, keyInput).toString(encrypter.enc.Utf8))["list"];
+            }
 
-    fs.readFile("authentication.json", 'utf8', (error, authenticationInput) => {
-        if (error) {
-            console.log(error);
-        } else {
-            var authentication = {};
-            Object.assign(authentication, JSON.parse(authenticationInput));
-            client.login(authentication["token"]);
-        }
-    });
-});
+            fs.readFile("authentication.json", 'utf8', (error, authenticationInput) => {
+                if (error) {
+                    console.log(error);
+                } else {
+                    var authentication = {};
+                    Object.assign(authentication, JSON.parse(authenticationInput));
+                    client.login(authentication["token"]);
+                }
+            });
+        });
+    }
+})
 
 client.on('ready', () => {
     fs.readFile("encryptionKey.txt", 'utf8', (error, keyInput) => {
@@ -214,25 +220,7 @@ client.on('guildCreate', (guild) => {
 
 client.on('guildDelete', (guild) => {
     participatingGuildsIDs.splice(participatingGuildsIDs.indexOf(guild.id), 1);
-
-    var guildsListOutput = { "list": participatingGuildsIDs };
-
-    fs.writeFile(`guildsList.json`, JSON.stringify(guildsListOutput), 'utf8', (error) => {
-        if (error) {
-            console.log(error);
-        }
-    })
-    //fs.readFile(`encryptionKey.txt`, 'utf8', (error, keyInput) => {
-    //    if (error) {
-    //        console.log(error);
-    //    } else {
-    //        fs.writeFile(`./data/${guildID}/opRole.txt`, encrypter.AES.encrypt(opRole, keyInput).toString(), 'utf8', (error) => {
-    //            if (error) {
-    //                console.log(error);
-    //            }
-    //        })
-    //    }
-    //})
+    saveParticipatingGuildsIDs();
 })
 
 
@@ -641,26 +629,9 @@ function filterWords(msgArray) { // Fetch arguments that are not mentions
 function guildCreate(guildID) {
     participatingGuildsIDs.push(guildID);
 
-    var guildsListOutput = { "list": participatingGuildsIDs };
-
     newGuildEntry(guildID);
 
-    fs.writeFile(`guildsList.json`, JSON.stringify(guildsListOutput), 'utf8', (error) => {
-        if (error) {
-            console.log(error);
-        }
-    })
-    //fs.readFile(`encryptionKey.txt`, 'utf8', (error, keyInput) => {
-    //    if (error) {
-    //        console.log(error);
-    //    } else {
-    //        fs.writeFile(`guildsList.txt`, encrypter.AES.encrypt(opRole, keyInput).toString(), 'utf8', (error) => {
-    //            if (error) {
-    //                console.log(error);
-    //            }
-    //        })
-    //    }
-    //})
+    saveParticipatingGuildsIDs();
 }
 
 function newGuildEntry(guildID) {
@@ -725,6 +696,22 @@ function savePlatformsList(guildID) {
             console.log(error);
         } else {
             fs.writeFile(`./data/${guildID}/platformsList.txt`, encrypter.AES.encrypt(JSON.stringify(guildDictionary[guildID].platformsList), keyInput).toString(), 'utf8', (error) => {
+                if (error) {
+                    console.log(error);
+                }
+            })
+        }
+    })
+}
+
+function saveParticipatingGuildsIDs() {
+    var guildsListOutput = { "list": participatingGuildsIDs };
+
+    fs.readFile(`encryptionKey.txt`, `utf8`, (error, keyInput) => {
+        if (error) {
+            console.log(error);
+        } else {
+            fs.writeFile(`guildsList.txt`, encrypter.AES.encrypt(JSON.stringify(guildsListOutput), keyInput), 'utf8', (error) => {
                 if (error) {
                     console.log(error);
                 }

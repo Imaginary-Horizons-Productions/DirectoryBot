@@ -57,17 +57,17 @@ fs.readFile("guildsList.json", 'utf8', (error, guildsListInput) => { //TODO encr
         console.log(error);
     } else {
         participatingGuildsIDs = JSON.parse(guildsListInput)["list"];
-
-        fs.readFile("authentication.json", 'utf8', (error, authenticationInput) => {
-            if (error) {
-                console.log(error);
-            } else {
-                var authentication = {};
-                Object.assign(authentication, JSON.parse(authenticationInput));
-                client.login(authentication["token"]);
-            }
-        });
     }
+
+    fs.readFile("authentication.json", 'utf8', (error, authenticationInput) => {
+        if (error) {
+            console.log(error);
+        } else {
+            var authentication = {};
+            Object.assign(authentication, JSON.parse(authenticationInput));
+            client.login(authentication["token"]);
+        }
+    });
 });
 
 client.on('ready', () => {
@@ -642,7 +642,7 @@ function guildCreate(guildID) {
     //    if (error) {
     //        console.log(error);
     //    } else {
-    //        fs.writeFile(`./data/${guildID}/opRole.txt`, encrypter.AES.encrypt(opRole, keyInput).toString(), 'utf8', (error) => {
+    //        fs.writeFile(`guildsList.txt`, encrypter.AES.encrypt(opRole, keyInput).toString(), 'utf8', (error) => {
     //            if (error) {
     //                console.log(error);
     //            }

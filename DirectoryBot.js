@@ -536,10 +536,11 @@ function newPlatformCommand(arguments, receivedMessage) {
     var platformsList = guildDictionary[receivedMessage.guild.id].platformsList;
     var opRole = guildDictionary[receivedMessage.guild.id].opRole;
 
-    let platform = arguments["words"][1].toLowerCase();
 
     if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(opRole)) {
-        if (!platformsList[arguments["words"][1].toLowerCase()]) {
+        let platform = arguments["words"][1].toLowerCase();
+
+        if (!platformsList[platform]) {
             if (arguments["words"].length > 2) { //TODO replace with improved platform construction
                 receivedMessage.author.send("Please declare new platforms one at a time.");
             } else {
@@ -550,12 +551,12 @@ function newPlatformCommand(arguments, receivedMessage) {
                     Object.keys(userDictionary).forEach((user) => {
                         userDictionary[user][platform] = new FriendCode();
                     })
-                    receivedMessage.author.send(`${arguments["words"][1]} ${platformsList[arguments["words"][1].toLowerCase()].term}s can now be recorded and retrieved.`);
+                    receivedMessage.author.send(`${arguments["words"][1]} ${platformsList[platform].term}s can now be recorded and retrieved.`);
                     savePlatformsList(receivedMessage.guild.id);
                 }
             }
         } else {
-            receivedMessage.author.send(`${arguments["words"][1]} ${platformsList[arguments["words"][1].toLowerCase()].term}s can already be recorded and retrieved.`)
+            receivedMessage.author.send(`${arguments["words"][1]} ${platformsList[platform].term}s can already be recorded and retrieved.`)
         }
     } else {
         receivedMessage.author.send(`You need a role with administrator privileges or the role ${receivedMessage.guild.roles.get(opRole).name} to add new platforms.`);
@@ -568,16 +569,18 @@ function removePlatformCommand(arguments, receivedMessage) {
     var platformsList = guildDictionary[receivedMessage.guild.id].platformsList;
     var opRole = guildDictionary[receivedMessage.guild.id].opRole;
 
-    let platform = arguments["words"][1].toLowerCase();
-
     if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(opRole)) {
-        if (Object.keys(platformsList).includes(arguments["words"][1])) {
-            platformsList.splice(Object.keys(platformsList).indexOf(platform), 1);
+        let platform = arguments["words"][1].toLowerCase();
+
+        if (platformsList[platform]) {
+            delete platformsList[platform];
             Object.keys(userDictionary).forEach(user => {
                 delete userDictionary[user][platform];
             })
-            receivedMessage.author.send(`${arguments["words"][1]} will no longer be recorded in ${receivedMessage.guild}.`);
+            receivedMessage.author.send(`${platform} will no longer be recorded in ${receivedMessage.guild}.`);
             savePlatformsList(receivedMessage.guild.id);
+        } else {
+            receivedMessage.author.send(`${platform} is not currently being recorded in ${receivedMessage.guild}.`);
         }
     } else {
         receivedMessage.author.send(`You need a role with administrator privileges or the role ${receivedMessage.guild.roles.get(opRole).name} to remove platforms.`);
@@ -740,7 +743,6 @@ function savePlatformsList(guildID, backup = false) {
                     fs.mkdirSync('./data/' + guildID);
                 }
             }
-            console.log(guildDictionary[guildID].platformsList);
             fs.writeFile(filePath, encrypter.AES.encrypt(JSON.stringify(guildDictionary[guildID].platformsList), keyInput).toString(), 'utf8', (error) => {
                 if (error) {
                     console.log(error);

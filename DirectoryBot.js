@@ -337,13 +337,15 @@ function recordCommand(arguments, receivedMessage) {
     var friendcode = arguments["words"][2];
 
     if (Object.keys(platformsList).includes(platform)) { // Early out if platform is not being tracked
-        if (userDictionary[receivedMessage.author.id][platform].value != friendcode) {
-            guildDictionary[receivedMessage.guild.id].userDictionary[receivedMessage.author.id][platform].value = friendcode;
-            syncUserRolePlatform(receivedMessage.member, platform, receivedMessage.guild.id);
-            saveUserDictionary(receivedMessage.guild.id);
-            receivedMessage.author.send(`Your ${platform} ${platformsList[platform].term} has been recorded as ${friendcode} in ${receivedMessage.guild}.`);
-        } else {
-            receivedMessage.author.send(`You have already recorded ${friendcode} as your ${platform} ${platformsList[platform].term} in ${receivedMessage.guild}.`)
+        if (userDictionary[receivedMessage.author.id][platform]) {
+            if (userDictionary[receivedMessage.author.id][platform].value != friendcode) {
+                userDictionary[receivedMessage.author.id][platform].value = friendcode;
+                syncUserRolePlatform(receivedMessage.member, platform, receivedMessage.guild.id);
+                saveUserDictionary(receivedMessage.guild.id);
+                receivedMessage.author.send(`Your ${platform} ${platformsList[platform].term} has been recorded as ${friendcode} in ${receivedMessage.guild}.`);
+            } else {
+                receivedMessage.author.send(`You have already recorded ${friendcode} as your ${platform} ${platformsList[platform].term} in ${receivedMessage.guild}.`)
+            }
         }
     } else {
         receivedMessage.author.send(`${platform} is not currently being tracked in ${receivedMessage.guild}.`)
@@ -530,8 +532,11 @@ function setOpRoleCommand(arguments, receivedMessage) {
 
 
 function newPlatformCommand(arguments, receivedMessage) {
+    var userDictionary = guildDictionary[receivedMessage.guild.id].userDictionary;
     var platformsList = guildDictionary[receivedMessage.guild.id].platformsList;
     var opRole = guildDictionary[receivedMessage.guild.id].opRole;
+
+    let platform = arguments["words"][1].toLowerCase();
 
     if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(opRole)) {
         if (!platformsList[arguments["words"][1].toLowerCase()]) {
@@ -541,13 +546,16 @@ function newPlatformCommand(arguments, receivedMessage) {
                 if (arguments["words"].length <= 1) {
                     receivedMessage.author.send("Please provide a name for the new platform.");
                 } else {
-                    platformsList[arguments["words"][1].toLowerCase()] = new PlatformData();
-                    receivedMessage.author.send(`${arguments["words"][1]} ${platformsList[arguments["words"][1].toLowerCase()]}s can now be recorded and retrieved.`);
+                    platformsList[platform] = new PlatformData();
+                    Object.keys(userDictionary).forEach((user) => {
+                        userDictionary[user][platform] = new FriendCode();
+                    })
+                    receivedMessage.author.send(`${arguments["words"][1]} ${platformsList[arguments["words"][1].toLowerCase()].term}s can now be recorded and retrieved.`);
                     savePlatformsList(receivedMessage.guild.id);
                 }
             }
         } else {
-            receivedMessage.author.send(`${arguments["words"][1]} ${platformsList[arguments["words"][1].toLowerCase()]}s can already be recorded and retrieved.`)
+            receivedMessage.author.send(`${arguments["words"][1]} ${platformsList[arguments["words"][1].toLowerCase()].term}s can already be recorded and retrieved.`)
         }
     } else {
         receivedMessage.author.send(`You need a role with administrator privileges or the role ${receivedMessage.guild.roles.get(opRole).name} to add new platforms.`);
@@ -560,11 +568,13 @@ function removePlatformCommand(arguments, receivedMessage) {
     var platformsList = guildDictionary[receivedMessage.guild.id].platformsList;
     var opRole = guildDictionary[receivedMessage.guild.id].opRole;
 
+    let platform = arguments["words"][1].toLowerCase();
+
     if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(opRole)) {
         if (Object.keys(platformsList).includes(arguments["words"][1])) {
-            platformsList.splice(Object.keys(platformsList).indexOf(arguments["words"][1]), 1);
+            platformsList.splice(Object.keys(platformsList).indexOf(platform), 1);
             Object.keys(userDictionary).forEach(user => {
-                delete userDictionary[user][arguments["words"][1]];
+                delete userDictionary[user][platform];
             })
             receivedMessage.author.send(`${arguments["words"][1]} will no longer be recorded in ${receivedMessage.guild}.`);
             savePlatformsList(receivedMessage.guild.id);
@@ -650,14 +660,6 @@ function saveOpRole(guildID, backup = false) {
         } else {
             var filePath = `./`;
             if (backup) {
-                filePath += 'data/' + guildID + '/opRole.txt';
-                if (!fs.existsSync('./data')) {
-                    fs.mkdirSync('./data');
-                }
-                if (!fs.existsSync('./data/' + guildID)) {
-                    fs.mkdirSync('./data/' + guildID);
-                }
-            } else {
                 filePath += 'backups/' + guildID + '/opRole.txt';
                 if (!fs.existsSync('./backups')) {
                     fs.mkdirSync('./backups');
@@ -665,7 +667,15 @@ function saveOpRole(guildID, backup = false) {
                 if (!fs.existsSync('./backups/' + guildID)) {
                     fs.mkdirSync('./backup/' + guildID);
                 }
-}
+            } else {
+                filePath += 'data/' + guildID + '/opRole.txt';
+                if (!fs.existsSync('./data')) {
+                    fs.mkdirSync('./data');
+                }
+                if (!fs.existsSync('./data/' + guildID)) {
+                    fs.mkdirSync('./data/' + guildID);
+                }
+            }
             fs.writeFile(filePath, encrypter.AES.encrypt(guildDictionary[guildID].opRole, keyInput).toString(), 'utf8', (error) => {
                 if (error) {
                     console.log(error);
@@ -682,20 +692,20 @@ function saveUserDictionary(guildID, backup = false) {
         } else {
             var filePath = `./`;
             if (backup) {
-                filePath += 'data/' + guildID + '/userDictionary.txt';
-                if (!fs.existsSync('./data')) {
-                    fs.mkdirSync('./data');
-                }
-                if (!fs.existsSync('./data/' + guildID)) {
-                    fs.mkdirSync('./data/' + guildID);
-                }
-            } else {
                 filePath += 'backups/' + guildID + '/userDictionary.txt';
                 if (!fs.existsSync('./backups')) {
                     fs.mkdirSync('./backups');
                 }
                 if (!fs.existsSync('./backups/' + guildID)) {
                     fs.mkdirSync('./backups/' + guildID);
+                }
+            } else {
+                filePath += 'data/' + guildID + '/userDictionary.txt';
+                if (!fs.existsSync('./data')) {
+                    fs.mkdirSync('./data');
+                }
+                if (!fs.existsSync('./data/' + guildID)) {
+                    fs.mkdirSync('./data/' + guildID);
                 }
             }
             fs.writeFile(filePath, encrypter.AES.encrypt(JSON.stringify(guildDictionary[guildID].userDictionary), keyInput).toString(), 'utf8', (error) => {
@@ -714,14 +724,6 @@ function savePlatformsList(guildID, backup = false) {
         } else {
             var filePath = `./`;
             if (backup) {
-                filePath += 'data/' + guildID + '/platformsList.txt';
-                if (!fs.existsSync('./data')) {
-                    fs.mkdirSync('./data');
-                }
-                if (!fs.existsSync('./data/' + guildID)) {
-                    fs.mkdirSync('./data/' + guildID);
-                }
-            } else {
                 filePath += 'backups/' + guildID + '/platformsList.txt';
                 if (!fs.existsSync('./backups')) {
                     fs.mkdirSync('./backups');
@@ -729,7 +731,16 @@ function savePlatformsList(guildID, backup = false) {
                 if (!fs.existsSync('./backups/' + guildID)) {
                     fs.mkdirSync('./backups/' + guildID);
                 }
+            } else {
+                filePath += 'data/' + guildID + '/platformsList.txt';
+                if (!fs.existsSync('./data')) {
+                    fs.mkdirSync('./data');
+                }
+                if (!fs.existsSync('./data/' + guildID)) {
+                    fs.mkdirSync('./data/' + guildID);
+                }
             }
+            console.log(guildDictionary[guildID].platformsList);
             fs.writeFile(filePath, encrypter.AES.encrypt(JSON.stringify(guildDictionary[guildID].platformsList), keyInput).toString(), 'utf8', (error) => {
                 if (error) {
                     console.log(error);
@@ -748,12 +759,12 @@ function saveParticipatingGuildsIDs(backup = false) {
         } else {
             var filePath = `./`;
             if (backup) {
-                filePath += 'guildsList.txt';
-            } else {
                 filePath += 'backups/guildsList.txt';
                 if (!fs.existsSync('./backups')) {
                     fs.mkdirSync('./backups');
                 }
+            } else {
+                filePath += 'guildsList.txt';
             }
             fs.writeFile(filePath, encrypter.AES.encrypt(JSON.stringify(guildsListOutput), keyInput), 'utf8', (error) => {
                 if (error) {

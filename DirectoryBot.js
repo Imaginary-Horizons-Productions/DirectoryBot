@@ -43,6 +43,7 @@ var platformsOverloads = ["platforms"];
 var creditsOverloads = ["credits", "creditz", "about"];
 var setoproleOverloads = ["setoprole"];
 var newplatformOverloads = ["newplatform", "addplatform"];
+var changeplatformtermOverloads = ["changeplatformterm"];
 var removeplatformOverloads = ["removeplatform"];
 var setplatformroleOverloads = ["setplatformrole"];
 
@@ -199,6 +200,8 @@ client.on('message', (receivedMessage) => {
                         setOpRoleCommand(arguments, receivedMessage);
                     } else if (newplatformOverloads.includes(arguments["words"][0])) {
                         newPlatformCommand(arguments, receivedMessage);
+                    } else if (changeplatformtermOverloads.includes(arguments["words"][0])) {
+                        changePlatformTermCommand(arguments, receivedMessage);
                     } else if (removeplatformOverloads.includes(arguments["words"][0])) {
                         removePlatformCommand(arguments, receivedMessage);
                     } else if (setplatformroleOverloads.includes(arguments["words"][0])) {
@@ -238,6 +241,7 @@ function helpCommand(arguments, receivedMessage) {
         if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(opRole)) {
             receivedMessage.author.send(`The operator commands are as follows:\n\
 *newplatform* - Setup a new game/service for users to record or retrieve information for\n\
+*changeplatformterm* - Changes what DirectoryBot calls information for the given platform\n\
 *removeplatform* - Stop recording and distributing user information for a game/service\n\
 *setplatformrole* - Automatically give a role to users who record information for a platform\n\
 *delete* for other users`);
@@ -292,8 +296,15 @@ Syntax: \`@DirectoryBot setoprole (role)\``);
         }
     } else if (newplatformOverloads.includes(arguments["words"][1])) {
         if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(opRole.opRole)) {
-            receivedMessage.author.send(`The *newplatform* command sets up a new game/service for users to record and retrieve information.\n\
-Syntax: \`@DirectoryBot newplatform (new game/service)\``);
+            receivedMessage.author.send(`The *newplatform* command sets up a new game/service for users to record and retrieve information. Optionally, you can set a term to call the information that is being stored (default is "username").\n\
+Syntax: \`@DirectoryBot newplatform (platform name) (information term)\``);
+        } else {
+            receivedMessage.author.send(`You need a role with administrator privileges or the role ${receivedMessage.guild.roles.get(opRole).name} to view operator commands.`);
+        }
+    } else if (changeplatformtermOverloads.includes(arguments["words"][1])) {
+        if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(opRole.opRole)) {
+            receivedMessage.author.send(`The *changeplatformterm* changes what DirectoryBot calls information from the given platform (default is "username").\n\
+Syntax: \`@DirectoryBot changeplatformterm (platform name) (new term)\``);
         } else {
             receivedMessage.author.send(`You need a role with administrator privileges or the role ${receivedMessage.guild.roles.get(opRole).name} to view operator commands.`);
         }
@@ -539,27 +550,45 @@ function newPlatformCommand(arguments, receivedMessage) {
 
     if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(opRole)) {
         let platform = arguments["words"][1].toLowerCase();
+        let term = arguments["words"][2];
 
         if (!platformsList[platform]) {
-            if (arguments["words"].length > 2) { //TODO replace with improved platform construction
-                receivedMessage.author.send("Please declare new platforms one at a time.");
+            if (arguments["words"].length <= 1) {
+                receivedMessage.author.send("Please provide a name for the new platform.");
             } else {
-                if (arguments["words"].length <= 1) {
-                    receivedMessage.author.send("Please provide a name for the new platform.");
-                } else {
-                    platformsList[platform] = new PlatformData();
-                    Object.keys(userDictionary).forEach((user) => {
-                        userDictionary[user][platform] = new FriendCode();
-                    })
-                    receivedMessage.author.send(`${arguments["words"][1]} ${platformsList[platform].term}s can now be recorded and retrieved.`);
-                    savePlatformsList(receivedMessage.guild.id);
-                }
+                platformsList[platform] = new PlatformData();
+                platformsList[platform].term = term;
+                Object.keys(userDictionary).forEach((user) => {
+                    userDictionary[user][platform] = new FriendCode();
+                })
+                receivedMessage.channel.send(`${arguments["words"][1]} ${platformsList[platform].term}s can now be recorded and retrieved.`);
+                savePlatformsList(receivedMessage.guild.id);
             }
         } else {
-            receivedMessage.author.send(`${arguments["words"][1]} ${platformsList[platform].term}s can already be recorded and retrieved.`)
+            receivedMessage.author.send(`${arguments["words"][1]} ${platformsList[platform].term}s can already be recorded and retrieved.`);
         }
     } else {
         receivedMessage.author.send(`You need a role with administrator privileges or the role ${receivedMessage.guild.roles.get(opRole).name} to add new platforms.`);
+    }
+}
+
+
+function changePlatformTermCommand(arguments, receivedMessage) {
+    let cachedGuild = guildDictionary[receivedMessage.guild.id];
+
+    if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(cachedGuild.opRole)) {
+        let platform = arguments["words"][1];
+        let term = arguments["words"][2];
+
+        if (cachedGuild.platformsList[platform.toLowerCase()]) {
+            cachedGuild.platformsList[platform.toLowerCase()].term = term;
+            receivedMessage.author.send(`Information for ${platform} will now be referred to as ${term} in ${receivedMessage.guild}.`);
+            savePlatformsList(receivedMessage.guild.id);
+        } else {
+            receivedMessage.author.send(`${platform} is not currently being recorded in ${receivedMessage.guild}.`);
+        }
+    } else {
+        receivedMessage.author.send(`You need a role with administrator privileges or the role ${receivedMessage.guild.roles.get(opRole).name} to change platform terms.`);
     }
 }
 
@@ -570,12 +599,12 @@ function removePlatformCommand(arguments, receivedMessage) {
     var opRole = guildDictionary[receivedMessage.guild.id].opRole;
 
     if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(opRole)) {
-        let platform = arguments["words"][1].toLowerCase();
+        let platform = arguments["words"][1];
 
-        if (platformsList[platform]) {
-            delete platformsList[platform];
+        if (platformsList[platform.toLowerCase()]) {
+            delete platformsList[platform.toLowerCase()];
             Object.keys(userDictionary).forEach(user => {
-                delete userDictionary[user][platform];
+                delete userDictionary[user][platform.toLowerCase()];
             })
             receivedMessage.author.send(`${platform} will no longer be recorded in ${receivedMessage.guild}.`);
             savePlatformsList(receivedMessage.guild.id);

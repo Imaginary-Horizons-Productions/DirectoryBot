@@ -7,7 +7,7 @@ var twitchModule = require('./DirectoryBot_TwitchModule.js');
 const client = new Discord.Client();
 
 class GuildSpecifics {
-    constructor(userDictionaryInput, platformsListInput, opRoleInput) {
+    constructor(userDictionaryInput = {}, platformsListInput = { "possessivepronoun": new PlatformData("preference"), "timezone": new PlatformData("default"), "twitch": new PlatformData() }, opRoleInput = "") {
         this.userDictionary = userDictionaryInput;
         this.platformsList = platformsListInput;
         this.opRole = opRoleInput;
@@ -52,23 +52,29 @@ var guildDictionary = {};
 var antiSpam = [];
 var commandLimit = 3;
 
-fs.readFile("guildsList.json", 'utf8', (error, guildsListInput) => { //TODO encrypt guildsList
+fs.readFile(`encryptionKey.txt`, `utf8`, (error, keyInput) => {
     if (error) {
         console.log(error);
     } else {
-        participatingGuildsIDs = JSON.parse(guildsListInput)["list"];
-
-        fs.readFile("authentication.json", 'utf8', (error, authenticationInput) => {
+        fs.readFile("guildsList.txt", 'utf8', (error, guildsListInput) => {
             if (error) {
                 console.log(error);
             } else {
-                var authentication = {};
-                Object.assign(authentication, JSON.parse(authenticationInput));
-                client.login(authentication["token"]);
+                participatingGuildsIDs = JSON.parse(encrypter.AES.decrypt(guildsListInput, keyInput).toString(encrypter.enc.Utf8))["list"];
             }
+
+            fs.readFile("authentication.json", 'utf8', (error, authenticationInput) => {
+                if (error) {
+                    console.log(error);
+                } else {
+                    var authentication = {};
+                    Object.assign(authentication, JSON.parse(authenticationInput));
+                    client.login(authentication["token"]);
+                }
+            });
         });
     }
-});
+})
 
 client.on('ready', () => {
     fs.readFile("encryptionKey.txt", 'utf8', (error, keyInput) => {
@@ -77,15 +83,13 @@ client.on('ready', () => {
         } else {
             participatingGuildsIDs.forEach(guildID => {
                 var newGuild = true;
-                var opRoleLoaded = "";
-                var userDictionaryLoaded = {};
-                var platformsListLoaded = { "possessivepronoun": new PlatformData("preference"), "timezone": new PlatformData("default"), "twitch": new PlatformData() };
+                guildDictionary[guildID] = new GuildSpecifics();
 
                 fs.readFile(`./data/${guildID}/opRole.txt`, 'utf8', (error, opRoleInput) => {
                     if (error) {
                         console.log(error);
                     } else {
-                        opRoleLoaded = encrypter.AES.decrypt(opRoleInput, keyInput).toString(encrypter.enc.Utf8);
+                        guildDictionary[guildID].opRole = encrypter.AES.decrypt(opRoleInput, keyInput).toString(encrypter.enc.Utf8);
                         newGuild = false;
                     }
 
@@ -93,7 +97,7 @@ client.on('ready', () => {
                         if (error) {
                             console.log(error);
                         } else {
-                            Object.assign(userDictionaryLoaded, JSON.parse(encrypter.AES.decrypt(userDictionaryInput, keyInput).toString(encrypter.enc.Utf8)));
+                            Object.assign(guildDictionary[guildID].userDictionary, JSON.parse(encrypter.AES.decrypt(userDictionaryInput, keyInput).toString(encrypter.enc.Utf8)));
                             newGuild = false;
                         }
 
@@ -101,16 +105,24 @@ client.on('ready', () => {
                             if (error) {
                                 console.log(error);
                             } else {
-                                Object.assign(platformsListLoaded, JSON.parse(encrypter.AES.decrypt(platformsListInput, keyInput).toString(encrypter.enc.Utf8)));
+                                Object.assign(guildDictionary[guildID].platformsList, JSON.parse(encrypter.AES.decrypt(platformsListInput, keyInput).toString(encrypter.enc.Utf8)));
                                 newGuild = false;
                             }
 
-                            guildDictionary[guildID] = new GuildSpecifics(userDictionaryLoaded, platformsListLoaded, opRoleLoaded);
                             if (newGuild) {
                                 saveOpRole(guildID);
                                 savePlatformsList(guildID);
                                 saveUserDictionary(guildID);
                             }
+
+                            setInterval(() => {
+                                saveParticipatingGuildsIDs(true);
+                                Object.keys(guildDictionary).forEach((guildID) => {
+                                    saveOpRole(guildID, true);
+                                    savePlatformsList(guildID, true);
+                                    saveUserDictionary(guildID, true);
+                                })
+                            }, 3600000)
                         });
                     });
                 });
@@ -128,6 +140,10 @@ client.on('message', (receivedMessage) => {
     }
 
     if (receivedMessage.mentions.users.has(client.user.id)) {
+        if (!participatingGuildsIDs.includes(receivedMessage.guild.id)) {
+            guildCreate(receivedMessage.guild.id);
+        }
+
         var splitMessage = receivedMessage.content.split(" ");
         if (splitMessage[0].replace(/\D/g, "") == client.user.id) {
             var recentInteractions = 0;
@@ -190,7 +206,7 @@ client.on('message', (receivedMessage) => {
                     } else if (Object.keys(platformsList).includes(arguments["words"][0])) {
                         lookupCommand(arguments, receivedMessage);
                     } else {//TODO convert command shortcut if input starts with a time
-                        receivedMessage.channel.send(`${arguments["words"][0]} isn't a **DirectoryBot** command. Please check for typos or use \`@DirectoryBot help.\``)
+                        receivedMessage.channel.send(`${arguments["words"][0]} isn't a DirectoryBot command. Please check for typos or use \`@DirectoryBot help.\``)
                     }
 
                     antiSpam.push(receivedMessage.author.id);
@@ -205,71 +221,20 @@ client.on('message', (receivedMessage) => {
 
 
 client.on('guildCreate', (guild) => {
-    participatingGuildsIDs.push(guild.id);
-
-    var guildsListOutput = { "list": participatingGuildsIDs };
-
-    fs.writeFile(`guildsList.json`, JSON.stringify(guildsListOutput), 'utf8', (error) => {
-        if (error) {
-            console.log(error);
-        }
-    })
-    //fs.readFile(`encryptionKey.txt`, 'utf8', (error, keyInput) => {
-    //    if (error) {
-    //        console.log(error);
-    //    } else {
-    //        fs.writeFile(`./data/${guildID}/opRole.txt`, encrypter.AES.encrypt(opRole, keyInput).toString(), 'utf8', (error) => {
-    //            if (error) {
-    //                console.log(error);
-    //            }
-    //        })
-    //    }
-    //})
+    guildCreate(guild.id);
 })
 
 
 client.on('guildDelete', (guild) => {
     participatingGuildsIDs.splice(participatingGuildsIDs.indexOf(guild.id), 1);
-
-    var guildsListOutput = { "list": participatingGuildsIDs };
-
-    fs.writeFile(`guildsList.json`, JSON.stringify(guildsListOutput), 'utf8', (error) => {
-        if (error) {
-            console.log(error);
-        }
-    })
-    //fs.readFile(`encryptionKey.txt`, 'utf8', (error, keyInput) => {
-    //    if (error) {
-    //        console.log(error);
-    //    } else {
-    //        fs.writeFile(`./data/${guildID}/opRole.txt`, encrypter.AES.encrypt(opRole, keyInput).toString(), 'utf8', (error) => {
-    //            if (error) {
-    //                console.log(error);
-    //            }
-    //        })
-    //    }
-    //})
+    saveParticipatingGuildsIDs();
 })
 
 
 function helpCommand(arguments, receivedMessage) {
     var opRole = guildDictionary[receivedMessage.guild.id].opRole;
- 
-    if (arguments["words"].length - 1 == 0 || arguments['words'][1] == "help") {
-        receivedMessage.channel.send(`Here are all of **DirectoryBot**'s commands:\n\
-*convert* - Convert a time to someone else's timezone or a given timezone\n\
-*countdown* - How long until the given time\n\
-*multistream* - Generate a multistream link for the given users\n\
-*platforms* - List the games/services **DirectoryBot** can be used to record or retrieve information for\n\
-*record* - Record your information for a platform\n\
-*lookup* - Look up someone else's information if they've recorded it\n\
-*send* - Have DirectoryBot send someone your information\n\
-*whois* - Ask DirectoryBot who a certain username belongs to\n\
-*delete* - Remove your information for a platform\n\
-*credits* - Version info and contributors\n\
-(and *help*).\n\
-You can type \`@directorybot help\` followed by one of those for specific instructions. If you are looking for operator commands, type \`@DirectoryBot help op\`.`);
-    } else if (arguments["words"][1] == "admin" || arguments["words"][1] == "op" || arguments["words"][1] == "operator") {
+
+    if (arguments["words"][1] == "admin" || arguments["words"][1] == "op" || arguments["words"][1] == "operator") {
         if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(opRole)) {
             receivedMessage.author.send(`The operator commands are as follows:\n\
 *newplatform* - Setup a new game/service for users to record or retrieve information for\n\
@@ -277,10 +242,10 @@ You can type \`@directorybot help\` followed by one of those for specific instru
 *setplatformrole* - Automatically give a role to users who record information for a platform\n\
 *delete* for other users`);
         } else {
-            receivedMessage.author.send(`You need a role with administrator privileges or the role " + receivedMessage.guild.roles.get(opRole) + " to view the operator commands.`);
+            receivedMessage.author.send(`You need a role with administrator privileges or the role ${receivedMessage.guild.roles.get(opRole).name} to view the operator commands.`);
         }
     } else if (convertOverloads.includes(arguments["words"][1])) {
-        receivedMessage.channel.send(`The *convert* command calculates a time for a given user. For best results, place timezones between parentheses.\n\
+        receivedMessage.channel.send(`The *convert* command calculates a time for a given user. DirectoryBot uses IANA specified timezones.\n\
 Syntax: \`@DirectoryBot convert (time) in (starting timezone) for (user)\`\n\
 \n\
 The command can also be used to switch a time to a given timezone.\n\
@@ -288,7 +253,7 @@ Syntax: \`@DirectoryBot convert (time) in (starting timezone) to (resulting time
 \n\
 If you omit the starting timezone, the bot will assume you mean the timezone you've recorded for the \"timezone\" platform.`);
     } else if (countdownOverloads.includes(arguments["words"][1])) {
-        receivedMessage.channel.send(`The *countdown* command states the time until the given time.\n\
+        receivedMessage.channel.send(`The *countdown* command states the time until the given time. DirectoryBot uses IANA specified timezones.\n\
 Syntax: \`@DirectoryBot countdown (time) (timezone)\``);
     } else if (multistreamOverloads.includes(arguments["words"][1])) {
         receivedMessage.channel.send(`The *multistream* command generates a link to watch multiple streams simultaneously. Optionally, you can enter the layout number last if you want to specify that.\n\
@@ -299,7 +264,7 @@ Syntax: \`@DirectoryBot record (platform) (code)\``);
     } else if (lookupOverloads.includes(arguments["words"][1])) {
         receivedMessage.channel.send(`The *lookup* command tells you the information associted with the given user for the given platform.\n\
 Syntax: \`@DirectoryBot lookup (user) (platform)\`\n\
-If you leave out the user mention, **DirectoryBot** will instead tell you everyone's information for that platform instead.\n\
+If you leave out the user mention, DirectoryBot will instead tell you everyone's information for that platform instead.\n\
 Syntax: \`@DirectoryBot lookup (platform)`);
     } else if (sendOverloads.includes(arguments["words"][1])) {
         receivedMessage.channel.send(`The *send* command sends your information on the given platform to the given user.\n\
@@ -320,32 +285,46 @@ Syntax: \`@DirectoryBot clear (user) (platform)\``);
         creditsCommand(receivedMessage);
     } else if (setoproleOverloads.includes(arguments["words"][1])) {
         if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(opRole)) {
-            receivedMessage.author.send(`The *setoprole* command updates the operator role for **DirectoryBot**. Users with this role use operator features of this bot without serverwide administrator privileges.\n\
+            receivedMessage.author.send(`The *setoprole* command updates the operator role for DirectoryBot. Users with this role use operator features of this bot without serverwide administrator privileges.\n\
 Syntax: \`@DirectoryBot setoprole (role)\``);
         } else {
-            receivedMessage.author.send(`You need a role with administrator privileges or the role ${receivedMessage.guild.roles.get(opRole)} to view operator commands.`);
+            receivedMessage.author.send(`You need a role with administrator privileges or the role ${receivedMessage.guild.roles.get(opRole).name} to view operator commands.`);
         }
     } else if (newplatformOverloads.includes(arguments["words"][1])) {
         if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(opRole.opRole)) {
             receivedMessage.author.send(`The *newplatform* command sets up a new game/service for users to record and retrieve information.\n\
 Syntax: \`@DirectoryBot newplatform (new game/service)\``);
         } else {
-            receivedMessage.author.send(`You need a role with administrator privileges or the role ${receivedMessage.guild.roles.get(opRole)} to view operator commands.`);
+            receivedMessage.author.send(`You need a role with administrator privileges or the role ${receivedMessage.guild.roles.get(opRole).name} to view operator commands.`);
         }
     } else if (removeplatformOverloads.includes(arguments["words"][1])) {
         if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(opRole)) {
-            receivedMessage.author.send(`The *removeplatform* command specifies a platform for **DirectoryBot** to stop recording and distributing information for.\n\
+            receivedMessage.author.send(`The *removeplatform* command specifies a platform for DirectoryBot to stop recording and distributing information for.\n\
 Syntax: \`@DirectoryBot removeplatform (platform to remove)\``)
         } else {
-            receivedMessage.author.send(`You need a role with administrator privileges or the role ${receivedMessage.guild.roles.get(opRole)} to view operator commands.`);
+            receivedMessage.author.send(`You need a role with administrator privileges or the role ${receivedMessage.guild.roles.get(opRole).name} to view operator commands.`);
         }
     } else if (setplatformroleOverloads.includes(arguments["words"][1])) {
         if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(opRole)) {
             receivedMessage.author.send(`The *setplatformrole* command associates the given role and platform. Anyone who records information for that platform will be automatically given the associated role.\n\
 Syntax: \`@DirectoryBot setplatformrole (platform) (role)\``)
         } else {
-            receivedMessage.author.send(`You need a role with administrator privileges or the role ${receivedMessage.guild.roles.get(opRole)} to view operator commands.`);
+            receivedMessage.author.send(`You need a role with administrator privileges or the role ${receivedMessage.guild.roles.get(opRole).name} to view operator commands.`);
         }
+    } else {
+        receivedMessage.channel.send(`Here are all of DirectoryBot's commands:\n\
+*convert* - Convert a time to someone else's timezone or a given timezone\n\
+*countdown* - How long until the given time\n\
+*multistream* - Generate a multistream link for the given users\n\
+*platforms* - List the games/services DirectoryBot can be used to record or retrieve information for\n\
+*record* - Record your information for a platform\n\
+*lookup* - Look up someone else's information if they've recorded it\n\
+*send* - Have DirectoryBot send someone your information\n\
+*whois* - Ask DirectoryBot who a certain username belongs to\n\
+*delete* - Remove your information for a platform\n\
+*credits* - Version info and contributors\n\
+(and *help*).\n\
+You can type \`@directorybot help\` followed by one of those for specific instructions. If you are looking for operator commands, type \`@DirectoryBot help op\`.`);
     }
 }
 
@@ -358,10 +337,16 @@ function recordCommand(arguments, receivedMessage) {
     var friendcode = arguments["words"][2];
 
     if (Object.keys(platformsList).includes(platform)) { // Early out if platform is not being tracked
-        userDictionary[receivedMessage.author.id][platform].value = friendcode;
-        syncUserRolePlatform(receivedMessage.member, platform, receivedMessage.guild.id);
-        saveUserDictionary(receivedMessage.guild.id);
-        receivedMessage.author.send(`your ${platform} ${platformsList[platform].term} has been recorded as ${friendcode} in ${receivedMessage.guild}.`);
+        if (userDictionary[receivedMessage.author.id][platform]) {
+            if (userDictionary[receivedMessage.author.id][platform].value != friendcode) {
+                userDictionary[receivedMessage.author.id][platform].value = friendcode;
+                syncUserRolePlatform(receivedMessage.member, platform, receivedMessage.guild.id);
+                saveUserDictionary(receivedMessage.guild.id);
+                receivedMessage.author.send(`Your ${platform} ${platformsList[platform].term} has been recorded as ${friendcode} in ${receivedMessage.guild}.`);
+            } else {
+                receivedMessage.author.send(`You have already recorded ${friendcode} as your ${platform} ${platformsList[platform].term} in ${receivedMessage.guild}.`)
+            }
+        }
     } else {
         receivedMessage.author.send(`${platform} is not currently being tracked in ${receivedMessage.guild}.`)
     }
@@ -384,12 +369,11 @@ function lookupCommand(arguments, receivedMessage) {
 
             if (Object.keys(platformsList).includes(platform)) {
                 if (!userDictionary[user.id] || !userDictionary[user.id][platform].value) {
-                    receivedMessage.channel.send(`${user} has not set a ${platform} ${platformsList[platform].term} in this server's **DirectoryBot** yet.`);
+                    receivedMessage.channel.send(`${user} has not set a ${platform} ${platformsList[platform].term} in this server's DirectoryBot yet.`);
                 } else {
                     receivedMessage.author.send(`${user}'s ${platform} ${platformsList[platform].term} is ${userDictionary[user.id][platform].value}.`);
                 }
             } else {
-                console.log(platformsList);
                 receivedMessage.author.send(`${platform} is not currently being tracked in ${receivedMessage.guild}.`)
             }
         } else {
@@ -405,7 +389,7 @@ function lookupCommand(arguments, receivedMessage) {
         }
 
         if (Object.keys(platformsList).includes(platform)) {
-            var text = `Here are all the ${platform} ${platformsList[platform].term}s in ${receivedMessage.guild}'s **DirectoryBot**:\n`;
+            var text = `Here are all the ${platform} ${platformsList[platform].term}s in ${receivedMessage.guild}'s DirectoryBot:\n`;
             Object.keys(userDictionary).forEach(user => {
                 if (userDictionary[user][platform].value) {
                     text += receivedMessage.guild.members.get(user).displayName + ": " + userDictionary[user][platform].value + "\n";
@@ -428,7 +412,7 @@ function sendCommand(arguments, receivedMessage) {
         if (Object.keys(platformsList).includes(platform)) {
             if (userDictionary[receivedMessage.author.id] && userDictionary[receivedMessage.author.id][platform].value) {
                 arguments["userMentions"].forEach(recipient => {
-                    recipient.send(`${receivedMessage.author.username} has sent you ${userDictionary[receivedMessage.author.id]["possessivepronoun"].value} ${platform} ${platformsList[platform].term}. It is: ${userDictionary[receivedMessage.author.id][platform].value}`);
+                    recipient.send(`${receivedMessage.author.username} has sent you ${userDictionary[receivedMessage.author.id]["possessivepronoun"].value ? userDictionary[receivedMessage.author.id]["possessivepronoun"].value : 'their'} ${platform} ${platformsList[platform].term}. It is: ${userDictionary[receivedMessage.author.id][platform].value}`);
                 })
             } else {
                 receivedMessage.author.send(`You have not recorded a ${platform} ${platformsList[platform].term} in ${receivedMessage.guild}.`);
@@ -515,14 +499,14 @@ function platformsCommand(receivedMessage) {
 
 
 function creditsCommand(receivedMessage) {
-    receivedMessage.author.send(`Version B1.1.0 <https://github.com/ntseng/DirectoryBot>\n\
+    receivedMessage.author.send(`Version B1.1.1 <https://github.com/ntseng/DirectoryBot>\n\
 __Design & Engineering__\n\
 Nathaniel Tseng ( <@106122478715150336> | <https://twitter.com/Archainis> )\n\
 \n\
 __Engineering__\n\
 Lucas Ensign ( <@112785244733628416> | <https://twitter.com/SillySalamndr> )\n\
 \n\
-**DirectoryBot** supporters from Patreon: https://www.patreon.com/imaginaryhorizonsproductions `);
+DirectoryBot supporters from Patreon: https://www.patreon.com/imaginaryhorizonsproductions `);
 }
 
 
@@ -530,41 +514,52 @@ function setOpRoleCommand(arguments, receivedMessage) {
     var opRole = guildDictionary[receivedMessage.guild.id].opRole;
 
     if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(opRole)) {
-        if (arguments["roleMentions"].length > 0) { //TODO early out if trying to set opRole to current opRole
-            guildDictionary[receivedMessage.guild.id].opRole = arguments["roleMentions"][0];
-            receivedMessage.author.send(`Changing the operator role for ${receivedMessage.guild}'s **DirectoryBot** has succeeded.`);
-            saveOpRole(receivedMessage.guild.id);
+        if (arguments["roleMentions"].length > 0) {
+            if (opRole != arguments["roleMentions"][0]) {
+                opRole = arguments["roleMentions"][0];
+                receivedMessage.author.send(`The operator role for ${receivedMessage.guild}'s DirectoryBot has been set to @${receivedMessage.guild.roles.get(arguments["roleMentions"][0]).name}.`);
+                saveOpRole(receivedMessage.guild.id);
+            } else {
+                receivedMessage.author.send(`${receivedMessage.guild.name}'s operator role already is @${receivedMessage.guild.roles.get(arguments["roleMentions"][0]).name}.`);
+            }
         } else {
-            receivedMessage.author.send(`Please mention a role to set the ${receivedMessage.guild}'s **DirectoryBot** operator role to.`);
+            receivedMessage.author.send(`Please mention a role to set the ${receivedMessage.guild}'s DirectoryBot operator role to.`);
         }
     } else {
-        receivedMessage.author.send("You need a role with administrator privileges or the role " + receivedMessage.guild.roles.get(guildData.opRole) + " to change the operator role.");
+        receivedMessage.author.send(`You need a role with administrator privileges or the role ${receivedMessage.guild.roles.get(opRole).name} to change the operator role.`);
     }
 }
 
 
 function newPlatformCommand(arguments, receivedMessage) {
+    var userDictionary = guildDictionary[receivedMessage.guild.id].userDictionary;
     var platformsList = guildDictionary[receivedMessage.guild.id].platformsList;
     var opRole = guildDictionary[receivedMessage.guild.id].opRole;
 
+
     if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(opRole)) {
-        if (arguments["words"].length > 2) {
-            receivedMessage.author.send("Please declare new platforms one at a time.");
-        } else {
-            if (arguments["words"].length <= 1) {
-                receivedMessage.author.send("Please provide a name for the new platform.");
+        let platform = arguments["words"][1].toLowerCase();
+
+        if (!platformsList[platform]) {
+            if (arguments["words"].length > 2) { //TODO replace with improved platform construction
+                receivedMessage.author.send("Please declare new platforms one at a time.");
             } else {
-                if (!platformsList[arguments["words"][1].toLowerCase()]) {
-                    platformsList[arguments["words"][1].toLowerCase()] = new PlatformData();
-                    receivedMessage.author.send(`${arguments["words"][1]} ${platformsList[arguments["words"][1].toLowerCase()]}s can now be recorded and retrieved.`);
-                    savePlatformsList(receivedMessage.guild.id);
+                if (arguments["words"].length <= 1) {
+                    receivedMessage.author.send("Please provide a name for the new platform.");
                 } else {
-                    receivedMessage.author.send(`${arguments["words"][1]} ${platformsList[arguments["words"][1].toLowerCase()]}s can already be recorded and retrieved.`)
+                    platformsList[platform] = new PlatformData();
+                    Object.keys(userDictionary).forEach((user) => {
+                        userDictionary[user][platform] = new FriendCode();
+                    })
+                    receivedMessage.author.send(`${arguments["words"][1]} ${platformsList[platform].term}s can now be recorded and retrieved.`);
+                    savePlatformsList(receivedMessage.guild.id);
                 }
             }
+        } else {
+            receivedMessage.author.send(`${arguments["words"][1]} ${platformsList[platform].term}s can already be recorded and retrieved.`)
         }
     } else {
-        receivedMessage.author.send("You need a role with administrator privileges or the role " + receivedMessage.guild.roles.get(guildData.opRole) + " to add new platforms.");
+        receivedMessage.author.send(`You need a role with administrator privileges or the role ${receivedMessage.guild.roles.get(opRole).name} to add new platforms.`);
     }
 }
 
@@ -575,16 +570,20 @@ function removePlatformCommand(arguments, receivedMessage) {
     var opRole = guildDictionary[receivedMessage.guild.id].opRole;
 
     if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(opRole)) {
-        if (Object.keys(platformsList).includes(arguments["words"][1])) {
-            platformsList.splice(Object.keys(platformsList).indexOf(arguments["words"][1]), 1);
+        let platform = arguments["words"][1].toLowerCase();
+
+        if (platformsList[platform]) {
+            delete platformsList[platform];
             Object.keys(userDictionary).forEach(user => {
-                delete userDictionary[user][arguments["words"][1]];
+                delete userDictionary[user][platform];
             })
-            receivedMessage.author.send(`${arguments["words"][1]} will no longer be recorded in ${receivedMessage.guild}.`);
+            receivedMessage.author.send(`${platform} will no longer be recorded in ${receivedMessage.guild}.`);
             savePlatformsList(receivedMessage.guild.id);
+        } else {
+            receivedMessage.author.send(`${platform} is not currently being recorded in ${receivedMessage.guild}.`);
         }
     } else {
-        receivedMessage.author.send("You need a role with administrator privileges or the role " + receivedMessage.guild.roles.get(guildData.opRole) + " to remove platforms.");
+        receivedMessage.author.send(`You need a role with administrator privileges or the role ${receivedMessage.guild.roles.get(opRole).name} to remove platforms.`);
     }
 }
 
@@ -598,15 +597,19 @@ function setPlatformRoleCommand(arguments, receivedMessage) {
     var platform = arguments['words'][1];
 
     if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(opRole)) {
-        platformsList[platform].role = role;
-        savePlatformsList(receivedMessage.guild.id);
-        Object.keys(userDictionary).forEach(user => {
-            syncUserRolePlatform(receivedMessage.guild.members.get(user), platform, receivedMessage.guild.id);
-        })
-        saveUserDictionary(receivedMessage.guild.id);
-        receivedMessage.author.send(`${receivedMessage.guild} members who set a ${platform} ${platform.term} will now automatically be given the role @${receivedMessage.guild.roles.get(role).name}.`);
+        if (platformsList[platform].role != role) {
+            platformsList[platform].role = role;
+            savePlatformsList(receivedMessage.guild.id);
+            Object.keys(userDictionary).forEach(user => {
+                syncUserRolePlatform(receivedMessage.guild.members.get(user), platform, receivedMessage.guild.id);
+            })
+            saveUserDictionary(receivedMessage.guild.id);
+            receivedMessage.author.send(`${receivedMessage.guild} members who set a ${platform} ${platformsList[platform].term} will now automatically be given the role @${receivedMessage.guild.roles.get(role).name}.`);
+        } else {
+            receivedMessage.author.send(`The role @${receivedMessage.guild.roles.get(role).name} is already associated with ${platform} in ${receivedMessage.guild}.`);
+        }
     } else {
-        receivedMessage.author.send("You need a role with administrator privileges or the role " + receivedMessage.guild.roles.get(guildData.opRole) + " to remove platforms.");
+        receivedMessage.author.send(`You need a role with administrator privileges or the role ${receivedMessage.guild.roles.get(opRole)} to remove platforms.`);
     }
 }
 
@@ -642,6 +645,138 @@ function filterWords(msgArray) { // Fetch arguments that are not mentions
     return argArray;
 }
 
+function guildCreate(guildID) {
+    participatingGuildsIDs.push(guildID);
+
+    guildDictionary[guildID] = new GuildSpecifics();
+    saveOpRole(guildID);
+    savePlatformsList(guildID);
+    saveUserDictionary(guildID);
+
+    saveParticipatingGuildsIDs();
+}
+
+function saveOpRole(guildID, backup = false) {
+    fs.readFile(`encryptionKey.txt`, 'utf8', (error, keyInput) => {
+        if (error) {
+            console.log(error);
+        } else {
+            var filePath = `./`;
+            if (backup) {
+                filePath += 'backups/' + guildID + '/opRole.txt';
+                if (!fs.existsSync('./backups')) {
+                    fs.mkdirSync('./backups');
+                }
+                if (!fs.existsSync('./backups/' + guildID)) {
+                    fs.mkdirSync('./backup/' + guildID);
+                }
+            } else {
+                filePath += 'data/' + guildID + '/opRole.txt';
+                if (!fs.existsSync('./data')) {
+                    fs.mkdirSync('./data');
+                }
+                if (!fs.existsSync('./data/' + guildID)) {
+                    fs.mkdirSync('./data/' + guildID);
+                }
+            }
+            fs.writeFile(filePath, encrypter.AES.encrypt(guildDictionary[guildID].opRole, keyInput).toString(), 'utf8', (error) => {
+                if (error) {
+                    console.log(error);
+                }
+            })
+        }
+    })
+}
+
+function saveUserDictionary(guildID, backup = false) {
+    fs.readFile("encryptionKey.txt", 'utf8', (error, keyInput) => {
+        if (error) {
+            console.log(error);
+        } else {
+            var filePath = `./`;
+            if (backup) {
+                filePath += 'backups/' + guildID + '/userDictionary.txt';
+                if (!fs.existsSync('./backups')) {
+                    fs.mkdirSync('./backups');
+                }
+                if (!fs.existsSync('./backups/' + guildID)) {
+                    fs.mkdirSync('./backups/' + guildID);
+                }
+            } else {
+                filePath += 'data/' + guildID + '/userDictionary.txt';
+                if (!fs.existsSync('./data')) {
+                    fs.mkdirSync('./data');
+                }
+                if (!fs.existsSync('./data/' + guildID)) {
+                    fs.mkdirSync('./data/' + guildID);
+                }
+            }
+            fs.writeFile(filePath, encrypter.AES.encrypt(JSON.stringify(guildDictionary[guildID].userDictionary), keyInput).toString(), 'utf8', (error) => {
+                if (error) {
+                    console.log(error);
+                }
+            })
+        }
+    })
+}
+
+function savePlatformsList(guildID, backup = false) {
+    fs.readFile("encryptionKey.txt", 'utf8', (error, keyInput) => {
+        if (error) {
+            console.log(error);
+        } else {
+            var filePath = `./`;
+            if (backup) {
+                filePath += 'backups/' + guildID + '/platformsList.txt';
+                if (!fs.existsSync('./backups')) {
+                    fs.mkdirSync('./backups');
+                }
+                if (!fs.existsSync('./backups/' + guildID)) {
+                    fs.mkdirSync('./backups/' + guildID);
+                }
+            } else {
+                filePath += 'data/' + guildID + '/platformsList.txt';
+                if (!fs.existsSync('./data')) {
+                    fs.mkdirSync('./data');
+                }
+                if (!fs.existsSync('./data/' + guildID)) {
+                    fs.mkdirSync('./data/' + guildID);
+                }
+            }
+            fs.writeFile(filePath, encrypter.AES.encrypt(JSON.stringify(guildDictionary[guildID].platformsList), keyInput).toString(), 'utf8', (error) => {
+                if (error) {
+                    console.log(error);
+                }
+            })
+        }
+    })
+}
+
+function saveParticipatingGuildsIDs(backup = false) {
+    var guildsListOutput = { "list": participatingGuildsIDs };
+
+    fs.readFile(`encryptionKey.txt`, `utf8`, (error, keyInput) => {
+        if (error) {
+            console.log(error);
+        } else {
+            var filePath = `./`;
+            if (backup) {
+                filePath += 'backups/guildsList.txt';
+                if (!fs.existsSync('./backups')) {
+                    fs.mkdirSync('./backups');
+                }
+            } else {
+                filePath += 'guildsList.txt';
+            }
+            fs.writeFile(filePath, encrypter.AES.encrypt(JSON.stringify(guildsListOutput), keyInput), 'utf8', (error) => {
+                if (error) {
+                    console.log(error);
+                }
+            })
+        }
+    })
+}
+
 function syncUserRolePlatform(member, platform, guildID) {
     if (guildDictionary[guildID].userDictionary[member.id]) {
         if (guildDictionary[guildID].platformsList[platform].role) {
@@ -652,67 +787,4 @@ function syncUserRolePlatform(member, platform, guildID) {
             }
         }
     }
-}
-
-function saveOpRole(guildID) {
-    if (!fs.existsSync('./data')) {
-        fs.mkdirSync('./data');
-    }
-    if (!fs.existsSync('./data/' + guildID)) {
-        fs.mkdirSync('./data/' + guildID);
-    }
-
-    fs.readFile(`encryptionKey.txt`, 'utf8', (error, keyInput) => {
-        if (error) {
-            console.log(error);
-        } else {
-            fs.writeFile(`./data/${guildID}/opRole.txt`, encrypter.AES.encrypt(guildDictionary[guildID].opRole, keyInput).toString(), 'utf8', (error) => {
-                if (error) {
-                    console.log(error);
-                }
-            })
-        }
-    })
-}
-
-function saveUserDictionary(guildID) {
-    if (!fs.existsSync('./data')) {
-        fs.mkdirSync('./data');
-    }
-    if (!fs.existsSync('./data/' + guildID)) {
-        fs.mkdirSync('./data/' + guildID);
-    }
-
-    fs.readFile("encryptionKey.txt", 'utf8', (error, keyInput) => {
-        if (error) {
-            console.log(error);
-        } else {
-            fs.writeFile(`./data/${guildID}/userDictionary.txt`, encrypter.AES.encrypt(JSON.stringify(guildDictionary[guildID].userDictionary), keyInput).toString(), 'utf8', (error) => {
-                if (error) {
-                    console.log(error);
-                }
-            })
-        }
-    })
-}
-
-function savePlatformsList(guildID) {
-    if (!fs.existsSync('./data')) {
-        fs.mkdirSync('./data');
-    }
-    if (!fs.existsSync('./data/' + guildID)) {
-        fs.mkdirSync('./data/' + guildID);
-    }
-
-    fs.readFile("encryptionKey.txt", 'utf8', (error, keyInput) => {
-        if (error) {
-            console.log(error);
-        } else {
-            fs.writeFile(`./data/${guildID}/platformsList.txt`, encrypter.AES.encrypt(JSON.stringify(guildDictionary[guildID].platformsList), keyInput).toString(), 'utf8', (error) => {
-                if (error) {
-                    console.log(error);
-                }
-            })
-        }
-    })
 }

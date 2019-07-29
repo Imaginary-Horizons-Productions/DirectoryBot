@@ -206,7 +206,7 @@ client.on('message', (receivedMessage) => {
                     } else if (Object.keys(platformsList).includes(arguments["words"][0])) {
                         lookupCommand(arguments, receivedMessage);
                     } else {//TODO convert command shortcut if input starts with a time
-                        receivedMessage.channel.send(`${arguments["words"][0]} isn't a **DirectoryBot** command. Please check for typos or use \`@DirectoryBot help.\``)
+                        receivedMessage.channel.send(`${arguments["words"][0]} isn't a DirectoryBot command. Please check for typos or use \`@DirectoryBot help.\``)
                     }
 
                     antiSpam.push(receivedMessage.author.id);
@@ -245,7 +245,7 @@ function helpCommand(arguments, receivedMessage) {
             receivedMessage.author.send(`You need a role with administrator privileges or the role ${receivedMessage.guild.roles.get(opRole).name} to view the operator commands.`);
         }
     } else if (convertOverloads.includes(arguments["words"][1])) {
-        receivedMessage.channel.send(`The *convert* command calculates a time for a given user. For best results, place timezones between parentheses.\n\
+        receivedMessage.channel.send(`The *convert* command calculates a time for a given user. DirectoryBot uses IANA specified timezones.\n\
 Syntax: \`@DirectoryBot convert (time) in (starting timezone) for (user)\`\n\
 \n\
 The command can also be used to switch a time to a given timezone.\n\
@@ -253,7 +253,7 @@ Syntax: \`@DirectoryBot convert (time) in (starting timezone) to (resulting time
 \n\
 If you omit the starting timezone, the bot will assume you mean the timezone you've recorded for the \"timezone\" platform.`);
     } else if (countdownOverloads.includes(arguments["words"][1])) {
-        receivedMessage.channel.send(`The *countdown* command states the time until the given time.\n\
+        receivedMessage.channel.send(`The *countdown* command states the time until the given time. DirectoryBot uses IANA specified timezones.\n\
 Syntax: \`@DirectoryBot countdown (time) (timezone)\``);
     } else if (multistreamOverloads.includes(arguments["words"][1])) {
         receivedMessage.channel.send(`The *multistream* command generates a link to watch multiple streams simultaneously. Optionally, you can enter the layout number last if you want to specify that.\n\
@@ -264,7 +264,7 @@ Syntax: \`@DirectoryBot record (platform) (code)\``);
     } else if (lookupOverloads.includes(arguments["words"][1])) {
         receivedMessage.channel.send(`The *lookup* command tells you the information associted with the given user for the given platform.\n\
 Syntax: \`@DirectoryBot lookup (user) (platform)\`\n\
-If you leave out the user mention, **DirectoryBot** will instead tell you everyone's information for that platform instead.\n\
+If you leave out the user mention, DirectoryBot will instead tell you everyone's information for that platform instead.\n\
 Syntax: \`@DirectoryBot lookup (platform)`);
     } else if (sendOverloads.includes(arguments["words"][1])) {
         receivedMessage.channel.send(`The *send* command sends your information on the given platform to the given user.\n\
@@ -285,7 +285,7 @@ Syntax: \`@DirectoryBot clear (user) (platform)\``);
         creditsCommand(receivedMessage);
     } else if (setoproleOverloads.includes(arguments["words"][1])) {
         if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(opRole)) {
-            receivedMessage.author.send(`The *setoprole* command updates the operator role for **DirectoryBot**. Users with this role use operator features of this bot without serverwide administrator privileges.\n\
+            receivedMessage.author.send(`The *setoprole* command updates the operator role for DirectoryBot. Users with this role use operator features of this bot without serverwide administrator privileges.\n\
 Syntax: \`@DirectoryBot setoprole (role)\``);
         } else {
             receivedMessage.author.send(`You need a role with administrator privileges or the role ${receivedMessage.guild.roles.get(opRole).name} to view operator commands.`);
@@ -299,7 +299,7 @@ Syntax: \`@DirectoryBot newplatform (new game/service)\``);
         }
     } else if (removeplatformOverloads.includes(arguments["words"][1])) {
         if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(opRole)) {
-            receivedMessage.author.send(`The *removeplatform* command specifies a platform for **DirectoryBot** to stop recording and distributing information for.\n\
+            receivedMessage.author.send(`The *removeplatform* command specifies a platform for DirectoryBot to stop recording and distributing information for.\n\
 Syntax: \`@DirectoryBot removeplatform (platform to remove)\``)
         } else {
             receivedMessage.author.send(`You need a role with administrator privileges or the role ${receivedMessage.guild.roles.get(opRole).name} to view operator commands.`);
@@ -312,11 +312,11 @@ Syntax: \`@DirectoryBot setplatformrole (platform) (role)\``)
             receivedMessage.author.send(`You need a role with administrator privileges or the role ${receivedMessage.guild.roles.get(opRole).name} to view operator commands.`);
         }
     } else {
-        receivedMessage.channel.send(`Here are all of **DirectoryBot**'s commands:\n\
+        receivedMessage.channel.send(`Here are all of DirectoryBot's commands:\n\
 *convert* - Convert a time to someone else's timezone or a given timezone\n\
 *countdown* - How long until the given time\n\
 *multistream* - Generate a multistream link for the given users\n\
-*platforms* - List the games/services **DirectoryBot** can be used to record or retrieve information for\n\
+*platforms* - List the games/services DirectoryBot can be used to record or retrieve information for\n\
 *record* - Record your information for a platform\n\
 *lookup* - Look up someone else's information if they've recorded it\n\
 *send* - Have DirectoryBot send someone your information\n\
@@ -369,7 +369,7 @@ function lookupCommand(arguments, receivedMessage) {
 
             if (Object.keys(platformsList).includes(platform)) {
                 if (!userDictionary[user.id] || !userDictionary[user.id][platform].value) {
-                    receivedMessage.channel.send(`${user} has not set a ${platform} ${platformsList[platform].term} in this server's **DirectoryBot** yet.`);
+                    receivedMessage.channel.send(`${user} has not set a ${platform} ${platformsList[platform].term} in this server's DirectoryBot yet.`);
                 } else {
                     receivedMessage.author.send(`${user}'s ${platform} ${platformsList[platform].term} is ${userDictionary[user.id][platform].value}.`);
                 }
@@ -389,7 +389,7 @@ function lookupCommand(arguments, receivedMessage) {
         }
 
         if (Object.keys(platformsList).includes(platform)) {
-            var text = `Here are all the ${platform} ${platformsList[platform].term}s in ${receivedMessage.guild}'s **DirectoryBot**:\n`;
+            var text = `Here are all the ${platform} ${platformsList[platform].term}s in ${receivedMessage.guild}'s DirectoryBot:\n`;
             Object.keys(userDictionary).forEach(user => {
                 if (userDictionary[user][platform].value) {
                     text += receivedMessage.guild.members.get(user).displayName + ": " + userDictionary[user][platform].value + "\n";
@@ -506,7 +506,7 @@ Nathaniel Tseng ( <@106122478715150336> | <https://twitter.com/Archainis> )\n\
 __Engineering__\n\
 Lucas Ensign ( <@112785244733628416> | <https://twitter.com/SillySalamndr> )\n\
 \n\
-**DirectoryBot** supporters from Patreon: https://www.patreon.com/imaginaryhorizonsproductions `);
+DirectoryBot supporters from Patreon: https://www.patreon.com/imaginaryhorizonsproductions `);
 }
 
 
@@ -517,13 +517,13 @@ function setOpRoleCommand(arguments, receivedMessage) {
         if (arguments["roleMentions"].length > 0) {
             if (opRole != arguments["roleMentions"][0]) {
                 opRole = arguments["roleMentions"][0];
-                receivedMessage.author.send(`The operator role for ${receivedMessage.guild}'s **DirectoryBot** has been set to @${receivedMessage.guild.roles.get(arguments["roleMentions"][0]).name}.`);
+                receivedMessage.author.send(`The operator role for ${receivedMessage.guild}'s DirectoryBot has been set to @${receivedMessage.guild.roles.get(arguments["roleMentions"][0]).name}.`);
                 saveOpRole(receivedMessage.guild.id);
             } else {
                 receivedMessage.author.send(`${receivedMessage.guild.name}'s operator role already is @${receivedMessage.guild.roles.get(arguments["roleMentions"][0]).name}.`);
             }
         } else {
-            receivedMessage.author.send(`Please mention a role to set the ${receivedMessage.guild}'s **DirectoryBot** operator role to.`);
+            receivedMessage.author.send(`Please mention a role to set the ${receivedMessage.guild}'s DirectoryBot operator role to.`);
         }
     } else {
         receivedMessage.author.send(`You need a role with administrator privileges or the role ${receivedMessage.guild.roles.get(opRole).name} to change the operator role.`);

@@ -257,8 +257,8 @@ Syntax: \`@DirectoryBot convert (time) in (starting timezone) to (resulting time
 \n\
 If you omit the starting timezone, the bot will assume you mean the timezone you've recorded for the \"timezone\" platform.`);
     } else if (countdownOverloads.includes(arguments["words"][1])) {
-        receivedMessage.channel.send(`The *countdown* command states the time until the given time. DirectoryBot uses IANA specified timezones.\n\
-Syntax: \`@DirectoryBot countdown (time) (timezone)\``);
+        receivedMessage.channel.send(`The *countdown* command states the time until the given time. DirectoryBot uses IANA specified timezones. If no timezone is given DirectoryBot will try with the user's timezone default, then the server's local timezone failing that.\n\
+Syntax: \`@DirectoryBot countdown (time) in (timezone)\``);
     } else if (multistreamOverloads.includes(arguments["words"][1])) {
         receivedMessage.channel.send(`The *multistream* command generates a link to watch multiple streams simultaneously. Optionally, you can enter the layout number last if you want to specify that.\n\
 Syntax: \`@DirectoryBot multistream (user1) (user2)... (layout)\``);

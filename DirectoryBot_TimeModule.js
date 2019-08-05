@@ -1,4 +1,4 @@
-const { DateTime, IANAZone } = require("luxon");
+const { DateTime, IANAZone, LocalZone } = require("luxon");
 var chrono = require('chrono-node');
 
 exports.convertCommand = function (arguments, receivedMessage, userDictionary) {
@@ -64,26 +64,34 @@ exports.convertCommand = function (arguments, receivedMessage, userDictionary) {
 
 
 exports.countdownCommand = function (arguments, receivedMessage) {
+    var startTimezone = LocalZone.instance.name;
     var timeText = "";
     for (var i = 0; i < arguments["words"].length; i++) {
-        if (arguments["words"][i] != "countdown") {
+        if (arguments["words"][i] == "in") {
+            startTimezone = arguments["words"][i + 1]
+            i++;
+        } else if (arguments["words"][i] != "countdown") {
             timeText += arguments["words"][i] + " ";
         }
     }
 
-    //if (userDictionary[receivedMessage.author.id] && userDictionary[receivedMessage.author.id]["timezone"].value) {
-    //    startTimezone = userDictionary[receivedMessage.author.id]["timezone"].value;
-    //} else {
-    //    receivedMessage.author.send(`Please either specifiy a starting timezone or record your default with \`@DirectoryBot record timezone (timezone)\`.`);
-    //    return;
-    //}
 
     var inputTime = new chrono.parse(timeText);
-    //inputTime[0].start.assign("timezoneOffset", IANAZone.create(startTimezone).offset(Date.now()));
+    if (!IANAZone.isValidZone(startTimezone) && userDictionary[receivedMessage.author.id] && userDictionary[receivedMessage.author.id]["timezone"].value) {
+        startTimezone = userDictionary[receivedMessage.author.id]["timezone"].value;
+    }
+    inputTime[0].start.assign("timezoneOffset", IANAZone.create(startTimezone).offset(Date.now()));
     var dateTimeObject = DateTime.fromJSDate(inputTime[0].start.date());
     var countdown = dateTimeObject.diffNow("minutes").toString();
     countdown = countdown.replace(/[a-zA-Z]/g, '');
     countdown = parseInt(countdown);
+    if (countdown < 0) {
+        countdown += 1440;
+    }
 
-    receivedMessage.channel.send(`${arguments["words"][1]} is about ${countdown} minutes from now.`); //BUG sometimes returns negative number of minutes
+    if (countdown > 60) {
+        receivedMessage.channel.send(`${arguments["words"][1]} in ${startTimezone} is about ${Math.floor(countdown/60)} hours and ${countdown % 60} minutes from now.`);
+    } else {
+        receivedMessage.channel.send(`${arguments["words"][1]} in ${startTimezone} is about ${countdown} minutes from now.`);
+    }
 }

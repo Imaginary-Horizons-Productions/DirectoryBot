@@ -179,7 +179,7 @@ client.on('message', (receivedMessage) => {
                     } else if (convertOverloads.includes(arguments["words"][0])) {
                         timeModule.convertCommand(arguments, receivedMessage, guildDictionary[receivedMessage.guild.id].userDictionary);
                     } else if (countdownOverloads.includes(arguments["words"][0])) {
-                        timeModule.countdownCommand(arguments, receivedMessage);
+                        timeModule.countdownCommand(arguments, receivedMessage, guildDictionary[receivedMessage.guild.id].userDictionary);
                     } else if (multistreamOverloads.includes(arguments["words"][0])) {
                         twitchModule.multistreamCommand(arguments, receivedMessage, guildDictionary[receivedMessage.guild.id].userDictionary);
                     } else if (recordOverloads.includes(arguments["words"][0])) {
@@ -235,10 +235,10 @@ client.on('guildDelete', (guild) => {
 
 
 function helpCommand(arguments, receivedMessage) {
-    var opRole = guildDictionary[receivedMessage.guild.id].opRole;
+    let cachedGuild = guildDictionary[receivedMessage.guild.id];
 
     if (arguments["words"][1] == "admin" || arguments["words"][1] == "op" || arguments["words"][1] == "operator") {
-        if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(opRole)) {
+        if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(cachedGuild.opRole)) {
             receivedMessage.author.send(`The operator commands are as follows:\n\
 *newplatform* - Setup a new game/service for users to record or retrieve information for\n\
 *changeplatformterm* - Changes what DirectoryBot calls information for the given platform\n\
@@ -246,7 +246,7 @@ function helpCommand(arguments, receivedMessage) {
 *setplatformrole* - Automatically give a role to users who record information for a platform\n\
 *delete* for other users`);
         } else {
-            receivedMessage.author.send(`You need a role with administrator privileges or the role ${receivedMessage.guild.roles.get(opRole).name} to view the operator commands.`);
+            receivedMessage.author.send(`You need a role with administrator privileges${cachedGuild.opRole ? ` or the role @${receivedMessage.guild.roles.get(cachedGuild.opRole).name}` : ""} to view the operator commands.`);
         }
     } else if (convertOverloads.includes(arguments["words"][1])) {
         receivedMessage.channel.send(`The *convert* command calculates a time for a given user. DirectoryBot uses IANA specified timezones.\n\
@@ -279,7 +279,7 @@ Syntax: \`@DirectoryBot whois (username)\``);
     } else if (deleteOverloads.includes(arguments["words"][1])) {
         receivedMessage.channel.send(`The *delete* command removes your information for the given platform.\n\
 Syntax: \`@DirectoryBot delete (platform)\``);
-        if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(opRole)) {
+        if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(cachedGuild.opRole)) {
             receivedMessage.author.send(`Operators can use the *delete* command to remove information for other users.\n\
 Syntax: \`@DirectoryBot clear (user) (platform)\``);
         }
@@ -288,39 +288,42 @@ Syntax: \`@DirectoryBot clear (user) (platform)\``);
     } else if (creditsOverloads.includes(arguments["words"][1])) {
         creditsCommand(receivedMessage);
     } else if (setoproleOverloads.includes(arguments["words"][1])) {
-        if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(opRole)) {
+        if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(cachedGuild.opRole)) {
             receivedMessage.author.send(`The *setoprole* command updates the operator role for DirectoryBot. Users with this role use operator features of this bot without serverwide administrator privileges.\n\
 Syntax: \`@DirectoryBot setoprole (role)\``);
         } else {
-            receivedMessage.author.send(`You need a role with administrator privileges or the role ${receivedMessage.guild.roles.get(opRole).name} to view operator commands.`);
+            if (true) {
+
+            }
+            receivedMessage.author.send(`You need a role with administrator privileges${cachedGuild.opRole ? ` or the role @${receivedMessage.guild.roles.get(cachedGuild.opRole).name}` : ""} to view operator commands.`);
         }
     } else if (newplatformOverloads.includes(arguments["words"][1])) {
-        if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(opRole.opRole)) {
+        if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(cachedGuild.opRole)) {
             receivedMessage.author.send(`The *newplatform* command sets up a new game/service for users to record and retrieve information. Optionally, you can set a term to call the information that is being stored (default is "username").\n\
 Syntax: \`@DirectoryBot newplatform (platform name) (information term)\``);
         } else {
-            receivedMessage.author.send(`You need a role with administrator privileges or the role ${receivedMessage.guild.roles.get(opRole).name} to view operator commands.`);
+            receivedMessage.author.send(`You need a role with administrator privileges${cachedGuild.opRole ? ` or the role @${receivedMessage.guild.roles.get(cachedGuild.opRole).name}` : ""} to view operator commands.`);
         }
     } else if (changeplatformtermOverloads.includes(arguments["words"][1])) {
-        if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(opRole.opRole)) {
+        if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(cachedGuild.opRole)) {
             receivedMessage.author.send(`The *changeplatformterm* changes what DirectoryBot calls information from the given platform (default is "username").\n\
 Syntax: \`@DirectoryBot changeplatformterm (platform name) (new term)\``);
         } else {
-            receivedMessage.author.send(`You need a role with administrator privileges or the role ${receivedMessage.guild.roles.get(opRole).name} to view operator commands.`);
+            receivedMessage.author.send(`You need a role with administrator privileges${cachedGuild.opRole ? ` or the role @${receivedMessage.guild.roles.get(cachedGuild.opRole).name}` : ""} to view operator commands.`);
         }
     } else if (removeplatformOverloads.includes(arguments["words"][1])) {
-        if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(opRole)) {
+        if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(cachedGuild.opRole)) {
             receivedMessage.author.send(`The *removeplatform* command specifies a platform for DirectoryBot to stop recording and distributing information for.\n\
 Syntax: \`@DirectoryBot removeplatform (platform to remove)\``)
         } else {
-            receivedMessage.author.send(`You need a role with administrator privileges or the role ${receivedMessage.guild.roles.get(opRole).name} to view operator commands.`);
+            receivedMessage.author.send(`You need a role with administrator privileges${cachedGuild.opRole ? ` or the role @${receivedMessage.guild.roles.get(cachedGuild.opRole).name}` : ""} to view operator commands.`);
         }
     } else if (setplatformroleOverloads.includes(arguments["words"][1])) {
-        if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(opRole)) {
+        if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(cachedGuild.opRole)) {
             receivedMessage.author.send(`The *setplatformrole* command associates the given role and platform. Anyone who records information for that platform will be automatically given the associated role.\n\
 Syntax: \`@DirectoryBot setplatformrole (platform) (role)\``)
         } else {
-            receivedMessage.author.send(`You need a role with administrator privileges or the role ${receivedMessage.guild.roles.get(opRole).name} to view operator commands.`);
+            receivedMessage.author.send(`You need a role with administrator privileges${cachedGuild.opRole ? ` or the role @${receivedMessage.guild.roles.get(cachedGuild.opRole).name}` : ""} to view operator commands.`);
         }
     } else {
         receivedMessage.channel.send(`Here are all of DirectoryBot's commands:\n\
@@ -341,21 +344,20 @@ You can type \`@directorybot help\` followed by one of those for specific instru
 
 
 function recordCommand(arguments, receivedMessage) {
-    var userDictionary = guildDictionary[receivedMessage.guild.id].userDictionary;
-    var platformsList = guildDictionary[receivedMessage.guild.id].platformsList;
+    let cachedGuild = guildDictionary[receivedMessage.guild.id];
 
     var platform = arguments["words"][1].toLowerCase();
     var friendcode = arguments["words"][2];
 
-    if (Object.keys(platformsList).includes(platform)) { // Early out if platform is not being tracked
-        if (userDictionary[receivedMessage.author.id][platform]) {
-            if (userDictionary[receivedMessage.author.id][platform].value != friendcode) {
-                userDictionary[receivedMessage.author.id][platform].value = friendcode;
+    if (Object.keys(cachedGuild.platformsList).includes(platform)) { // Early out if platform is not being tracked
+        if (cachedGuild.userDictionary[receivedMessage.author.id][platform]) {
+            if (cachedGuild.userDictionary[receivedMessage.author.id][platform].value != friendcode) {
+                cachedGuild.userDictionary[receivedMessage.author.id][platform].value = friendcode;
                 syncUserRolePlatform(receivedMessage.member, platform, receivedMessage.guild.id);
                 saveUserDictionary(receivedMessage.guild.id);
-                receivedMessage.author.send(`Your ${platform} ${platformsList[platform].term} has been recorded as ${friendcode} in ${receivedMessage.guild}.`);
+                receivedMessage.author.send(`Your ${platform} ${cachedGuild.platformsList[platform].term} has been recorded as ${friendcode} in ${receivedMessage.guild}.`);
             } else {
-                receivedMessage.author.send(`You have already recorded ${friendcode} as your ${platform} ${platformsList[platform].term} in ${receivedMessage.guild}.`)
+                receivedMessage.author.send(`You have already recorded ${friendcode} as your ${platform} ${cachedGuild.platformsList[platform].term} in ${receivedMessage.guild}.`)
             }
         }
     } else {
@@ -365,8 +367,7 @@ function recordCommand(arguments, receivedMessage) {
 
 
 function lookupCommand(arguments, receivedMessage) {
-    var userDictionary = guildDictionary[receivedMessage.guild.id].userDictionary;
-    var platformsList = guildDictionary[receivedMessage.guild.id].platformsList;
+    let cachedGuild = guildDictionary[receivedMessage.guild.id];
 
     if (arguments["userMentions"].length == 1) {
         var user = arguments["userMentions"][0].user;
@@ -378,11 +379,11 @@ function lookupCommand(arguments, receivedMessage) {
                 var platform = arguments["words"][0].toLowerCase();
             }
 
-            if (Object.keys(platformsList).includes(platform)) {
-                if (!userDictionary[user.id] || !userDictionary[user.id][platform].value) {
-                    receivedMessage.channel.send(`${user} has not set a ${platform} ${platformsList[platform].term} in this server's DirectoryBot yet.`);
+            if (Object.keys(cachedGuild.platformsList).includes(platform)) {
+                if (!cachedGuild.userDictionary[user.id] || !cachedGuild.userDictionary[user.id][platform].value) {
+                    receivedMessage.channel.send(`${user} has not set a ${platform} ${cachedGuild.platformsList[platform].term} in this server's DirectoryBot yet.`);
                 } else {
-                    receivedMessage.author.send(`${user}'s ${platform} ${platformsList[platform].term} is ${userDictionary[user.id][platform].value}.`);
+                    receivedMessage.author.send(`${user}'s ${platform} ${cachedGuild.platformsList[platform].term} is ${cachedGuild.userDictionary[user.id][platform].value}.`);
                 }
             } else {
                 receivedMessage.author.send(`${platform} is not currently being tracked in ${receivedMessage.guild}.`)
@@ -399,11 +400,11 @@ function lookupCommand(arguments, receivedMessage) {
             platform = arguments["words"][0].toLowerCase();
         }
 
-        if (Object.keys(platformsList).includes(platform)) {
-            var text = `Here are all the ${platform} ${platformsList[platform].term}s in ${receivedMessage.guild}'s DirectoryBot:\n`;
-            Object.keys(userDictionary).forEach(user => {
-                if (userDictionary[user][platform].value) {
-                    text += receivedMessage.guild.members.get(user).displayName + ": " + userDictionary[user][platform].value + "\n";
+        if (Object.keys(cachedGuild.platformsList).includes(platform)) {
+            var text = `Here are all the ${platform} ${cachedGuild.platformsList[platform].term}s in ${receivedMessage.guild}'s DirectoryBot:\n`;
+            Object.keys(cachedGuild.userDictionary).forEach(user => {
+                if (cachedGuild.userDictionary[user][platform].value) {
+                    text += receivedMessage.guild.members.get(user).displayName + ": " + cachedGuild.userDictionary[user][platform].value + "\n";
                 }
             })
             receivedMessage.author.send(text);
@@ -415,18 +416,17 @@ function lookupCommand(arguments, receivedMessage) {
 
 
 function sendCommand(arguments, receivedMessage) {
-    var userDictionary = guildDictionary[receivedMessage.guild.id].userDictionary;
-    var platformsList = guildDictionary[receivedMessage.guild.id].platformsList;
+    let cachedGuild = guildDictionary[receivedMessage.guild.id];
 
     if (arguments["userMentions"].length >= 1) {
         var platform = arguments["words"][1].toLowerCase();
-        if (Object.keys(platformsList).includes(platform)) {
-            if (userDictionary[receivedMessage.author.id] && userDictionary[receivedMessage.author.id][platform].value) {
+        if (Object.keys(cachedGuild.platformsList).includes(platform)) {
+            if (cachedGuild.userDictionary[receivedMessage.author.id] && cachedGuild.userDictionary[receivedMessage.author.id][platform].value) {
                 arguments["userMentions"].forEach(recipient => {
-                    recipient.send(`${receivedMessage.author.username} has sent you ${userDictionary[receivedMessage.author.id]["possessivepronoun"].value ? userDictionary[receivedMessage.author.id]["possessivepronoun"].value : 'their'} ${platform} ${platformsList[platform].term}. It is: ${userDictionary[receivedMessage.author.id][platform].value}`);
+                    recipient.send(`${receivedMessage.author.username} has sent you ${cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value ? cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value : 'their'} ${platform} ${cachedGuild.platformsList[platform].term}. It is: ${cachedGuild.userDictionary[receivedMessage.author.id][platform].value}`);
                 })
             } else {
-                receivedMessage.author.send(`You have not recorded a ${platform} ${platformsList[platform].term} in ${receivedMessage.guild}.`);
+                receivedMessage.author.send(`You have not recorded a ${platform} ${cachedGuild.platformsList[platform].term} in ${receivedMessage.guild}.`);
             }
         } else {
             receivedMessage.author.send(`${platform} is not currently being tracked in ${receivedMessage.guild}.`)
@@ -438,14 +438,14 @@ function sendCommand(arguments, receivedMessage) {
 
 
 function whoisCommand(arguments, receivedMessage) {
-    var userDictionary = guildDictionary[receivedMessage.guild.id].userDictionary;
+    let cachedGuild = guildDictionary[receivedMessage.guild.id];
 
     if (arguments["words"].length >= 1) {
         var searchTerm = arguments["words"][1];
         var reply = `The following people have recorded ${searchTerm} in ${receivedMessage.guild.name}:`;
-        Object.keys(userDictionary).forEach(user => {
-            for (var platform in userDictionary[user]) {
-                if (userDictionary[user][platform].value == searchTerm) {
+        Object.keys(cachedGuild.userDictionary).forEach(user => {
+            for (var platform in cachedGuild.userDictionary[user]) {
+                if (cachedGuild.userDictionary[user][platform].value == searchTerm) {
                     reply += `\n${receivedMessage.guild.members.get(user).displayName} on ${platform}`;
                 }
             }
@@ -459,41 +459,39 @@ function whoisCommand(arguments, receivedMessage) {
 
 
 function deleteCommand(arguments, receivedMessage) {
-    var userDictionary = guildDictionary[receivedMessage.guild.id].userDictionary;
-    var platformsList = guildDictionary[receivedMessage.guild.id].platformsList;
-    var opRole = guildDictionary[receivedMessage.guild.id].opRole;
+    let cachedGuild = guildDictionary[receivedMessage.guild.id];
 
     var platform = arguments["words"][1].toLowerCase();
 
     if (arguments["userMentions"].length == 1) {
-        if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(opRole)) {
-            if (Object.keys(platformsList).includes(platform)) {
+        if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(cachedGuild.opRole)) {
+            if (Object.keys(cachedGuild.platformsList).includes(platform)) {
                 var target = arguments["userMentions"][0];
 
-                if (userDictionary[target.id] && userDictionary[target.id][platform].value) {
-                    userDictionary[target.id][platform] = new FriendCode();
-                    target.send(`Your ${platformsList[platform].term} has been removed from ${receivedMessage.guild}.`); //TODO allow a reason to be passed
+                if (cachedGuild.userDictionary[target.id] && cachedGuild.userDictionary[target.id][platform].value) {
+                    cachedGuild.userDictionary[target.id][platform] = new FriendCode();
+                    target.send(`Your ${cachedGuild.platformsList[platform].term} has been removed from ${receivedMessage.guild}.`); //TODO allow a reason to be passed
                     syncUserRolePlatform(target, platform, receivedMessage.guild.id);
                     saveUserDictionary(receivedMessage.guild.id);
-                    receivedMessage.author.send(`You have removed ${target}'s ${platform} ${platformsList[platform].term} from ${receivedMessage.guild}.`);
+                    receivedMessage.author.send(`You have removed ${target}'s ${platform} ${cachedGuild.platformsList[platform].term} from ${receivedMessage.guild}.`);
                 } else {
-                    receivedMessage.author.send(`${target} does not have a ${platform} ${platformsList[platform].term} recorded in ${receivedMessage.guild}.`);
+                    receivedMessage.author.send(`${target} does not have a ${platform} ${cachedGuild.platformsList[platform].term} recorded in ${receivedMessage.guild}.`);
                 }
             } else {
-                receivedMessage.author.send(`You need a role with administrator privileges or the role ${receivedMessage.guild.roles.get(opRole)} to remove ${platformsList[platform].term}s for others.`);
+                receivedMessage.author.send(`You need a role with administrator privileges${cachedGuild.opRole ? ` or the role @${receivedMessage.guild.roles.get(cachedGuild.opRole).name}` : ""} to remove ${cachedGuild.platformsList[platform].term}s for others.`);
             }
         } else {
             receivedMessage.author.send(`${platform} is not currently being tracked in ${receivedMessage.guild}.`)
         }
     } else {
-        if (Object.keys(platformsList).includes(platform)) {
-            if (userDictionary[receivedMessage.author.id] && userDictionary[receivedMessage.author.id][platform].value) {
-                userDictionary[receivedMessage.author.id][platform] = new FriendCode();
-                receivedMessage.author.send(`You have removed your ${platform} ${platformsList[platform].term} from ${receivedMessage.guild}.`);
+        if (Object.keys(cachedGuild.platformsList).includes(platform)) {
+            if (cachedGuild.userDictionary[receivedMessage.author.id] && cachedGuild.userDictionary[receivedMessage.author.id][platform].value) {
+                cachedGuild.userDictionary[receivedMessage.author.id][platform] = new FriendCode();
+                receivedMessage.author.send(`You have removed your ${platform} ${cachedGuild.platformsList[platform].term} from ${receivedMessage.guild}.`);
                 syncUserRolePlatform(receivedMessage.member, platform, receivedMessage.guild.id);
                 saveUserDictionary(receivedMessage.guild.id);
             } else {
-                receivedMessage.author.send(`You do not currently have a ${platform} ${platformsList[platform].term} recorded in ${receivedMessage.guild}.`);
+                receivedMessage.author.send(`You do not currently have a ${platform} ${cachedGuild.platformsList[platform].term} recorded in ${receivedMessage.guild}.`);
             }
         } else {
             receivedMessage.author.send(`${platform} is not currently being tracked in ${receivedMessage.guild}.`)
@@ -503,14 +501,14 @@ function deleteCommand(arguments, receivedMessage) {
 
 
 function platformsCommand(receivedMessage) {
-    var processedText = Object.keys(guildDictionary[receivedMessage.guild.id].platformsList).toString().replace(/,/g, ', ');
+    let processedText = Object.keys(guildDictionary[receivedMessage.guild.id].platformsList).toString().replace(/,/g, ', ');
 
     receivedMessage.channel.send(`This server's tracked platforms are: ${processedText}`);
 }
 
 
 function creditsCommand(receivedMessage) {
-    receivedMessage.author.send(`Version B1.1.1 <https://github.com/ntseng/DirectoryBot>\n\
+    receivedMessage.author.send(`Version B1.2.0 <https://github.com/ntseng/DirectoryBot>\n\
 __Design & Engineering__\n\
 Nathaniel Tseng ( <@106122478715150336> | <https://twitter.com/Archainis> )\n\
 \n\
@@ -522,12 +520,12 @@ DirectoryBot supporters from Patreon: https://www.patreon.com/imaginaryhorizonsp
 
 
 function setOpRoleCommand(arguments, receivedMessage) {
-    var opRole = guildDictionary[receivedMessage.guild.id].opRole;
+    let cachedGuild = guildDictionary[receivedMessage.guild.id];
 
-    if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(opRole)) {
+    if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(cachedGuild.opRole)) {
         if (arguments["roleMentions"].length > 0) {
-            if (opRole != arguments["roleMentions"][0]) {
-                opRole = arguments["roleMentions"][0];
+            if (cachedGuild.opRole != arguments["roleMentions"][0]) {
+                cachedGuild.opRole = arguments["roleMentions"][0];
                 receivedMessage.author.send(`The operator role for ${receivedMessage.guild}'s DirectoryBot has been set to @${receivedMessage.guild.roles.get(arguments["roleMentions"][0]).name}.`);
                 saveOpRole(receivedMessage.guild.id);
             } else {
@@ -537,38 +535,36 @@ function setOpRoleCommand(arguments, receivedMessage) {
             receivedMessage.author.send(`Please mention a role to set the ${receivedMessage.guild}'s DirectoryBot operator role to.`);
         }
     } else {
-        receivedMessage.author.send(`You need a role with administrator privileges or the role ${receivedMessage.guild.roles.get(opRole).name} to change the operator role.`);
+        receivedMessage.author.send(`You need a role with administrator privileges${cachedGuild.opRole ? ` or the role @${receivedMessage.guild.roles.get(cachedGuild.opRole).name}` : ""} to change the operator role.`);
     }
 }
 
 
 function newPlatformCommand(arguments, receivedMessage) {
-    var userDictionary = guildDictionary[receivedMessage.guild.id].userDictionary;
-    var platformsList = guildDictionary[receivedMessage.guild.id].platformsList;
-    var opRole = guildDictionary[receivedMessage.guild.id].opRole;
+    let cachedGuild = guildDictionary[receivedMessage.guild.id];
 
 
-    if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(opRole)) {
+    if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(cachedGuild.opRole)) {
         let platform = arguments["words"][1].toLowerCase();
         let term = arguments["words"][2];
 
-        if (!platformsList[platform]) {
+        if (!cachedGuild.platformsList[platform]) {
             if (arguments["words"].length <= 1) {
                 receivedMessage.author.send("Please provide a name for the new platform.");
             } else {
-                platformsList[platform] = new PlatformData();
-                platformsList[platform].term = term;
-                Object.keys(userDictionary).forEach((user) => {
-                    userDictionary[user][platform] = new FriendCode();
+                cachedGuild.platformsList[platform] = new PlatformData();
+                cachedGuild.platformsList[platform].term = term;
+                Object.keys(cachedGuild.userDictionary).forEach((user) => {
+                    cachedGuild.userDictionary[user][platform] = new FriendCode();
                 })
-                receivedMessage.channel.send(`${arguments["words"][1]} ${platformsList[platform].term}s can now be recorded and retrieved.`);
+                receivedMessage.channel.send(`${arguments["words"][1]} ${cachedGuild.platformsList[platform].term}s can now be recorded and retrieved.`);
                 savePlatformsList(receivedMessage.guild.id);
             }
         } else {
-            receivedMessage.author.send(`${arguments["words"][1]} ${platformsList[platform].term}s can already be recorded and retrieved.`);
+            receivedMessage.author.send(`${arguments["words"][1]} ${cachedGuild.platformsList[platform].term}s can already be recorded and retrieved.`);
         }
     } else {
-        receivedMessage.author.send(`You need a role with administrator privileges or the role ${receivedMessage.guild.roles.get(opRole).name} to add new platforms.`);
+        receivedMessage.author.send(`You need a role with administrator privileges${cachedGuild.opRole ? ` or the role @${receivedMessage.guild.roles.get(cachedGuild.opRole).name}` : ""} to add new platforms.`);
     }
 }
 
@@ -588,23 +584,21 @@ function changePlatformTermCommand(arguments, receivedMessage) {
             receivedMessage.author.send(`${platform} is not currently being recorded in ${receivedMessage.guild}.`);
         }
     } else {
-        receivedMessage.author.send(`You need a role with administrator privileges or the role ${receivedMessage.guild.roles.get(opRole).name} to change platform terms.`);
+        receivedMessage.author.send(`You need a role with administrator privileges${cachedGuild.opRole ? ` or the role @${receivedMessage.guild.roles.get(cachedGuild.opRole).name}` : ""} to change platform terms.`);
     }
 }
 
 
 function removePlatformCommand(arguments, receivedMessage) {
-    var userDictionary = guildDictionary[receivedMessage.guild.id].userDictionary;
-    var platformsList = guildDictionary[receivedMessage.guild.id].platformsList;
-    var opRole = guildDictionary[receivedMessage.guild.id].opRole;
+    let cachedGuild = guildDictionary[receivedMessage.guild.id];
 
-    if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(opRole)) {
+    if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(cachedGuild.opRole)) {
         let platform = arguments["words"][1];
 
-        if (platformsList[platform.toLowerCase()]) {
-            delete platformsList[platform.toLowerCase()];
-            Object.keys(userDictionary).forEach(user => {
-                delete userDictionary[user][platform.toLowerCase()];
+        if (cachedGuild.platformsList[platform.toLowerCase()]) {
+            delete cachedGuild.platformsList[platform.toLowerCase()];
+            Object.keys(cachedGuild.userDictionary).forEach(user => {
+                delete cachedGuild.userDictionary[user][platform.toLowerCase()];
             })
             receivedMessage.author.send(`${platform} will no longer be recorded in ${receivedMessage.guild}.`);
             savePlatformsList(receivedMessage.guild.id);
@@ -612,33 +606,31 @@ function removePlatformCommand(arguments, receivedMessage) {
             receivedMessage.author.send(`${platform} is not currently being recorded in ${receivedMessage.guild}.`);
         }
     } else {
-        receivedMessage.author.send(`You need a role with administrator privileges or the role ${receivedMessage.guild.roles.get(opRole).name} to remove platforms.`);
+        receivedMessage.author.send(`You need a role with administrator privileges${cachedGuild.opRole ? ` or the role @${receivedMessage.guild.roles.get(cachedGuild.opRole).name}` : ""} to remove platforms.`);
     }
 }
 
 
 function setPlatformRoleCommand(arguments, receivedMessage) {
-    var userDictionary = guildDictionary[receivedMessage.guild.id].userDictionary;
-    var platformsList = guildDictionary[receivedMessage.guild.id].platformsList;
-    var opRole = guildDictionary[receivedMessage.guild.id].opRole;
+    let cachedGuild = guildDictionary[receivedMessage.guild.id];
 
     var role = arguments['roleMentions'][0];
     var platform = arguments['words'][1];
 
-    if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(opRole)) {
-        if (platformsList[platform].role != role) {
-            platformsList[platform].role = role;
+    if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(cachedGuild.opRole)) {
+        if (cachedGuild.platformsList[platform].role != role) {
+            cachedGuild.platformsList[platform].role = role;
             savePlatformsList(receivedMessage.guild.id);
-            Object.keys(userDictionary).forEach(user => {
+            Object.keys(cachedGuild.userDictionary).forEach(user => {
                 syncUserRolePlatform(receivedMessage.guild.members.get(user), platform, receivedMessage.guild.id);
             })
             saveUserDictionary(receivedMessage.guild.id);
-            receivedMessage.author.send(`${receivedMessage.guild} members who set a ${platform} ${platformsList[platform].term} will now automatically be given the role @${receivedMessage.guild.roles.get(role).name}.`);
+            receivedMessage.author.send(`${receivedMessage.guild} members who set a ${platform} ${cachedGuild.platformsList[platform].term} will now automatically be given the role @${receivedMessage.guild.roles.get(role).name}.`);
         } else {
             receivedMessage.author.send(`The role @${receivedMessage.guild.roles.get(role).name} is already associated with ${platform} in ${receivedMessage.guild}.`);
         }
     } else {
-        receivedMessage.author.send(`You need a role with administrator privileges or the role ${receivedMessage.guild.roles.get(opRole)} to remove platforms.`);
+        receivedMessage.author.send(`You need a role with administrator privileges${cachedGuild.opRole ? ` or the role @${receivedMessage.guild.roles.get(cachedGuild.opRole).name}` : ""} to remove platforms.`);
     }
 }
 

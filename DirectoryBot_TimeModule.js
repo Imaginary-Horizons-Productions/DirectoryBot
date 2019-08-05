@@ -63,7 +63,7 @@ exports.convertCommand = function (arguments, receivedMessage, userDictionary) {
 }
 
 
-exports.countdownCommand = function (arguments, receivedMessage) {
+exports.countdownCommand = function (arguments, receivedMessage, userDictionary) {
     var startTimezone = LocalZone.instance.name;
     var timeText = "";
     for (var i = 0; i < arguments["words"].length; i++) {

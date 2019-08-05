@@ -206,7 +206,7 @@ client.on('message', (receivedMessage) => {
                         removePlatformCommand(arguments, receivedMessage);
                     } else if (setplatformroleOverloads.includes(arguments["words"][0])) {
                         setPlatformRoleCommand(arguments, receivedMessage);
-                    } else if (Object.keys(platformsList).includes(arguments["words"][0])) {
+                    } else if (Object.keys(guildDictionary[receivedMessage.guild.id].platformsList).includes(arguments["words"][0])) {
                         lookupCommand(arguments, receivedMessage);
                     } else {//TODO convert command shortcut if input starts with a time
                         receivedMessage.channel.send(`${arguments["words"][0]} isn't a DirectoryBot command. Please check for typos or use \`@DirectoryBot help.\``)

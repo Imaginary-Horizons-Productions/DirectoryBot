@@ -174,6 +174,8 @@ client.on('message', (receivedMessage) => {
                         });
                     }
 
+                    let clearCommand = true;
+
                     if (helpOverloads.includes(arguments["words"][0])) {
                         helpCommand(arguments, receivedMessage);
                     } else if (convertOverloads.includes(arguments["words"][0])) {
@@ -186,6 +188,7 @@ client.on('message', (receivedMessage) => {
                         recordCommand(arguments, receivedMessage);
                     } else if (lookupOverloads.includes(arguments["words"][0])) {
                         lookupCommand(arguments, receivedMessage);
+                        clearCommand = false;
                     } else if (sendOverloads.includes(arguments["words"][0])) {
                         sendCommand(arguments, receivedMessage);
                     } else if (whoisOverloads.includes(arguments["words"][0])) {
@@ -214,6 +217,9 @@ client.on('message', (receivedMessage) => {
 
                     antiSpam.push(receivedMessage.author.id);
                     setTimeout(function () { antiSpam.shift(); }, 5000);
+                    if (clearCommand) {
+                        receivedMessage.delete();
+                    }
                 }
             } else {
                 receivedMessage.author.send(`To prevent excessive messaging, users are unable to enter more than ${commandLimit} commands in 5 seconds. You can use \`@DirectoryBot lookup (platform)\` to look up everyone's information for the given platform at once.`);
@@ -292,9 +298,6 @@ Syntax: \`@DirectoryBot clear (user) (platform)\``);
             receivedMessage.author.send(`The *setoprole* command updates the operator role for DirectoryBot. Users with this role use operator features of this bot without serverwide administrator privileges.\n\
 Syntax: \`@DirectoryBot setoprole (role)\``);
         } else {
-            if (true) {
-
-            }
             receivedMessage.author.send(`You need a role with administrator privileges${cachedGuild.opRole ? ` or the role @${receivedMessage.guild.roles.get(cachedGuild.opRole).name}` : ""} to view operator commands.`);
         }
     } else if (newplatformOverloads.includes(arguments["words"][1])) {
@@ -330,13 +333,13 @@ Syntax: \`@DirectoryBot setplatformrole (platform) (role)\``)
 *convert* - Convert a time to someone else's timezone or a given timezone\n\
 *countdown* - How long until the given time\n\
 *multistream* - Generate a multistream link for the given users\n\
-*platforms* - List the games/services DirectoryBot can be used to record or retrieve information for\n\
+*platforms* - List the games/services DirectoryBot can be used to record or retrieve information for (using help on this command uses the command)\n\
 *record* - Record your information for a platform\n\
 *lookup* - Look up someone else's information if they've recorded it\n\
 *send* - Have DirectoryBot send someone your information\n\
 *whois* - Ask DirectoryBot who a certain username belongs to\n\
 *delete* - Remove your information for a platform\n\
-*credits* - Version info and contributors\n\
+*credits* - Version info and contributors (using help on this command uses the command)\n\
 (and *help*).\n\
 You can type \`@directorybot help\` followed by one of those for specific instructions. If you are looking for operator commands, type \`@DirectoryBot help op\`.`);
     }

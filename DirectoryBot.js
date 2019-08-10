@@ -52,6 +52,7 @@ var guildDictionary = {};
 
 var antiSpam = [];
 var commandLimit = 3;
+var infoLifetime = 3600000;
 
 fs.readFile(`encryptionKey.txt`, `utf8`, (error, keyInput) => {
     if (error) {
@@ -211,12 +212,15 @@ client.on('message', (receivedMessage) => {
                         setPlatformRoleCommand(arguments, receivedMessage);
                     } else if (Object.keys(guildDictionary[receivedMessage.guild.id].platformsList).includes(arguments["words"][0])) {
                         lookupCommand(arguments, receivedMessage);
+                        clearCommand = false;
                     } else {//TODO convert command shortcut if input starts with a time
                         receivedMessage.channel.send(`${arguments["words"][0]} isn't a DirectoryBot command. Please check for typos or use \`@DirectoryBot help.\``)
                     }
 
                     antiSpam.push(receivedMessage.author.id);
-                    setTimeout(function () { antiSpam.shift(); }, 5000);
+                    setTimeout(function () {
+                        antiSpam.shift();
+                    }, 5000);
                     if (clearCommand) {
                         receivedMessage.delete();
                     }
@@ -386,7 +390,11 @@ function lookupCommand(arguments, receivedMessage) {
                 if (!cachedGuild.userDictionary[user.id] || !cachedGuild.userDictionary[user.id][platform].value) {
                     receivedMessage.channel.send(`${user} has not set a ${platform} ${cachedGuild.platformsList[platform].term} in this server's DirectoryBot yet.`);
                 } else {
-                    receivedMessage.author.send(`${user}'s ${platform} ${cachedGuild.platformsList[platform].term} is ${cachedGuild.userDictionary[user.id][platform].value}.`);
+                    receivedMessage.author.send(`${user.name} has set ${cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value ? cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value : 'their'} ${platform} ${cachedGuild.platformsList[platform].term} in ${receivedMessage.guild.name} as **${cachedGuild.userDictionary[user.id][platform].value}**.`).then(sentMessage => {
+                        setTimeout(function () {
+                            sentMessage.edit(`Your lookup of ${user.name}'s ${platform} ${cachedGuild.platformsList[platform].term} from ${receivedMessage.guild.name} has expired.`);
+                        }, infoLifetime);
+                    });
                 }
             } else {
                 receivedMessage.author.send(`${platform} is not currently being tracked in ${receivedMessage.guild}.`)
@@ -410,7 +418,11 @@ function lookupCommand(arguments, receivedMessage) {
                     text += receivedMessage.guild.members.get(user).displayName + ": " + cachedGuild.userDictionary[user][platform].value + "\n";
                 }
             })
-            receivedMessage.author.send(text);
+            receivedMessage.author.send(text).then(sentMessage => {
+                setTimeout(function () {
+                    sentMessage.edit(`Your lookup of ${platform} ${cachedGuild.platformsList[platform].term}s from ${receivedMessage.guild.name} has expired.`);
+                }, infoLifetime);
+            });
         } else {
             receivedMessage.author.send(`${platform} is not currently being tracked in ${receivedMessage.guild}.`)
         }
@@ -426,7 +438,11 @@ function sendCommand(arguments, receivedMessage) {
         if (Object.keys(cachedGuild.platformsList).includes(platform)) {
             if (cachedGuild.userDictionary[receivedMessage.author.id] && cachedGuild.userDictionary[receivedMessage.author.id][platform].value) {
                 arguments["userMentions"].forEach(recipient => {
-                    recipient.send(`${receivedMessage.author.username} has sent you ${cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value ? cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value : 'their'} ${platform} ${cachedGuild.platformsList[platform].term}. It is: ${cachedGuild.userDictionary[receivedMessage.author.id][platform].value}`);
+                    recipient.send(`${receivedMessage.author.username} has sent you ${cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value ? cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value : 'their'} ${platform} ${cachedGuild.platformsList[platform].term}. It is: ${cachedGuild.userDictionary[receivedMessage.author.id][platform].value}`).then(sentMessage => {
+                        setTimeout(function () {
+                            sentMessage.edit(`${receivedMessage.author.username} has sent you ${cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value ? cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value : 'their'} ${platform} ${cachedGuild.platformsList[platform].term}, but it's expired. You can look it up again with \`@DirectoryBot lookup @${receivedMessage.author.username} ${platform}\`.`);
+                        }, infoLifetime);
+                    });
                 })
             } else {
                 receivedMessage.author.send(`You have not recorded a ${platform} ${cachedGuild.platformsList[platform].term} in ${receivedMessage.guild}.`);

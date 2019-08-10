@@ -2,13 +2,26 @@ exports.multistreamCommand = function (arguments, receivedMessage, userDictionar
     var url = "https://multistre.am/";
     var layout = arguments["words"][1];
 
+    var missingUsers = [];
     for (var i = 0; i < arguments["userMentions"].length; i++) {
         if (!userDictionary[arguments["userMentions"][i].id] || !userDictionary[arguments["userMentions"][i].id]["twitch"].value) {
-            receivedMessage.channel.send(`${arguments["userMentions"][i]} does not have a Twitch account logged with **DirectoryBot**.`)
-            return;
+            missingUsers.push(arguments["userMentions"][i].user);
+        } else {
+            url += userDictionary[arguments["userMentions"][i].id]["twitch"].value + "/";
         }
-        url += userDictionary[arguments["userMentions"][i].id]["twitch"].value + "/";
     }
+
+    if (missingUsers.length > 0) {
+        let missingUsersText = "";
+        for (var i = 0; i < missingUsers.length; i++) {
+            missingUsersText += missingUsers[i] + ", ";
+        }
+
+        missingUsersText = missingUsersText.slice(0, -2);
+        receivedMessage.channel.send(`The following users don't have stream info logged with DirectoryBot: ${missingUsersText}.`)
+        return;
+    }
+
     if (layout) {
         url += "layout" + layout;
     }

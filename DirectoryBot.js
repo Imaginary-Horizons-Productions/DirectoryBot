@@ -43,7 +43,7 @@ var platformsOverloads = ["platforms"];
 var creditsOverloads = ["credits", "creditz", "about"];
 var setoproleOverloads = ["setoprole"];
 var newplatformOverloads = ["newplatform", "addplatform"];
-var changeplatformtermOverloads = ["changeplatformterm"];
+var changeplatformtermOverloads = ["changeplatformterm", "setplatformterm"];
 var removeplatformOverloads = ["removeplatform"];
 var setplatformroleOverloads = ["setplatformrole"];
 
@@ -390,9 +390,9 @@ function lookupCommand(arguments, receivedMessage) {
                 if (!cachedGuild.userDictionary[user.id] || !cachedGuild.userDictionary[user.id][platform].value) {
                     receivedMessage.channel.send(`${user} has not set a ${platform} ${cachedGuild.platformsList[platform].term} in this server's DirectoryBot yet.`);
                 } else {
-                    receivedMessage.author.send(`${user.name} has set ${cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value ? cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value : 'their'} ${platform} ${cachedGuild.platformsList[platform].term} in ${receivedMessage.guild.name} as **${cachedGuild.userDictionary[user.id][platform].value}**.`).then(sentMessage => {
+                    receivedMessage.author.send(`${user} has set ${cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value ? cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value : 'their'} ${platform} ${cachedGuild.platformsList[platform].term} in ${receivedMessage.guild.name} as **${cachedGuild.userDictionary[user.id][platform].value}**.`).then(sentMessage => {
                         setTimeout(function () {
-                            sentMessage.edit(`Your lookup of ${user.name}'s ${platform} ${cachedGuild.platformsList[platform].term} from ${receivedMessage.guild.name} has expired.`);
+                            sentMessage.edit(`Your lookup of ${user}'s ${platform} ${cachedGuild.platformsList[platform].term} from ${receivedMessage.guild.name} has expired.`);
                         }, infoLifetime);
                     });
                 }
@@ -465,7 +465,7 @@ function whoisCommand(arguments, receivedMessage) {
         Object.keys(cachedGuild.userDictionary).forEach(user => {
             for (var platform in cachedGuild.userDictionary[user]) {
                 if (cachedGuild.userDictionary[user][platform].value == searchTerm) {
-                    reply += `\n${receivedMessage.guild.members.get(user).displayName} on ${platform}`;
+                    reply += `\n${receivedMessage.guild.members.get(user).displayName} for ${platform}`;
                 }
             }
         })
@@ -489,7 +489,7 @@ function deleteCommand(arguments, receivedMessage) {
 
                 if (cachedGuild.userDictionary[target.id] && cachedGuild.userDictionary[target.id][platform].value) {
                     cachedGuild.userDictionary[target.id][platform] = new FriendCode();
-                    target.send(`Your ${cachedGuild.platformsList[platform].term} has been removed from ${receivedMessage.guild}.`); //TODO allow a reason to be passed
+                    target.send(`Your ${platform} ${cachedGuild.platformsList[platform].term} has been removed from ${receivedMessage.guild}.`); //TODO allow a reason to be passed
                     syncUserRolePlatform(target, platform, receivedMessage.guild.id);
                     saveUserDictionary(receivedMessage.guild.id);
                     receivedMessage.author.send(`You have removed ${target}'s ${platform} ${cachedGuild.platformsList[platform].term} from ${receivedMessage.guild}.`);
@@ -572,7 +572,9 @@ function newPlatformCommand(arguments, receivedMessage) {
                 receivedMessage.author.send("Please provide a name for the new platform.");
             } else {
                 cachedGuild.platformsList[platform] = new PlatformData();
-                cachedGuild.platformsList[platform].term = term;
+                if (term) {
+                    cachedGuild.platformsList[platform].term = term;
+                }
                 Object.keys(cachedGuild.userDictionary).forEach((user) => {
                     cachedGuild.userDictionary[user][platform] = new FriendCode();
                 })
@@ -597,7 +599,7 @@ function changePlatformTermCommand(arguments, receivedMessage) {
 
         if (cachedGuild.platformsList[platform.toLowerCase()]) {
             cachedGuild.platformsList[platform.toLowerCase()].term = term;
-            receivedMessage.author.send(`Information for ${platform} will now be referred to as ${term} in ${receivedMessage.guild}.`);
+            receivedMessage.author.send(`Information for *${platform}* will now be referred to as **${term}** in ${receivedMessage.guild}.`);
             savePlatformsList(receivedMessage.guild.id);
         } else {
             receivedMessage.author.send(`${platform} is not currently being recorded in ${receivedMessage.guild}.`);
@@ -619,7 +621,7 @@ function removePlatformCommand(arguments, receivedMessage) {
             Object.keys(cachedGuild.userDictionary).forEach(user => {
                 delete cachedGuild.userDictionary[user][platform.toLowerCase()];
             })
-            receivedMessage.author.send(`${platform} will no longer be recorded in ${receivedMessage.guild}.`);
+            receivedMessage.channel.send(`${platform} information will no longer be recorded.`);
             savePlatformsList(receivedMessage.guild.id);
         } else {
             receivedMessage.author.send(`${platform} is not currently being recorded in ${receivedMessage.guild}.`);

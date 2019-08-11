@@ -19,7 +19,7 @@ exports.convertCommand = function (arguments, receivedMessage, userDictionary) {
                 timeText += arguments["words"][i] + " ";
             }
         }
-        resultTimezone = userDictionary[arguments["userMentions"][0].id]["timezone"];
+        resultTimezone = userDictionary[arguments["userMentions"][0].id]["timezone"].value;
     } else {
         for (var i = 0; i < arguments["words"].length; i++) {
             if (arguments["words"][i] == "in") {
@@ -43,22 +43,26 @@ exports.convertCommand = function (arguments, receivedMessage, userDictionary) {
     }
 
     if (IANAZone.isValidZone(startTimezone)) {
-        if (IANAZone.isValidZone(resultTimezone)) {
-            var inputTime = new chrono.parse(timeText);
-            inputTime[0].start.assign("timezoneOffset", IANAZone.create(startTimezone).offset(Date.now()));
-            var dateTimeObject = DateTime.fromJSDate(inputTime[0].start.date(), { zone: startTimezone });
-            var convertedDateTime = dateTimeObject.setZone(resultTimezone);
+        if (resultTimezone) {
+            if (IANAZone.isValidZone(resultTimezone)) {
+                var inputTime = new chrono.parse(timeText);
+                inputTime[0].start.assign("timezoneOffset", IANAZone.create(startTimezone).offset(Date.now()));
+                var dateTimeObject = DateTime.fromJSDate(inputTime[0].start.date(), { zone: startTimezone });
+                var convertedDateTime = dateTimeObject.setZone(resultTimezone);
 
-            if (arguments["userMentions"].length == 1) {
-                receivedMessage.channel.send(`${arguments["words"][1]} in ${startTimezone} is ${convertedDateTime.toLocaleString(DateTime.TIME_24_SIMPLE)} for ${arguments["userMentions"][0]}.`);
+                if (arguments["userMentions"].length == 1) {
+                    receivedMessage.channel.send(`*${arguments["words"][1]} in ${startTimezone}* is **${convertedDateTime.toLocaleString(DateTime.TIME_24_SIMPLE)}** for ${arguments["userMentions"][0]}.`);
+                } else {
+                    receivedMessage.channel.send(`*${arguments["words"][1]} in ${startTimezone}* is **${convertedDateTime.toLocaleString(DateTime.TIME_24_SIMPLE)} in ${resultTimezone}**.`);
+                }
             } else {
-                receivedMessage.channel.send(`${arguments["words"][1]} in ${startTimezone} is ${convertedDateTime.toLocaleString(DateTime.TIME_24_SIMPLE)} in ${resultTimezone}.`);
+                receivedMessage.author.send(`Please use the IANA timezone format for the **result timezone**. You can look up timezones here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones`);
             }
         } else {
-            receivedMessage.author.send(`Please use the IANA timezone format for the result timezone. You can look up timezones here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones`);
+            receivedMessage.author.send(`Please specify a result timezone for your convert command.`);
         }
     } else {
-        receivedMessage.author.send(`Please use the IANA timezone format for the starting timezone. You can look up timezones here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones`);
+        receivedMessage.author.send(`Please use the IANA timezone format for the **starting timezone**. You can look up timezones here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones`);
     }
 }
 
@@ -90,8 +94,8 @@ exports.countdownCommand = function (arguments, receivedMessage, userDictionary)
     }
 
     if (countdown > 60) {
-        receivedMessage.channel.send(`${arguments["words"][1]} in ${startTimezone} is about ${Math.floor(countdown/60)} hours and ${countdown % 60} minutes from now.`);
+        receivedMessage.channel.send(`*${arguments["words"][1]} in ${startTimezone}* is about **${Math.floor(countdown/60)} hours and ${countdown % 60} minutes** from now.`);
     } else {
-        receivedMessage.channel.send(`${arguments["words"][1]} in ${startTimezone} is about ${countdown} minutes from now.`);
+        receivedMessage.channel.send(`*${arguments["words"][1]} in ${startTimezone}* is about **${countdown} minutes** from now.`);
     }
 }

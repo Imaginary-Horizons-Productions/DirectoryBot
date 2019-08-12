@@ -527,7 +527,7 @@ function platformsCommand(receivedMessage) {
 
 
 function creditsCommand(receivedMessage) {
-    receivedMessage.author.send(`Version B1.2.0 <https://github.com/ntseng/DirectoryBot>\n\
+    receivedMessage.author.send(`Version B1.2.1 <https://github.com/ntseng/DirectoryBot>\n\
 __Design & Engineering__\n\
 Nathaniel Tseng ( <@106122478715150336> | <https://twitter.com/Archainis> )\n\
 \n\
@@ -710,7 +710,7 @@ function saveOpRole(guildID, backup = false) {
                     fs.mkdirSync('./backups');
                 }
                 if (!fs.existsSync('./backups/' + guildID)) {
-                    fs.mkdirSync('./backup/' + guildID);
+                    fs.mkdirSync('./backups/' + guildID);
                 }
             } else {
                 filePath += 'data/' + guildID + '/opRole.txt';

@@ -2,9 +2,12 @@
 DirectoryBot is a Discord bot that stores friend codes, converts timezones, and announces streams.
 
 ## Set-Up
-Add DirectoryBot to your server from this link: https://discordapp.com/api/oauth2/authorize?client_id=585336216262803456&permissions=268437504&scope=bot
+1. Add DirectoryBot to your server from this link: https://discordapp.com/api/oauth2/authorize?client_id=585336216262803456&permissions=268445696&scope=bot
+2. Move the DirectoryBot role above any roles you'd like it to be able to automatically add (new roles get added at the bottom)
+
 ### Optional
-Use "@DirectoryBot setoprole (role)" to set up an operator role. Operators are allowed to use the operator commands without Discord administrator permissions.
+* Use "@DirectoryBot setoprole (role)" to set up an operator role. Operators are allowed to use the operator commands without Discord administrator permissions.
+* Check out BountyBot, another Imaginary Horizons Productions discord bot: (link coming soon)
 
 ## Commands
 #### @DirectoryBot *help*

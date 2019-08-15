@@ -234,14 +234,53 @@ client.on('message', (receivedMessage) => {
 
 
 client.on('guildCreate', (guild) => {
-    if (!guildDictionary[guild.id]) {
-        guildCreate(guild.id);
-    }
+    guildCreate(guild.id);
     //client.user.setActivity("\"@DirectoryBot help\"", { type: "LISTENING" });
 })
 
 
 client.on('guildDelete', (guild) => {
+    fs.unlinkSync(`./data/${guild.id}/opRole.txt`, (error) => {
+        if (error) {
+            console.log(error);
+        }
+    })
+    fs.unlinkSync(`./data/${guild.id}/userDictionary.txt`, (error) => {
+        if (error) {
+            console.log(error);
+        }
+    })
+    fs.unlinkSync(`./data/${guild.id}/platformsList.txt`, (error) => {
+        if (error) {
+            console.log(error);
+        }
+    })
+    fs.rmdirSync(`./data/${guild.id}`, (error) => {
+        if (error) {
+            console.log(error);
+        }
+    })
+    fs.unlinkSync(`./backups/${guild.id}/opRole.txt`, (error) => {
+        if (error) {
+            console.log(error);
+        }
+    })
+    fs.unlinkSync(`./backups/${guild.id}/userDictionary.txt`, (error) => {
+        if (error) {
+            console.log(error);
+        }
+    })
+    fs.unlinkSync(`./backups/${guild.id}/platformsList.txt`, (error) => {
+        if (error) {
+            console.log(error);
+        }
+    })
+    fs.rmdirSync(`./backups/${guild.id}`, (error) => {
+        if (error) {
+            console.log(error);
+        }
+    })
+
     participatingGuildsIDs.splice(participatingGuildsIDs.indexOf(guild.id), 1);
     saveParticipatingGuildsIDs();
 })

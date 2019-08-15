@@ -646,7 +646,7 @@ function setPlatformRoleCommand(arguments, receivedMessage) {
                 syncUserRolePlatform(receivedMessage.guild.members.get(user), platform, receivedMessage.guild.id);
             })
             saveUserDictionary(receivedMessage.guild.id);
-            receivedMessage.author.send(`${receivedMessage.guild} members who set a ${platform} ${cachedGuild.platformsList[platform].term} will now automatically be given the role @${receivedMessage.guild.roles.get(role).name}.`);
+            receivedMessage.channel.send(`Server members who set a ${platform} ${cachedGuild.platformsList[platform].term} will now automatically be given the role @${receivedMessage.guild.roles.get(role).name}.`);
         } else {
             receivedMessage.author.send(`The role @${receivedMessage.guild.roles.get(role).name} is already associated with ${platform} in ${receivedMessage.guild}.`);
         }

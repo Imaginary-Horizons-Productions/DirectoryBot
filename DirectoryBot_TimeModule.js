@@ -37,7 +37,10 @@ exports.convertCommand = function (arguments, receivedMessage, userDictionary) {
         if (userDictionary[receivedMessage.author.id] && userDictionary[receivedMessage.author.id]["timezone"].value) {
             startTimezone = userDictionary[receivedMessage.author.id]["timezone"].value;
         } else {
-            receivedMessage.author.send(`Please either specifiy a starting timezone or record your default with \`@DirectoryBot record timezone (timezone)\`.`);
+            // Error Message
+            receivedMessage.author.send(`Please either specifiy a starting timezone or record your default with \`@DirectoryBot record timezone (timezone)\`.\n\
+\n\
+You sent: ${receivedMessage}`);
             return;
         }
     }
@@ -56,13 +59,21 @@ exports.convertCommand = function (arguments, receivedMessage, userDictionary) {
                     receivedMessage.channel.send(`*${arguments["words"][1]} in ${startTimezone}* is **${convertedDateTime.toLocaleString(DateTime.TIME_24_SIMPLE)} in ${resultTimezone}**.`);
                 }
             } else {
-                receivedMessage.author.send(`Please use the IANA timezone format for the **result timezone**. You can look up timezones here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones`);
+                // Error Message
+                receivedMessage.author.send(`Please use the IANA timezone format for the **result timezone**. You can look up timezones here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones\n\
+\n\
+You sent: ${receivedMessage}`);
             }
         } else {
-            receivedMessage.author.send(`Please specify a result timezone for your convert command.`);
+            // Error Message
+            receivedMessage.author.send(`Please specify a result timezone for your convert command.\n\
+You sent: ${receivedMessage}`);
         }
     } else {
-        receivedMessage.author.send(`Please use the IANA timezone format for the **starting timezone**. You can look up timezones here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones`);
+        // Error Message
+        receivedMessage.author.send(`Please use the IANA timezone format for the **starting timezone**. You can look up timezones here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones\n\
+\n\
+You sent: ${receivedMessage}`);
     }
 }
 

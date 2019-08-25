@@ -84,50 +84,54 @@ client.on('ready', () => {
             console.log(error);
         } else {
             participatingGuildsIDs.forEach(guildID => {
-                var newGuild = true;
-                guildDictionary[guildID] = new GuildSpecifics();
+                if (Object.keys(client.guilds).includes(guildID)) {
+                    var newGuild = true;
+                    guildDictionary[guildID] = new GuildSpecifics();
 
-                fs.readFile(`./data/${guildID}/opRole.txt`, 'utf8', (error, opRoleInput) => {
-                    if (error) {
-                        console.log(error);
-                    } else {
-                        guildDictionary[guildID].opRole = encrypter.AES.decrypt(opRoleInput, keyInput).toString(encrypter.enc.Utf8);
-                        newGuild = false;
-                    }
-
-                    fs.readFile(`./data/${guildID}/userDictionary.txt`, 'utf8', (error, userDictionaryInput) => {
+                    fs.readFile(`./data/${guildID}/opRole.txt`, 'utf8', (error, opRoleInput) => {
                         if (error) {
                             console.log(error);
                         } else {
-                            Object.assign(guildDictionary[guildID].userDictionary, JSON.parse(encrypter.AES.decrypt(userDictionaryInput, keyInput).toString(encrypter.enc.Utf8)));
+                            guildDictionary[guildID].opRole = encrypter.AES.decrypt(opRoleInput, keyInput).toString(encrypter.enc.Utf8);
                             newGuild = false;
                         }
 
-                        fs.readFile(`./data/${guildID}/platformsList.txt`, 'utf8', (error, platformsListInput) => {
+                        fs.readFile(`./data/${guildID}/userDictionary.txt`, 'utf8', (error, userDictionaryInput) => {
                             if (error) {
                                 console.log(error);
                             } else {
-                                Object.assign(guildDictionary[guildID].platformsList, JSON.parse(encrypter.AES.decrypt(platformsListInput, keyInput).toString(encrypter.enc.Utf8)));
+                                Object.assign(guildDictionary[guildID].userDictionary, JSON.parse(encrypter.AES.decrypt(userDictionaryInput, keyInput).toString(encrypter.enc.Utf8)));
                                 newGuild = false;
                             }
 
-                            if (newGuild) {
-                                saveOpRole(guildID);
-                                savePlatformsList(guildID);
-                                saveUserDictionary(guildID);
-                            }
+                            fs.readFile(`./data/${guildID}/platformsList.txt`, 'utf8', (error, platformsListInput) => {
+                                if (error) {
+                                    console.log(error);
+                                } else {
+                                    Object.assign(guildDictionary[guildID].platformsList, JSON.parse(encrypter.AES.decrypt(platformsListInput, keyInput).toString(encrypter.enc.Utf8)));
+                                    newGuild = false;
+                                }
 
-                            setInterval(() => {
-                                saveParticipatingGuildsIDs(true);
-                                Object.keys(guildDictionary).forEach((guildID) => {
-                                    saveOpRole(guildID, true);
-                                    savePlatformsList(guildID, true);
-                                    saveUserDictionary(guildID, true);
-                                })
-                            }, 3600000)
+                                if (newGuild) {
+                                    saveOpRole(guildID);
+                                    savePlatformsList(guildID);
+                                    saveUserDictionary(guildID);
+                                }
+
+                                setInterval(() => {
+                                    saveParticipatingGuildsIDs(true);
+                                    Object.keys(guildDictionary).forEach((guildID) => {
+                                        saveOpRole(guildID, true);
+                                        savePlatformsList(guildID, true);
+                                        saveUserDictionary(guildID, true);
+                                    })
+                                }, 3600000)
+                            });
                         });
                     });
-                });
+                } else {
+                    guildDelete(guildID);
+                }
             })
         }
     })
@@ -238,54 +242,11 @@ client.on('message', (receivedMessage) => {
 
 client.on('guildCreate', (guild) => {
     guildCreate(guild.id);
-    //client.user.setActivity("\"@DirectoryBot help\"", { type: "LISTENING" });
 })
 
 
 client.on('guildDelete', (guild) => {
-    fs.unlinkSync(`./data/${guild.id}/opRole.txt`, (error) => {
-        if (error) {
-            console.log(error);
-        }
-    })
-    fs.unlinkSync(`./data/${guild.id}/userDictionary.txt`, (error) => {
-        if (error) {
-            console.log(error);
-        }
-    })
-    fs.unlinkSync(`./data/${guild.id}/platformsList.txt`, (error) => {
-        if (error) {
-            console.log(error);
-        }
-    })
-    fs.rmdirSync(`./data/${guild.id}`, (error) => {
-        if (error) {
-            console.log(error);
-        }
-    })
-    fs.unlinkSync(`./backups/${guild.id}/opRole.txt`, (error) => {
-        if (error) {
-            console.log(error);
-        }
-    })
-    fs.unlinkSync(`./backups/${guild.id}/userDictionary.txt`, (error) => {
-        if (error) {
-            console.log(error);
-        }
-    })
-    fs.unlinkSync(`./backups/${guild.id}/platformsList.txt`, (error) => {
-        if (error) {
-            console.log(error);
-        }
-    })
-    fs.rmdirSync(`./backups/${guild.id}`, (error) => {
-        if (error) {
-            console.log(error);
-        }
-    })
-
-    participatingGuildsIDs.splice(participatingGuildsIDs.indexOf(guild.id), 1);
-    saveParticipatingGuildsIDs();
+    guildDelete(guild.id);
 })
 
 
@@ -778,6 +739,52 @@ function guildCreate(guildID) {
     savePlatformsList(guildID);
     saveUserDictionary(guildID);
 
+    saveParticipatingGuildsIDs();
+}
+
+function guildDelete(guildID) {
+    fs.unlinkSync(`./data/${guildID}/opRole.txt`, (error) => {
+        if (error) {
+            console.log(error);
+        }
+    })
+    fs.unlinkSync(`./data/${guildID}/userDictionary.txt`, (error) => {
+        if (error) {
+            console.log(error);
+        }
+    })
+    fs.unlinkSync(`./data/${guildID}/platformsList.txt`, (error) => {
+        if (error) {
+            console.log(error);
+        }
+    })
+    fs.rmdirSync(`./data/${guildID}`, (error) => {
+        if (error) {
+            console.log(error);
+        }
+    })
+    fs.unlinkSync(`./backups/${guildID}/opRole.txt`, (error) => {
+        if (error) {
+            console.log(error);
+        }
+    })
+    fs.unlinkSync(`./backups/${guildID}/userDictionary.txt`, (error) => {
+        if (error) {
+            console.log(error);
+        }
+    })
+    fs.unlinkSync(`./backups/${guildID}/platformsList.txt`, (error) => {
+        if (error) {
+            console.log(error);
+        }
+    })
+    fs.rmdirSync(`./backups/${guildID}`, (error) => {
+        if (error) {
+            console.log(error);
+        }
+    })
+
+    participatingGuildsIDs.splice(participatingGuildsIDs.indexOf(guildID), 1);
     saveParticipatingGuildsIDs();
 }
 

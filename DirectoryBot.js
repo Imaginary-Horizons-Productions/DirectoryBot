@@ -84,7 +84,7 @@ client.on('ready', () => {
             console.log(error);
         } else {
             participatingGuildsIDs.forEach(guildID => {
-                if (Object.keys(client.guilds).includes(guildID)) {
+                if (client.guilds.has(guildID)) {
                     var newGuild = true;
                     guildDictionary[guildID] = new GuildSpecifics();
 
@@ -743,46 +743,62 @@ function guildCreate(guildID) {
 }
 
 function guildDelete(guildID) {
-    fs.unlinkSync(`./data/${guildID}/opRole.txt`, (error) => {
-        if (error) {
-            console.log(error);
+    if (fs.existsSync(`./data/${guildID}`)) {
+        if (fs.existsSync(`./data/${guildID}/opRole.txt`)) {
+            fs.unlinkSync(`./data/${guildID}/opRole.txt`, (error) => {
+                if (error) {
+                    console.log(error);
+                }
+            })
         }
-    })
-    fs.unlinkSync(`./data/${guildID}/userDictionary.txt`, (error) => {
-        if (error) {
-            console.log(error);
+        if (fs.existsSync(`./data/${guildID}/userDictionary.txt`)) {
+            fs.unlinkSync(`./data/${guildID}/userDictionary.txt`, (error) => {
+                if (error) {
+                    console.log(error);
+                }
+            })
         }
-    })
-    fs.unlinkSync(`./data/${guildID}/platformsList.txt`, (error) => {
-        if (error) {
-            console.log(error);
+        if (fs.existsSync(`./data/${guildID}/platformsList.txt`)) {
+            fs.unlinkSync(`./data/${guildID}/platformsList.txt`, (error) => {
+                if (error) {
+                    console.log(error);
+                }
+            })
         }
-    })
-    fs.rmdirSync(`./data/${guildID}`, (error) => {
-        if (error) {
-            console.log(error);
+        fs.rmdirSync(`./data/${guildID}`, (error) => {
+            if (error) {
+                console.log(error);
+            }
+        })
+    }
+    if (fs.existsSync(`./backups/${guildID}`)) {
+        if (fs.existsSync(`./backups/${guildID}/opRole.txt`)) {
+            fs.unlinkSync(`./backups/${guildID}/opRole.txt`, (error) => {
+                if (error) {
+                    console.log(error);
+                }
+            })
         }
-    })
-    fs.unlinkSync(`./backups/${guildID}/opRole.txt`, (error) => {
-        if (error) {
-            console.log(error);
+        if (fs.existsSync(`./backups/${guildID}/userDictionary.txt`)) {
+            fs.unlinkSync(`./backups/${guildID}/userDictionary.txt`, (error) => {
+                if (error) {
+                    console.log(error);
+                }
+            })
         }
-    })
-    fs.unlinkSync(`./backups/${guildID}/userDictionary.txt`, (error) => {
-        if (error) {
-            console.log(error);
+        if (fs.existsSync(`./backups/${guildID}/platformsList.txt`)) {
+            fs.unlinkSync(`./backups/${guildID}/platformsList.txt`, (error) => {
+                if (error) {
+                    console.log(error);
+                }
+            })
         }
-    })
-    fs.unlinkSync(`./backups/${guildID}/platformsList.txt`, (error) => {
-        if (error) {
-            console.log(error);
-        }
-    })
-    fs.rmdirSync(`./backups/${guildID}`, (error) => {
-        if (error) {
-            console.log(error);
-        }
-    })
+        fs.rmdirSync(`./backups/${guildID}`, (error) => {
+            if (error) {
+                console.log(error);
+            }
+        })
+    }
 
     participatingGuildsIDs.splice(participatingGuildsIDs.indexOf(guildID), 1);
     saveParticipatingGuildsIDs();

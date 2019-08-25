@@ -134,6 +134,9 @@ client.on('ready', () => {
 
     client.user.setActivity("\"@DirectoryBot help\"", { type: "LISTENING" });
     console.log("Connected as " + client.user.tag);
+    client.guilds.forEach(guild => {
+        console.log("Connected to: " + guild);
+    })
 })
 
 client.on('message', (receivedMessage) => {

@@ -681,17 +681,22 @@ function setPlatformRoleCommand(arguments, receivedMessage) {
     var platform = arguments['words'][1];
 
     if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(cachedGuild.opRole)) {
-        if (cachedGuild.platformsList[platform].role != role) {
-            cachedGuild.platformsList[platform].role = role;
-            savePlatformsList(receivedMessage.guild.id);
-            Object.keys(cachedGuild.userDictionary).forEach(user => {
-                syncUserRolePlatform(receivedMessage.guild.members.get(user), platform, receivedMessage.guild.id);
-            })
-            saveUserDictionary(receivedMessage.guild.id);
-            receivedMessage.channel.send(`Server members who set a ${platform} ${cachedGuild.platformsList[platform].term} will now automatically be given the role @${receivedMessage.guild.roles.get(role).name}.`);
+        if (cachedGuild.platformsList[platform]) {
+            if (cachedGuild.platformsList[platform].role != role) {
+                cachedGuild.platformsList[platform].role = role;
+                savePlatformsList(receivedMessage.guild.id);
+                Object.keys(cachedGuild.userDictionary).forEach(user => {
+                    syncUserRolePlatform(receivedMessage.guild.members.get(user), platform, receivedMessage.guild.id);
+                })
+                saveUserDictionary(receivedMessage.guild.id);
+                receivedMessage.channel.send(`Server members who set a ${platform} ${cachedGuild.platformsList[platform].term} will now automatically be given the role @${receivedMessage.guild.roles.get(role).name}.`);
+            } else {
+                // Error Message
+                receivedMessage.author.send(`The role @${receivedMessage.guild.roles.get(role).name} is already associated with ${platform} in ${receivedMessage.guild}.`);
+            }
         } else {
             // Error Message
-            receivedMessage.author.send(`The role @${receivedMessage.guild.roles.get(role).name} is already associated with ${platform} in ${receivedMessage.guild}.`);
+            receivedMessage.author.send(`${receivedMessage.guild} doesn't have a platform named ${platform}.`);
         }
     } else {
         // Error Message

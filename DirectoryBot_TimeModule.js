@@ -37,7 +37,10 @@ exports.convertCommand = function (arguments, receivedMessage, userDictionary) {
         if (userDictionary[receivedMessage.author.id] && userDictionary[receivedMessage.author.id]["timezone"].value) {
             startTimezone = userDictionary[receivedMessage.author.id]["timezone"].value;
         } else {
-            receivedMessage.author.send(`Please either specifiy a starting timezone or record your default with \`@DirectoryBot record timezone (timezone)\`.`);
+            // Error Message
+            receivedMessage.author.send(`Please either specifiy a starting timezone or record your default with \`@DirectoryBot record timezone (timezone)\`.\n\
+\n\
+You sent: ${receivedMessage}`);
             return;
         }
     }
@@ -51,18 +54,26 @@ exports.convertCommand = function (arguments, receivedMessage, userDictionary) {
                 var convertedDateTime = dateTimeObject.setZone(resultTimezone);
 
                 if (arguments["userMentions"].length == 1) {
-                    receivedMessage.channel.send(`*${arguments["words"][1]} in ${startTimezone}* is **${convertedDateTime.toLocaleString(DateTime.TIME_24_SIMPLE)}** for ${arguments["userMentions"][0]}.`);
+                    receivedMessage.author.send(`*${arguments["words"][1]} in ${startTimezone}* is **${convertedDateTime.toLocaleString(DateTime.TIME_24_SIMPLE)}** for ${arguments["userMentions"][0]}.`);
                 } else {
-                    receivedMessage.channel.send(`*${arguments["words"][1]} in ${startTimezone}* is **${convertedDateTime.toLocaleString(DateTime.TIME_24_SIMPLE)} in ${resultTimezone}**.`);
+                    receivedMessage.author.send(`*${arguments["words"][1]} in ${startTimezone}* is **${convertedDateTime.toLocaleString(DateTime.TIME_24_SIMPLE)} in ${resultTimezone}**.`);
                 }
             } else {
-                receivedMessage.author.send(`Please use the IANA timezone format for the **result timezone**. You can look up timezones here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones`);
+                // Error Message
+                receivedMessage.author.send(`Please use the IANA timezone format for the **result timezone**. You can look up timezones here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones\n\
+\n\
+You sent: ${receivedMessage}`);
             }
         } else {
-            receivedMessage.author.send(`Please specify a result timezone for your convert command.`);
+            // Error Message
+            receivedMessage.author.send(`Please specify a result timezone for your convert command.\n\
+You sent: ${receivedMessage}`);
         }
     } else {
-        receivedMessage.author.send(`Please use the IANA timezone format for the **starting timezone**. You can look up timezones here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones`);
+        // Error Message
+        receivedMessage.author.send(`Please use the IANA timezone format for the **starting timezone**. You can look up timezones here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones\n\
+\n\
+You sent: ${receivedMessage}`);
     }
 }
 
@@ -94,8 +105,8 @@ exports.countdownCommand = function (arguments, receivedMessage, userDictionary)
     }
 
     if (countdown > 60) {
-        receivedMessage.channel.send(`*${arguments["words"][1]} in ${startTimezone}* is about **${Math.floor(countdown/60)} hours and ${countdown % 60} minutes** from now.`);
+        receivedMessage.author.send(`*${arguments["words"][1]} in ${startTimezone}* is about **${Math.floor(countdown/60)} hours and ${countdown % 60} minutes** from now.`);
     } else {
-        receivedMessage.channel.send(`*${arguments["words"][1]} in ${startTimezone}* is about **${countdown} minutes** from now.`);
+        receivedMessage.author.send(`*${arguments["words"][1]} in ${startTimezone}* is about **${countdown} minutes** from now.`);
     }
 }

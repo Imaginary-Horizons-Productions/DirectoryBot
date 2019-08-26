@@ -18,15 +18,21 @@ exports.multistreamCommand = function (arguments, receivedMessage, userDictionar
         }
 
         missingUsersText = missingUsersText.slice(0, -2);
+        // Error Message
         receivedMessage.channel.send(`The following users don't have stream info logged with DirectoryBot: ${missingUsersText}.`)
         return;
     }
 
     if (layout) {
-        url += "layout" + layout;
+        if (/^[0-9]+$/.test(layout)) {
+            url += "layout" + layout;
+        } else {
+            // Error Message (non-halting)
+            receivedMessage.author.send(`The multistream layout argument you sent (${layout}) was not a number.`);
+        }
     }
 
-    receivedMessage.channel.send(`Here's the multistream link: ${url}`);
+    receivedMessage.author.send(`Here's the multistream link: ${url}`);
 }
 
 //TODO going live notification

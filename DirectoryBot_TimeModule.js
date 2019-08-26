@@ -54,9 +54,9 @@ You sent: ${receivedMessage}`);
                 var convertedDateTime = dateTimeObject.setZone(resultTimezone);
 
                 if (arguments["userMentions"].length == 1) {
-                    receivedMessage.channel.send(`*${arguments["words"][1]} in ${startTimezone}* is **${convertedDateTime.toLocaleString(DateTime.TIME_24_SIMPLE)}** for ${arguments["userMentions"][0]}.`);
+                    receivedMessage.author.send(`*${arguments["words"][1]} in ${startTimezone}* is **${convertedDateTime.toLocaleString(DateTime.TIME_24_SIMPLE)}** for ${arguments["userMentions"][0]}.`);
                 } else {
-                    receivedMessage.channel.send(`*${arguments["words"][1]} in ${startTimezone}* is **${convertedDateTime.toLocaleString(DateTime.TIME_24_SIMPLE)} in ${resultTimezone}**.`);
+                    receivedMessage.author.send(`*${arguments["words"][1]} in ${startTimezone}* is **${convertedDateTime.toLocaleString(DateTime.TIME_24_SIMPLE)} in ${resultTimezone}**.`);
                 }
             } else {
                 // Error Message
@@ -105,8 +105,8 @@ exports.countdownCommand = function (arguments, receivedMessage, userDictionary)
     }
 
     if (countdown > 60) {
-        receivedMessage.channel.send(`*${arguments["words"][1]} in ${startTimezone}* is about **${Math.floor(countdown/60)} hours and ${countdown % 60} minutes** from now.`);
+        receivedMessage.author.send(`*${arguments["words"][1]} in ${startTimezone}* is about **${Math.floor(countdown/60)} hours and ${countdown % 60} minutes** from now.`);
     } else {
-        receivedMessage.channel.send(`*${arguments["words"][1]} in ${startTimezone}* is about **${countdown} minutes** from now.`);
+        receivedMessage.author.send(`*${arguments["words"][1]} in ${startTimezone}* is about **${countdown} minutes** from now.`);
     }
 }

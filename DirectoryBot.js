@@ -221,7 +221,7 @@ client.on('message', (receivedMessage) => {
                         lookupCommand(arguments, receivedMessage);
                         clearCommand = false;
                     } else {//TODO convert command shortcut if input starts with a time
-                        receivedMessage.channel.send(`${arguments["words"][0]} isn't a DirectoryBot command. Please check for typos or use \`@DirectoryBot help.\``)
+                        receivedMessage.author.send(`${arguments["words"][0]} isn't a DirectoryBot command. Please check for typos or use \`@DirectoryBot help.\``)
                     }
 
                     antiSpam.push(receivedMessage.author.id);
@@ -265,7 +265,7 @@ function helpCommand(arguments, receivedMessage) {
             receivedMessage.author.send(`You need a role with administrator privileges${cachedGuild.opRole ? ` or the role @${receivedMessage.guild.roles.get(cachedGuild.opRole).name}` : ""} to view the operator commands.`);
         }
     } else if (convertOverloads.includes(arguments["words"][1])) {
-        receivedMessage.channel.send(`The *convert* command calculates a time for a given user. DirectoryBot uses IANA specified timezones.\n\
+        receivedMessage.author.send(`The *convert* command calculates a time for a given user. DirectoryBot uses IANA specified timezones.\n\
 Syntax: \`@DirectoryBot convert (time) in (starting timezone) for (user)\`\n\
 \n\
 The command can also be used to switch a time to a given timezone.\n\
@@ -273,27 +273,27 @@ Syntax: \`@DirectoryBot convert (time) in (starting timezone) to (resulting time
 \n\
 If you omit the starting timezone, the bot will assume you mean the timezone you've recorded for the \"timezone\" platform.`);
     } else if (countdownOverloads.includes(arguments["words"][1])) {
-        receivedMessage.channel.send(`The *countdown* command states the time until the given time. DirectoryBot uses IANA specified timezones. If no timezone is given DirectoryBot will try with the user's timezone default, then the server's local timezone failing that.\n\
+        receivedMessage.author.send(`The *countdown* command states the time until the given time. DirectoryBot uses IANA specified timezones. If no timezone is given DirectoryBot will try with the user's timezone default, then the server's local timezone failing that.\n\
 Syntax: \`@DirectoryBot countdown (time) in (timezone)\``);
     } else if (multistreamOverloads.includes(arguments["words"][1])) {
-        receivedMessage.channel.send(`The *multistream* command generates a link to watch multiple streams simultaneously. Optionally, you can enter the layout number last if you want to specify that.\n\
+        receivedMessage.author.send(`The *multistream* command generates a link to watch multiple streams simultaneously. Optionally, you can enter the layout number last if you want to specify that.\n\
 Syntax: \`@DirectoryBot multistream (user1) (user2)... (layout)\``);
     } else if (recordOverloads.includes(arguments["words"][1])) {
-        receivedMessage.channel.send(`The *record* command adds the code information you gave for the given platform so that the bot can use that information and people can ask the bot for it.\n\
+        receivedMessage.author.send(`The *record* command adds the code information you gave for the given platform so that the bot can use that information and people can ask the bot for it.\n\
 Syntax: \`@DirectoryBot record (platform) (code)\``);
     } else if (lookupOverloads.includes(arguments["words"][1])) {
-        receivedMessage.channel.send(`The *lookup* command tells you the information associted with the given user for the given platform.\n\
+        receivedMessage.author.send(`The *lookup* command tells you the information associted with the given user for the given platform.\n\
 Syntax: \`@DirectoryBot lookup (user) (platform)\`\n\
 If you leave out the user mention, DirectoryBot will instead tell you everyone's information for that platform instead.\n\
 Syntax: \`@DirectoryBot lookup (platform)`);
     } else if (sendOverloads.includes(arguments["words"][1])) {
-        receivedMessage.channel.send(`The *send* command sends your information on the given platform to the given user.\n\
+        receivedMessage.author.send(`The *send* command sends your information on the given platform to the given user.\n\
 Syntax: \`@DirectoryBot send (platform) (user)\``);
     } else if (whoisOverloads.includes(arguments["words"][1])) {
-        receivedMessage.channel.send(`The *whois* command checks if anyone uses the given username and private messages you the result.\n\
+        receivedMessage.author.send(`The *whois* command checks if anyone uses the given username and private messages you the result.\n\
 Syntax: \`@DirectoryBot whois (username)\``);
     } else if (deleteOverloads.includes(arguments["words"][1])) {
-        receivedMessage.channel.send(`The *delete* command removes your information for the given platform.\n\
+        receivedMessage.author.send(`The *delete* command removes your information for the given platform.\n\
 Syntax: \`@DirectoryBot delete (platform)\``);
         if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(cachedGuild.opRole)) {
             receivedMessage.author.send(`Operators can use the *delete* command to remove information for other users.\n\
@@ -326,7 +326,7 @@ Syntax: \`@DirectoryBot changeplatformterm (platform name) (new term)\``);
         }
     } else if (removeplatformOverloads.includes(arguments["words"][1])) {
         if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(cachedGuild.opRole)) {
-            receivedMessage.author.send(`The *removeplatform* command specifies a platform for DirectoryBot to stop recording and distributing information for.\n\
+            receivedMessage.author.send(`The *removeplatform* command specifies a platform for DirectoryBot to stop recording and distributing information for. Note: this command does not remove roles associated with platforms in case someone has that role but wasn't given it by DirectoryBot.\n\
 Syntax: \`@DirectoryBot removeplatform (platform to remove)\``)
         } else {
             receivedMessage.author.send(`You need a role with administrator privileges${cachedGuild.opRole ? ` or the role @${receivedMessage.guild.roles.get(cachedGuild.opRole).name}` : ""} to view operator commands.`);
@@ -339,7 +339,7 @@ Syntax: \`@DirectoryBot setplatformrole (platform) (role)\``)
             receivedMessage.author.send(`You need a role with administrator privileges${cachedGuild.opRole ? ` or the role @${receivedMessage.guild.roles.get(cachedGuild.opRole).name}` : ""} to view operator commands.`);
         }
     } else {
-        receivedMessage.channel.send(`Here are all of DirectoryBot's commands:\n\
+        receivedMessage.author.send(`Here are all of DirectoryBot's commands:\n\
 *convert* - Convert a time to someone else's timezone or a given timezone\n\
 *countdown* - How long until the given time\n\
 *multistream* - Generate a multistream link for the given users\n\
@@ -397,7 +397,7 @@ function lookupCommand(arguments, receivedMessage) {
             if (Object.keys(cachedGuild.platformsList).includes(platform)) {
                 if (!cachedGuild.userDictionary[user.id] || !cachedGuild.userDictionary[user.id][platform].value) {
                     // Error Message
-                    receivedMessage.channel.send(`${user} has not set a ${platform} ${cachedGuild.platformsList[platform].term} in this server's DirectoryBot yet.`);
+                    receivedMessage.author.send(`${user} has not set a ${platform} ${cachedGuild.platformsList[platform].term} in this server's DirectoryBot yet.`);
                 } else {
                     receivedMessage.author.send(`${user} has set ${cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value ? cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value : 'their'} ${platform} ${cachedGuild.platformsList[platform].term} in ${receivedMessage.guild.name} as **${cachedGuild.userDictionary[user.id][platform].value}**.`).then(sentMessage => {
                         setTimeout(function () {
@@ -411,7 +411,7 @@ function lookupCommand(arguments, receivedMessage) {
             }
         } else {
             // Error Message
-            receivedMessage.channel.send(`${user} is a bot. Though bots do not have friend codes, Imaginary Horizons Productions definitely welcomes our coming robot overlords.`);
+            receivedMessage.author.send(`${user} is a bot. Though bots do not have friend codes, Imaginary Horizons Productions definitely welcomes our coming robot overlords.`);
         }
     } else {
         var platform = "";
@@ -935,8 +935,6 @@ function syncUserRolePlatform(member, platform, guildID) {
         if (guildDictionary[guildID].platformsList[platform].role) {
             if (guildDictionary[guildID].userDictionary[member.id][platform].value) {
                 member.addRole(guildDictionary[guildID].platformsList[platform].role);
-            } else {
-                member.removeRole(guildDictionary[guildID].platformsList[platform].role);
             }
         }
     }

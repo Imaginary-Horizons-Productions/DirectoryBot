@@ -196,7 +196,9 @@ client.on('message', (receivedMessage) => {
                     } else if (countdownOverloads.includes(arguments["command"])) {
                         timeModule.countdownCommand(arguments, receivedMessage, guildDictionary[receivedMessage.guild.id].userDictionary);
                     } else if (multistreamOverloads.includes(arguments["command"])) {
-                        twitchModule.multistreamCommand(arguments, receivedMessage, guildDictionary[receivedMessage.guild.id].userDictionary);
+                        streamModule.multistreamCommand(arguments, receivedMessage, guildDictionary[receivedMessage.guild.id].userDictionary);
+                    } else if (streamshoutoutOverloads.includes(arguments["command"])) {
+                        streamModule.streamShoutoutCommand(arguments, receivedMessage, guildDictionary[receivedMessage.guild.id].userDictionary)
                     } else if (recordOverloads.includes(arguments["command"])) {
                         recordCommand(arguments, receivedMessage);
                     } else if (lookupOverloads.includes(arguments["command"])) {
@@ -280,6 +282,9 @@ If you omit the starting timezone, the bot will assume you mean the timezone you
     } else if (countdownOverloads.includes(arguments["words"][0])) {
         receivedMessage.author.send(`The *countdown* command states the time until the given time. DirectoryBot uses IANA specified timezones. If no timezone is given DirectoryBot will try with the user's timezone default, then the server's local timezone failing that.\n\
 Syntax: \`@DirectoryBot countdown (time) in (timezone)\``);
+    } else if (streamshoutoutOverloads.includes(arguments["words"][0])) {
+        receivedMessage.author.send(`The *shoutout* command posts the given user's stream information.\n\
+Syntax: \`@DirectoryBot shoutout (user)\``);
     } else if (multistreamOverloads.includes(arguments["words"][0])) {
         receivedMessage.author.send(`The *multistream* command generates a link to watch multiple streams simultaneously. Optionally, you can enter the layout number last if you want to specify that.\n\
 Syntax: \`@DirectoryBot multistream (user1) (user2)... (layout)\``);

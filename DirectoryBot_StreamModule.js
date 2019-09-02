@@ -1,6 +1,6 @@
 exports.multistreamCommand = function (arguments, receivedMessage, userDictionary) {
     var url = "https://multistre.am/";
-    var layout = arguments["words"][1];
+    var layout = arguments["words"][0];
 
     var missingUsers = [];
     for (var i = 0; i < arguments["userMentions"].length; i++) {

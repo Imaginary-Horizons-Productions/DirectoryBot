@@ -169,10 +169,14 @@ client.on('message', (receivedMessage) => {
                     return element != "";
                 });
                 messageArray = messageArray.slice(1);
+                var words = filterWords(messageArray);
+                var command = words[0];
+                words.shift();
                 var arguments = {
                     "userMentions": filterMentions(messageArray, receivedMessage.guild),
                     "roleMentions": filterRoleMentions(messageArray),
-                    "words": filterWords(messageArray) // First element is usually primary command
+                    "command": command, // The primary command
+                    "words": words // All other non-command words
                 };
 
                 if (arguments["words"].length > 0) {
@@ -185,46 +189,44 @@ client.on('message', (receivedMessage) => {
 
                     let clearCommand = true;
 
-                    if (helpOverloads.includes(arguments["words"][0])) {
+                    if (helpOverloads.includes(arguments["command"])) {
                         helpCommand(arguments, receivedMessage);
-                    } else if (convertOverloads.includes(arguments["words"][0])) {
+                    } else if (convertOverloads.includes(arguments["command"])) {
                         timeModule.convertCommand(arguments, receivedMessage, guildDictionary[receivedMessage.guild.id].userDictionary);
-                    } else if (countdownOverloads.includes(arguments["words"][0])) {
+                    } else if (countdownOverloads.includes(arguments["command"])) {
                         timeModule.countdownCommand(arguments, receivedMessage, guildDictionary[receivedMessage.guild.id].userDictionary);
-                    } else if (multistreamOverloads.includes(arguments["words"][0])) {
-                        streamModule.multistreamCommand(arguments, receivedMessage, guildDictionary[receivedMessage.guild.id].userDictionary);
-                    } else if (recordOverloads.includes(arguments["words"][0])) {
+                    } else if (multistreamOverloads.includes(arguments["command"])) {
+                        twitchModule.multistreamCommand(arguments, receivedMessage, guildDictionary[receivedMessage.guild.id].userDictionary);
+                    } else if (recordOverloads.includes(arguments["command"])) {
                         recordCommand(arguments, receivedMessage);
-                    } else if (lookupOverloads.includes(arguments["words"][0])) {
+                    } else if (lookupOverloads.includes(arguments["command"])) {
                         lookupCommand(arguments, receivedMessage);
                         clearCommand = false;
-                    } else if (sendOverloads.includes(arguments["words"][0])) {
+                    } else if (sendOverloads.includes(arguments["command"])) {
                         sendCommand(arguments, receivedMessage);
-                    } else if (streamshoutoutOverloads.includes(arguments["words"][0])) {
-                        streamModule.streamShoutoutCommand(arguments, receivedMessage, guildDictionary[receivedMessage.guild.id].userDictionary);
-                    } else if (whoisOverloads.includes(arguments["words"][0])) {
+                    } else if (whoisOverloads.includes(arguments["command"])) {
                         whoisCommand(arguments, receivedMessage);
-                    } else if (deleteOverloads.includes(arguments["words"][0])) {
+                    } else if (deleteOverloads.includes(arguments["command"])) {
                         deleteCommand(arguments, receivedMessage);
-                    } else if (platformsOverloads.includes(arguments["words"][0])) {
+                    } else if (platformsOverloads.includes(arguments["command"])) {
                         platformsCommand(receivedMessage);
-                    } else if (creditsOverloads.includes(arguments["words"][0])) {
+                    } else if (creditsOverloads.includes(arguments["command"])) {
                         creditsCommand(receivedMessage);
-                    } else if (setoproleOverloads.includes(arguments["words"][0])) {
+                    } else if (setoproleOverloads.includes(arguments["command"])) {
                         setOpRoleCommand(arguments, receivedMessage);
-                    } else if (newplatformOverloads.includes(arguments["words"][0])) {
+                    } else if (newplatformOverloads.includes(arguments["command"])) {
                         newPlatformCommand(arguments, receivedMessage);
-                    } else if (changeplatformtermOverloads.includes(arguments["words"][0])) {
+                    } else if (changeplatformtermOverloads.includes(arguments["command"])) {
                         changePlatformTermCommand(arguments, receivedMessage);
-                    } else if (removeplatformOverloads.includes(arguments["words"][0])) {
+                    } else if (removeplatformOverloads.includes(arguments["command"])) {
                         removePlatformCommand(arguments, receivedMessage);
-                    } else if (setplatformroleOverloads.includes(arguments["words"][0])) {
+                    } else if (setplatformroleOverloads.includes(arguments["command"])) {
                         setPlatformRoleCommand(arguments, receivedMessage);
-                    } else if (Object.keys(guildDictionary[receivedMessage.guild.id].platformsList).includes(arguments["words"][0])) {
+                    } else if (Object.keys(guildDictionary[receivedMessage.guild.id].platformsList).includes(arguments["command"])) {
                         lookupCommand(arguments, receivedMessage);
                         clearCommand = false;
                     } else {//TODO convert command shortcut if input starts with a time
-                        receivedMessage.author.send(`${arguments["words"][0]} isn't a DirectoryBot command. Please check for typos or use \`@DirectoryBot help.\``)
+                        receivedMessage.author.send(`${arguments["command"]} isn't a DirectoryBot command. Please check for typos or use \`@DirectoryBot help.\``)
                     }
 
                     antiSpam.push(receivedMessage.author.id);
@@ -256,7 +258,7 @@ client.on('guildDelete', (guild) => {
 function helpCommand(arguments, receivedMessage) {
     let cachedGuild = guildDictionary[receivedMessage.guild.id];
 
-    if (arguments["words"][1] == "admin" || arguments["words"][1] == "op" || arguments["words"][1] == "operator") {
+    if (arguments["words"][0] == "admin" || arguments["words"][0] == "op" || arguments["words"][0] == "operator") {
         if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(cachedGuild.opRole)) {
             receivedMessage.author.send(`The operator commands are as follows:\n\
 *newplatform* - Setup a new game/service for users to record or retrieve information for\n\
@@ -267,7 +269,7 @@ function helpCommand(arguments, receivedMessage) {
         } else {
             receivedMessage.author.send(`You need a role with administrator privileges${cachedGuild.opRole ? ` or the role @${receivedMessage.guild.roles.get(cachedGuild.opRole).name}` : ""} to view the operator commands.`);
         }
-    } else if (convertOverloads.includes(arguments["words"][1])) {
+    } else if (convertOverloads.includes(arguments["words"][0])) {
         receivedMessage.author.send(`The *convert* command calculates a time for a given user. DirectoryBot uses IANA specified timezones.\n\
 Syntax: \`@DirectoryBot convert (time) in (starting timezone) for (user)\`\n\
 \n\
@@ -275,69 +277,66 @@ The command can also be used to switch a time to a given timezone.\n\
 Syntax: \`@DirectoryBot convert (time) in (starting timezone) to (resulting timezone)\`\n\
 \n\
 If you omit the starting timezone, the bot will assume you mean the timezone you've recorded for the \"timezone\" platform.`);
-    } else if (countdownOverloads.includes(arguments["words"][1])) {
+    } else if (countdownOverloads.includes(arguments["words"][0])) {
         receivedMessage.author.send(`The *countdown* command states the time until the given time. DirectoryBot uses IANA specified timezones. If no timezone is given DirectoryBot will try with the user's timezone default, then the server's local timezone failing that.\n\
 Syntax: \`@DirectoryBot countdown (time) in (timezone)\``);
-    } else if (multistreamOverloads.includes(arguments["words"][1])) {
+    } else if (multistreamOverloads.includes(arguments["words"][0])) {
         receivedMessage.author.send(`The *multistream* command generates a link to watch multiple streams simultaneously. Optionally, you can enter the layout number last if you want to specify that.\n\
 Syntax: \`@DirectoryBot multistream (user1) (user2)... (layout)\``);
-    } else if (recordOverloads.includes(arguments["words"][1])) {
+    } else if (recordOverloads.includes(arguments["words"][0])) {
         receivedMessage.author.send(`The *record* command adds the code information you gave for the given platform so that the bot can use that information and people can ask the bot for it.\n\
 Syntax: \`@DirectoryBot record (platform) (code)\``);
-    } else if (lookupOverloads.includes(arguments["words"][1])) {
+    } else if (lookupOverloads.includes(arguments["words"][0])) {
         receivedMessage.author.send(`The *lookup* command tells you the information associted with the given user for the given platform.\n\
 Syntax: \`@DirectoryBot lookup (user) (platform)\`\n\
 If you leave out the user mention, DirectoryBot will instead tell you everyone's information for that platform instead.\n\
 Syntax: \`@DirectoryBot lookup (platform)`);
-    } else if (sendOverloads.includes(arguments["words"][1])) {
+    } else if (sendOverloads.includes(arguments["words"][0])) {
         receivedMessage.author.send(`The *send* command sends your information on the given platform to the given user.\n\
 Syntax: \`@DirectoryBot send (platform) (user)\``);
-    } else if (whoisOverloads.includes(arguments["words"][1])) {
+    } else if (whoisOverloads.includes(arguments["words"][0])) {
         receivedMessage.author.send(`The *whois* command checks if anyone uses the given username and private messages you the result.\n\
 Syntax: \`@DirectoryBot whois (username)\``);
-    } else if (streamshoutoutOverloads.includes(arguments["words"][1])) {
-        receivedMessage.author.send(`The *shoutout* command posts the given user's stream information.\n\
-Syntax: \`@DirectoryBot shoutout (user)\``);
-    } else if (deleteOverloads.includes(arguments["words"][1])) {
+    } else if (deleteOverloads.includes(arguments["words"][0])) {
         receivedMessage.author.send(`The *delete* command removes your information for the given platform.\n\
 Syntax: \`@DirectoryBot delete (platform)\``);
         if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(cachedGuild.opRole)) {
             receivedMessage.author.send(`Operators can use the *delete* command to remove information for other users.\n\
 Syntax: \`@DirectoryBot clear (user) (platform)\``);
         }
-    } else if (platformsOverloads.includes(arguments["words"][1])) {
+    } else if (platformsOverloads.includes(arguments["words"][0])) {
         platformsCommand(receivedMessage);
-    } else if (creditsOverloads.includes(arguments["words"][1])) {
+    } else if (creditsOverloads.includes(arguments["words"][0])) {
         creditsCommand(receivedMessage);
-    } else if (setoproleOverloads.includes(arguments["words"][1])) {
+    } else if (setoproleOverloads.includes(arguments["words"][0])) {
         if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(cachedGuild.opRole)) {
             receivedMessage.author.send(`The *setoprole* command updates the operator role for DirectoryBot. Users with this role use operator features of this bot without serverwide administrator privileges.\n\
 Syntax: \`@DirectoryBot setoprole (role)\``);
         } else {
             receivedMessage.author.send(`You need a role with administrator privileges${cachedGuild.opRole ? ` or the role @${receivedMessage.guild.roles.get(cachedGuild.opRole).name}` : ""} to view operator commands.`);
         }
-    } else if (newplatformOverloads.includes(arguments["words"][1])) {
+    } else if (newplatformOverloads.includes(arguments["words"][0])) {
         if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(cachedGuild.opRole)) {
             receivedMessage.author.send(`The *newplatform* command sets up a new game/service for users to record and retrieve information. Optionally, you can set a term to call the information that is being stored (default is "username").\n\
 Syntax: \`@DirectoryBot newplatform (platform name) (information term)\``);
         } else {
             receivedMessage.author.send(`You need a role with administrator privileges${cachedGuild.opRole ? ` or the role @${receivedMessage.guild.roles.get(cachedGuild.opRole).name}` : ""} to view operator commands.`);
         }
-    } else if (changeplatformtermOverloads.includes(arguments["words"][1])) {
+    } else if (changeplatformtermOverloads.includes(arguments["words"][0])) {
         if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(cachedGuild.opRole)) {
             receivedMessage.author.send(`The *changeplatformterm* changes what DirectoryBot calls information from the given platform (default is "username").\n\
 Syntax: \`@DirectoryBot changeplatformterm (platform name) (new term)\``);
         } else {
             receivedMessage.author.send(`You need a role with administrator privileges${cachedGuild.opRole ? ` or the role @${receivedMessage.guild.roles.get(cachedGuild.opRole).name}` : ""} to view operator commands.`);
         }
-    } else if (removeplatformOverloads.includes(arguments["words"][1])) {
+    } else if (removeplatformOverloads.includes(arguments["words"][0])) {
         if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(cachedGuild.opRole)) {
             receivedMessage.author.send(`The *removeplatform* command specifies a platform for DirectoryBot to stop recording and distributing information for. Note: this command does not remove roles associated with platforms in case someone has that role but wasn't given it by DirectoryBot.\n\
 Syntax: \`@DirectoryBot removeplatform (platform to remove)\``)
         } else {
             receivedMessage.author.send(`You need a role with administrator privileges${cachedGuild.opRole ? ` or the role @${receivedMessage.guild.roles.get(cachedGuild.opRole).name}` : ""} to view operator commands.`);
         }
-    } else if (setplatformroleOverloads.includes(arguments["words"][1])) {
+    } else if (setplatformroleOverloads.includes(arguments["words"][0])) {
         if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(cachedGuild.opRole)) {
             receivedMessage.author.send(`The *setplatformrole* command associates the given role and platform. Anyone who records information for that platform will be automatically given the associated role.\n\
 Syntax: \`@DirectoryBot setplatformrole (platform) (role)\``)
@@ -366,8 +365,9 @@ You can type \`@directorybot help\` followed by one of those for specific instru
 function recordCommand(arguments, receivedMessage) {
     let cachedGuild = guildDictionary[receivedMessage.guild.id];
 
-    var platform = arguments["words"][1].toLowerCase();
-    var friendcode = arguments["words"][2];
+    var platform = arguments["words"][0].toLowerCase();
+    var codeArray = arguments["words"].slice(1);
+    var friendcode = codeArray.join(" ");
 
     if (Object.keys(cachedGuild.platformsList).includes(platform)) { // Early out if platform is not being tracked
         if (cachedGuild.userDictionary[receivedMessage.author.id][platform]) {
@@ -395,10 +395,10 @@ function lookupCommand(arguments, receivedMessage) {
         var user = arguments["userMentions"][0].user;
 
         if (!user.bot) {
-            if (lookupOverloads.includes(arguments["words"][0])) {
-                var platform = arguments["words"][1].toLowerCase();
-            } else {
+            if (lookupOverloads.includes(arguments["command"])) {
                 var platform = arguments["words"][0].toLowerCase();
+            } else {
+                var platform = arguments["command"].toLowerCase();
             }
 
             if (Object.keys(cachedGuild.platformsList).includes(platform)) {
@@ -423,10 +423,10 @@ function lookupCommand(arguments, receivedMessage) {
     } else {
         var platform = "";
 
-        if (lookupOverloads.includes(arguments["words"][0])) {
-            platform = arguments["words"][1].toLowerCase();
-        } else {
+        if (lookupOverloads.includes(arguments["command"])) {
             platform = arguments["words"][0].toLowerCase();
+        } else {
+            platform = arguments["command"].toLowerCase();
         }
 
         if (Object.keys(cachedGuild.platformsList).includes(platform)) {
@@ -453,7 +453,7 @@ function sendCommand(arguments, receivedMessage) {
     let cachedGuild = guildDictionary[receivedMessage.guild.id];
 
     if (arguments["userMentions"].length >= 1) {
-        var platform = arguments["words"][1].toLowerCase();
+        var platform = arguments["words"][0].toLowerCase();
         if (Object.keys(cachedGuild.platformsList).includes(platform)) {
             if (cachedGuild.userDictionary[receivedMessage.author.id] && cachedGuild.userDictionary[receivedMessage.author.id][platform].value) {
                 arguments["userMentions"].forEach(recipient => {
@@ -484,7 +484,7 @@ function whoisCommand(arguments, receivedMessage) {
     let cachedGuild = guildDictionary[receivedMessage.guild.id];
 
     if (arguments["words"].length >= 1) {
-        var searchTerm = arguments["words"][1];
+        var searchTerm = arguments["words"][0];
         var reply = `The following people have recorded ${searchTerm} in ${receivedMessage.guild.name}:`;
         Object.keys(cachedGuild.userDictionary).forEach(user => {
             for (var platform in cachedGuild.userDictionary[user]) {
@@ -507,7 +507,9 @@ You sent: ${receivedMessage}`);
 function deleteCommand(arguments, receivedMessage) {
     let cachedGuild = guildDictionary[receivedMessage.guild.id];
 
-    var platform = arguments["words"][1].toLowerCase();
+    var platform = arguments["words"][0].toLowerCase();
+    var msgList = arguments["words"].slice(1);
+    var reason = msgList.join(" ");
 
     if (arguments["userMentions"].length == 1) {
         if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(cachedGuild.opRole)) {
@@ -516,7 +518,7 @@ function deleteCommand(arguments, receivedMessage) {
 
                 if (cachedGuild.userDictionary[target.id] && cachedGuild.userDictionary[target.id][platform].value) {
                     cachedGuild.userDictionary[target.id][platform] = new FriendCode();
-                    target.send(`Your ${platform} ${cachedGuild.platformsList[platform].term} has been removed from ${receivedMessage.guild}.`); //TODO allow a reason to be passed
+                    target.send(`Your ${platform} ${cachedGuild.platformsList[platform].term} has been removed from ${receivedMessage.guild} because ${reason}.`); //TODO allow a reason to be passed
                     syncUserRolePlatform(target, platform, receivedMessage.guild.id);
                     saveUserDictionary(receivedMessage.guild.id);
                     receivedMessage.author.send(`You have removed ${target}'s ${platform} ${cachedGuild.platformsList[platform].term} from ${receivedMessage.guild}.`);
@@ -604,8 +606,8 @@ function newPlatformCommand(arguments, receivedMessage) {
 
 
     if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(cachedGuild.opRole)) {
-        let platform = arguments["words"][1].toLowerCase();
-        let term = arguments["words"][2];
+        let platform = arguments["words"][0].toLowerCase();
+        let term = arguments["words"][1];
 
         if (!cachedGuild.platformsList[platform]) {
             if (arguments["words"].length > 0) {
@@ -616,7 +618,7 @@ function newPlatformCommand(arguments, receivedMessage) {
                 Object.keys(cachedGuild.userDictionary).forEach((user) => {
                     cachedGuild.userDictionary[user][platform] = new FriendCode();
                 })
-                receivedMessage.channel.send(`${arguments["words"][1]} ${cachedGuild.platformsList[platform].term}s can now be recorded and retrieved.`);
+                receivedMessage.channel.send(`${arguments["words"][0]} ${cachedGuild.platformsList[platform].term}s can now be recorded and retrieved.`);
                 savePlatformsList(receivedMessage.guild.id);
             } else {
                 // Error Message
@@ -626,7 +628,7 @@ You sent: ${receivedMessage}`);
             }
         } else {
             // Error Message
-            receivedMessage.author.send(`${arguments["words"][1]} ${cachedGuild.platformsList[platform].term}s can already be recorded and retrieved.`);
+            receivedMessage.author.send(`${arguments["words"][0]} ${cachedGuild.platformsList[platform].term}s can already be recorded and retrieved.`);
         }
     } else {
         // Error Message
@@ -639,8 +641,8 @@ function changePlatformTermCommand(arguments, receivedMessage) {
     let cachedGuild = guildDictionary[receivedMessage.guild.id];
 
     if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(cachedGuild.opRole)) {
-        let platform = arguments["words"][1];
-        let term = arguments["words"][2];
+        let platform = arguments["words"][0];
+        let term = arguments["words"][1];
 
         if (cachedGuild.platformsList[platform.toLowerCase()]) {
             cachedGuild.platformsList[platform.toLowerCase()].term = term;
@@ -661,7 +663,7 @@ function removePlatformCommand(arguments, receivedMessage) {
     let cachedGuild = guildDictionary[receivedMessage.guild.id];
 
     if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(cachedGuild.opRole)) {
-        let platform = arguments["words"][1];
+        let platform = arguments["words"][0];
 
         if (cachedGuild.platformsList[platform.toLowerCase()]) {
             delete cachedGuild.platformsList[platform.toLowerCase()];

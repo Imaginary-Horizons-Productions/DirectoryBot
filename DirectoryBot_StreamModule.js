@@ -35,5 +35,18 @@ exports.multistreamCommand = function (arguments, receivedMessage, userDictionar
     receivedMessage.author.send(`Here's the multistream link: ${url}`);
 }
 
+exports.streamShoutoutCommand = function (arguments, receivedMessage, userDictionary) {
+    var user = arguments["userMentions"][0];
+
+    if (userDictionary[user.id] && userDictionary[user.id]["twitch"].value) {
+        var url = "https://www.twitch.tv/" + userDictionary[user.id]["twitch"].value;
+
+        receivedMessage.channel.send(`Check out ${user}'s stream at ${url} !`)
+    } else {
+        // Error Message
+        receivedMessage.channel.send(`${user} has not set a twitch username in this server's DirectoryBot yet.`);
+    }
+}
+
 //TODO going live notification
 //TODO weekly stream schedule updates

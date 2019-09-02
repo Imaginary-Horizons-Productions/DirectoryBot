@@ -2,7 +2,7 @@ const Discord = require('discord.js');
 const fs = require('fs');
 var encrypter = require('crypto-js');
 var timeModule = require('./DirectoryBot_TimeModule.js');
-var twitchModule = require('./DirectoryBot_TwitchModule.js');
+var streamModule = require('./DirectoryBot_StreamModule.js');
 
 const client = new Discord.Client();
 
@@ -37,6 +37,7 @@ var multistreamOverloads = ["multistream", "multitwitch"];
 var recordOverloads = ["record", "log"];
 var sendOverloads = ["send", "tell"];
 var lookupOverloads = ["lookup"];
+var streamshoutoutOverloads = ["shoutout", "streamshoutout"];
 var whoisOverloads = ["whois"];
 var deleteOverloads = ["delete", "remove", "clear"];
 var platformsOverloads = ["platforms"];
@@ -191,7 +192,7 @@ client.on('message', (receivedMessage) => {
                     } else if (countdownOverloads.includes(arguments["words"][0])) {
                         timeModule.countdownCommand(arguments, receivedMessage, guildDictionary[receivedMessage.guild.id].userDictionary);
                     } else if (multistreamOverloads.includes(arguments["words"][0])) {
-                        twitchModule.multistreamCommand(arguments, receivedMessage, guildDictionary[receivedMessage.guild.id].userDictionary);
+                        streamModule.multistreamCommand(arguments, receivedMessage, guildDictionary[receivedMessage.guild.id].userDictionary);
                     } else if (recordOverloads.includes(arguments["words"][0])) {
                         recordCommand(arguments, receivedMessage);
                     } else if (lookupOverloads.includes(arguments["words"][0])) {
@@ -199,6 +200,8 @@ client.on('message', (receivedMessage) => {
                         clearCommand = false;
                     } else if (sendOverloads.includes(arguments["words"][0])) {
                         sendCommand(arguments, receivedMessage);
+                    } else if (streamshoutoutOverloads.includes(arguments["words"][0])) {
+                        streamModule.streamShoutoutCommand(arguments, receivedMessage, guildDictionary[receivedMessage.guild.id].userDictionary);
                     } else if (whoisOverloads.includes(arguments["words"][0])) {
                         whoisCommand(arguments, receivedMessage);
                     } else if (deleteOverloads.includes(arguments["words"][0])) {
@@ -292,6 +295,9 @@ Syntax: \`@DirectoryBot send (platform) (user)\``);
     } else if (whoisOverloads.includes(arguments["words"][1])) {
         receivedMessage.author.send(`The *whois* command checks if anyone uses the given username and private messages you the result.\n\
 Syntax: \`@DirectoryBot whois (username)\``);
+    } else if (streamshoutoutOverloads.includes(arguments["words"][1])) {
+        receivedMessage.author.send(`The *shoutout* command posts the given user's stream information.\n\
+Syntax: \`@DirectoryBot shoutout (user)\``);
     } else if (deleteOverloads.includes(arguments["words"][1])) {
         receivedMessage.author.send(`The *delete* command removes your information for the given platform.\n\
 Syntax: \`@DirectoryBot delete (platform)\``);
@@ -348,6 +354,7 @@ Syntax: \`@DirectoryBot setplatformrole (platform) (role)\``)
 *lookup* - Look up someone else's information if they've recorded it\n\
 *send* - Have DirectoryBot send someone your information\n\
 *whois* - Ask DirectoryBot who a certain username belongs to\n\
+*shoutout* - Have DirectoryBot post someone's stream information\n\
 *delete* - Remove your information for a platform\n\
 *credits* - Version info and contributors (using help on this command uses the command)\n\
 (and *help*).\n\
@@ -397,7 +404,7 @@ function lookupCommand(arguments, receivedMessage) {
             if (Object.keys(cachedGuild.platformsList).includes(platform)) {
                 if (!cachedGuild.userDictionary[user.id] || !cachedGuild.userDictionary[user.id][platform].value) {
                     // Error Message
-                    receivedMessage.author.send(`${user} has not set a ${platform} ${cachedGuild.platformsList[platform].term} in this server's DirectoryBot yet.`);
+                    receivedMessage.channel.send(`${user} has not set a ${platform} ${cachedGuild.platformsList[platform].term} in this server's DirectoryBot yet.`);
                 } else {
                     receivedMessage.author.send(`${user} has set ${cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value ? cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value : 'their'} ${platform} ${cachedGuild.platformsList[platform].term} in ${receivedMessage.guild.name} as **${cachedGuild.userDictionary[user.id][platform].value}**.`).then(sentMessage => {
                         setTimeout(function () {

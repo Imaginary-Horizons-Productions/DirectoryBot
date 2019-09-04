@@ -7,7 +7,7 @@ var streamModule = require('./DirectoryBot_StreamModule.js');
 const client = new Discord.Client();
 
 class GuildSpecifics {
-    constructor(userDictionaryInput = {}, platformsListInput = { "possessivepronoun": new PlatformData("preference"), "timezone": new PlatformData("default"), "twitch": new PlatformData() }, opRoleInput = "") {
+    constructor(userDictionaryInput = {}, platformsListInput = { "possessivepronoun": new PlatformData("preference"), "timezone": new PlatformData("default"), "stream": new PlatformData() }, opRoleInput = "") {
         this.userDictionary = userDictionaryInput;
         this.platformsList = platformsListInput;
         this.opRole = opRoleInput;
@@ -55,29 +55,7 @@ var antiSpam = [];
 var commandLimit = 3;
 var infoLifetime = 3600000;
 
-fs.readFile(`encryptionKey.txt`, `utf8`, (error, keyInput) => {
-    if (error) {
-        console.log(error);
-    } else {
-        fs.readFile("guildsList.txt", 'utf8', (error, guildsListInput) => {
-            if (error) {
-                console.log(error);
-            } else {
-                participatingGuildsIDs = JSON.parse(encrypter.AES.decrypt(guildsListInput, keyInput).toString(encrypter.enc.Utf8))["list"];
-            }
-
-            fs.readFile("authentication.json", 'utf8', (error, authenticationInput) => {
-                if (error) {
-                    console.log(error);
-                } else {
-                    var authentication = {};
-                    Object.assign(authentication, JSON.parse(authenticationInput));
-                    client.login(authentication["token"]);
-                }
-            });
-        });
-    }
-})
+login();
 
 client.on('ready', () => {
     fs.readFile("encryptionKey.txt", 'utf8', (error, keyInput) => {
@@ -173,9 +151,9 @@ client.on('message', (receivedMessage) => {
                 var command = words[0];
                 words.shift();
                 var arguments = {
+                    "command": command, // The primary command
                     "userMentions": filterMentions(messageArray, receivedMessage.guild),
                     "roleMentions": filterRoleMentions(messageArray),
-                    "command": command, // The primary command
                     "words": words // All other non-command words
                 };
 
@@ -254,6 +232,25 @@ client.on('guildCreate', (guild) => {
 
 client.on('guildDelete', (guild) => {
     guildDelete(guild.id);
+})
+
+
+client.on('guildMemberRemove', (member) => {
+    if (guildDictionary[member.guild.id].userDictionary[member.id]) {
+        delete guildDictionary[member.guild.id].userDictionary[member.id];
+    }
+})
+
+
+client.on('disconnect', (error, code) => {
+    console.log(`Disconnect encountered (Error code ${code}):\n${error}\n---Restarting`)
+    login();
+})
+
+
+client.on('error', (error) => {
+    console.log(`Error encountered:\n${error}\n---Restarting`);
+    login();
 })
 
 
@@ -523,7 +520,7 @@ function deleteCommand(arguments, receivedMessage) {
 
                 if (cachedGuild.userDictionary[target.id] && cachedGuild.userDictionary[target.id][platform].value) {
                     cachedGuild.userDictionary[target.id][platform] = new FriendCode();
-                    target.send(`Your ${platform} ${cachedGuild.platformsList[platform].term} has been removed from ${receivedMessage.guild} because ${reason}.`); //TODO allow a reason to be passed
+                    target.send(`Your ${platform} ${cachedGuild.platformsList[platform].term} has been removed${reason? ` from ${ receivedMessage.guild } because ${ reason }` : ""}.`);
                     syncUserRolePlatform(target, platform, receivedMessage.guild.id);
                     saveUserDictionary(receivedMessage.guild.id);
                     receivedMessage.author.send(`You have removed ${target}'s ${platform} ${cachedGuild.platformsList[platform].term} from ${receivedMessage.guild}.`);
@@ -716,6 +713,33 @@ function setPlatformRoleCommand(arguments, receivedMessage) {
         // Error Message
         receivedMessage.author.send(`You need a role with administrator privileges${cachedGuild.opRole ? ` or the role @${receivedMessage.guild.roles.get(cachedGuild.opRole).name}` : ""} to remove platforms.`);
     }
+}
+
+
+function login() {
+    fs.readFile(`encryptionKey.txt`, `utf8`, (error, keyInput) => {
+        if (error) {
+            console.log(error);
+        } else {
+            fs.readFile("guildsList.txt", 'utf8', (error, guildsListInput) => {
+                if (error) {
+                    console.log(error);
+                } else {
+                    participatingGuildsIDs = JSON.parse(encrypter.AES.decrypt(guildsListInput, keyInput).toString(encrypter.enc.Utf8))["list"];
+                }
+
+                fs.readFile("authentication.json", 'utf8', (error, authenticationInput) => {
+                    if (error) {
+                        console.log(error);
+                    } else {
+                        var authentication = {};
+                        Object.assign(authentication, JSON.parse(authenticationInput));
+                        client.login(authentication["token"]);
+                    }
+                });
+            });
+        }
+    })
 }
 
 

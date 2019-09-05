@@ -226,6 +226,7 @@ client.on('message', (receivedMessage) => {
 
 
 client.on('guildCreate', (guild) => {
+    console.log(`Added to server: ${guild.name}`);
     guildCreate(guild.id);
 })
 

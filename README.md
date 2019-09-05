@@ -7,6 +7,7 @@ DirectoryBot is a Discord bot that stores friend codes, converts timezones, and 
 
 ### Optional
 * Use "@DirectoryBot setoprole (role)" to set up an operator role. Operators are allowed to use the operator commands without Discord administrator permissions.
+* Record your information for DirectoryBot's default platforms: time zone, possessive pronoun, and stream.
 * Check out BountyBot, another Imaginary Horizons Productions discord bot: (link coming soon)
 
 ### Notes

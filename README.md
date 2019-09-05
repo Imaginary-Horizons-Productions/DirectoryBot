@@ -47,9 +47,12 @@ States the (time) in (timezone1) as its equivalent for (user) based on (user)'s 
 #### @DirectoryBot *countdown* (time) *in* (timezone)
 States how long until (time) in (timezone1) for the sender.
 
-### Twitch Module
+### Streaming Module
 #### @DirectoryBot *multistream* (user1) (user2)... (layout)
 Generates a multistre.am link for all (user)s based on the users' recorded Twitch accounts with the specified (layout).
+
+#### @DirectoryBot *shoutout* (user)
+Posts a link to the user's stream!
 
 ### Operator Commands
 #### @DirectoryBot *setoprole* (role)

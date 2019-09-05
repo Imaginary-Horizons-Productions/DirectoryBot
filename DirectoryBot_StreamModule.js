@@ -4,10 +4,16 @@ exports.multistreamCommand = function (arguments, receivedMessage, userDictionar
 
     var missingUsers = [];
     for (var i = 0; i < arguments["userMentions"].length; i++) {
-        if (!userDictionary[arguments["userMentions"][i].id] || !userDictionary[arguments["userMentions"][i].id]["twitch"].value) {
-            missingUsers.push(arguments["userMentions"][i].user);
+        if (arguments["userMentions"][i]) {
+            if (!userDictionary[arguments["userMentions"][i].id] || !userDictionary[arguments["userMentions"][i].id]["twitch"].value) {
+                missingUsers.push(arguments["userMentions"][i].user);
+            } else {
+                url += userDictionary[arguments["userMentions"][i].id]["twitch"].value + "/";
+            }
         } else {
-            url += userDictionary[arguments["userMentions"][i].id]["twitch"].value + "/";
+            // Error Message
+            receivedMessage.author.send(`One of those people is not a member of ${receivedMessage.guild}.`);
+            return;
         }
     }
 
@@ -36,15 +42,20 @@ exports.multistreamCommand = function (arguments, receivedMessage, userDictionar
 }
 
 exports.streamShoutoutCommand = function (arguments, receivedMessage, userDictionary) {
-    var user = arguments["userMentions"][0];
+    if (arguments["userMentions"][0]) {
+        var user = arguments["userMentions"][0];
 
-    if (userDictionary[user.id] && userDictionary[user.id]["twitch"].value) {
-        var url = "https://www.twitch.tv/" + userDictionary[user.id]["twitch"].value;
+        if (userDictionary[user.id] && userDictionary[user.id]["twitch"].value) {
+            var url = "https://www.twitch.tv/" + userDictionary[user.id]["twitch"].value;
 
-        receivedMessage.channel.send(`Check out ${user}'s stream at ${url} !`)
+            receivedMessage.channel.send(`Check out ${user}'s stream at ${url} !`)
+        } else {
+            // Error Message
+            receivedMessage.channel.send(`${user} has not set a twitch username in this server's DirectoryBot yet.`);
+        }
     } else {
         // Error Message
-        receivedMessage.channel.send(`${user} has not set a twitch username in this server's DirectoryBot yet.`);
+        receivedMessage.author.send(`That person isn't a member of ${receivedMessage.guild}.`);
     }
 }
 

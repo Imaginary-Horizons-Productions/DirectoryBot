@@ -1,25 +1,33 @@
 const { DateTime, IANAZone, LocalZone } = require("luxon");
 var chrono = require('chrono-node');
 
-exports.convertCommand = function (arguments, receivedMessage, userDictionary) {
+exports.convertCommand = function (arguments, receivedMessage, userDictionary, shortcut = false) {
     var timeText = "";
     var startTimezone = "";
     var resultTimezone;
 
-    //TODO check against convertOverloads here to adjust argument indexing after shortcut has been implemented
+    if (shortcut) {
+        timeText += arguments["command"] + " ";
+    }
 
     if (arguments["userMentions"].length == 1) {
-        for (var i = 0; i < arguments["words"].length; i++) {
-            if (arguments["words"][i] == "in") {
-                startTimezone = arguments["words"][i + 1]
-                i++;
-            } else if (arguments["words"][i] == "for") {
-                break;
-            } else if (arguments["words"][i] != "convert") {
-                timeText += arguments["words"][i] + " ";
+        if (arguments["userMentions"][0]) {
+            for (var i = 0; i < arguments["words"].length; i++) {
+                if (arguments["words"][i] == "in") {
+                    startTimezone = arguments["words"][i + 1]
+                    i++;
+                } else if (arguments["words"][i] == "for") {
+                    break;
+                } else {
+                    timeText += arguments["words"][i] + " ";
+                }
             }
+            resultTimezone = userDictionary[arguments["userMentions"][0].id]["timezone"].value;
+        } else {
+            // Error Message
+            receivedMessage.author.send(`That person isn't a member of ${receivedMessage.guild}.`);
+            return;
         }
-        resultTimezone = userDictionary[arguments["userMentions"][0].id]["timezone"].value;
     } else {
         for (var i = 0; i < arguments["words"].length; i++) {
             if (arguments["words"][i] == "in") {
@@ -28,7 +36,7 @@ exports.convertCommand = function (arguments, receivedMessage, userDictionary) {
             } else if (arguments["words"][i] == "to") {
                 resultTimezone = arguments["words"][i + 1];
                 break;
-            } else if (arguments["words"][i] != "convert") {
+            } else {
                 timeText += arguments["words"][i] + " ";
             }
         }
@@ -54,9 +62,17 @@ You sent: ${receivedMessage}`);
                 var convertedDateTime = dateTimeObject.setZone(resultTimezone);
 
                 if (arguments["userMentions"].length == 1) {
-                    receivedMessage.author.send(`*${arguments["words"][0]} in ${startTimezone}* is **${convertedDateTime.toLocaleString(DateTime.TIME_24_SIMPLE)}** for ${arguments["userMentions"][0]}.`);
+                    if (shortcut) {
+                        receivedMessage.channel.send(`*${timeText}in ${startTimezone}* is **${convertedDateTime.toLocaleString(DateTime.TIME_24_SIMPLE)}** for ${arguments["userMentions"][0]}.`);
+                    } else {
+                        receivedMessage.author.send(`*${timeText}in ${startTimezone}* is **${convertedDateTime.toLocaleString(DateTime.TIME_24_SIMPLE)}** for ${arguments["userMentions"][0]}.`);
+                    }
                 } else {
-                    receivedMessage.author.send(`*${arguments["words"][0]} in ${startTimezone}* is **${convertedDateTime.toLocaleString(DateTime.TIME_24_SIMPLE)} in ${resultTimezone}**.`);
+                    if (shortcut) {
+                        receivedMessage.channel.send(`*${timeText}in ${startTimezone}* is **${convertedDateTime.toLocaleString(DateTime.TIME_24_SIMPLE)} in ${resultTimezone}**.`);
+                    } else {
+                        receivedMessage.author.send(`*${timeText}in ${startTimezone}* is **${convertedDateTime.toLocaleString(DateTime.TIME_24_SIMPLE)} in ${resultTimezone}**.`);
+                    }
                 }
             } else {
                 // Error Message
@@ -105,7 +121,7 @@ exports.countdownCommand = function (arguments, receivedMessage, userDictionary)
     }
 
     if (countdown > 60) {
-        receivedMessage.author.send(`*${arguments["words"][0]} in ${startTimezone}* is about **${Math.floor(countdown/60)} hours and ${countdown % 60} minutes** from now.`);
+        receivedMessage.author.send(`*${arguments["words"][0]} in ${startTimezone}* is about **${Math.floor(countdown / 60)} hours and ${countdown % 60} minutes** from now.`);
     } else {
         receivedMessage.author.send(`*${arguments["words"][0]} in ${startTimezone}* is about **${countdown} minutes** from now.`);
     }

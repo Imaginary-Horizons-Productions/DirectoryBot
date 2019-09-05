@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
 const fs = require('fs');
 var encrypter = require('crypto-js');
+var chrono = require('chrono-node');
 var timeModule = require('./DirectoryBot_TimeModule.js');
 var streamModule = require('./DirectoryBot_StreamModule.js');
 
@@ -203,9 +204,11 @@ client.on('message', (receivedMessage) => {
                     } else if (setplatformroleOverloads.includes(arguments["command"])) {
                         setPlatformRoleCommand(arguments, receivedMessage);
                     } else if (Object.keys(guildDictionary[receivedMessage.guild.id].platformsList).includes(arguments["command"])) {
-                        lookupCommand(arguments, receivedMessage);
+                        lookupCommand(arguments, receivedMessage, true);
                         clearCommand = false;
-                    } else {//TODO convert command shortcut if input starts with a time
+                    } else if (chrono.parse(arguments["command"]).length > 0) {
+                        timeModule.convertCommand(arguments, receivedMessage, guildDictionary[receivedMessage.guild.id].userDictionary, true);
+                    } else {
                         receivedMessage.author.send(`${arguments["command"]} isn't a DirectoryBot command. Please check for typos or use \`@DirectoryBot help.\``)
                     }
 
@@ -391,14 +394,14 @@ function recordCommand(arguments, receivedMessage) {
 }
 
 
-function lookupCommand(arguments, receivedMessage) {
+function lookupCommand(arguments, receivedMessage, shortcut = false) {
     let cachedGuild = guildDictionary[receivedMessage.guild.id];
 
     if (arguments["userMentions"].length == 1) {
         var user = arguments["userMentions"][0].user;
 
         if (!user.bot) {
-            if (lookupOverloads.includes(arguments["command"])) {
+            if (shortcut) {
                 var platform = arguments["words"][0].toLowerCase();
             } else {
                 var platform = arguments["command"].toLowerCase();

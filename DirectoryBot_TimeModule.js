@@ -1,12 +1,14 @@
 const { DateTime, IANAZone, LocalZone } = require("luxon");
 var chrono = require('chrono-node');
 
-exports.convertCommand = function (arguments, receivedMessage, userDictionary) {
+exports.convertCommand = function (arguments, receivedMessage, userDictionary, shortcut = false) {
     var timeText = "";
     var startTimezone = "";
     var resultTimezone;
 
-    //TODO check against convertOverloads here to adjust argument indexing after shortcut has been implemented
+    if (shortcut) {
+        timeText += arguments["command"] + " ";
+    }
 
     if (arguments["userMentions"].length == 1) {
         for (var i = 0; i < arguments["words"].length; i++) {
@@ -15,7 +17,7 @@ exports.convertCommand = function (arguments, receivedMessage, userDictionary) {
                 i++;
             } else if (arguments["words"][i] == "for") {
                 break;
-            } else if (arguments["words"][i] != "convert") {
+            } else {
                 timeText += arguments["words"][i] + " ";
             }
         }
@@ -28,7 +30,7 @@ exports.convertCommand = function (arguments, receivedMessage, userDictionary) {
             } else if (arguments["words"][i] == "to") {
                 resultTimezone = arguments["words"][i + 1];
                 break;
-            } else if (arguments["words"][i] != "convert") {
+            } else {
                 timeText += arguments["words"][i] + " ";
             }
         }
@@ -54,9 +56,17 @@ You sent: ${receivedMessage}`);
                 var convertedDateTime = dateTimeObject.setZone(resultTimezone);
 
                 if (arguments["userMentions"].length == 1) {
-                    receivedMessage.author.send(`*${arguments["words"][0]} in ${startTimezone}* is **${convertedDateTime.toLocaleString(DateTime.TIME_24_SIMPLE)}** for ${arguments["userMentions"][0]}.`);
+                    if (shortcut) {
+                        receivedMessage.channel.send(`*${timeText}in ${startTimezone}* is **${convertedDateTime.toLocaleString(DateTime.TIME_24_SIMPLE)}** for ${arguments["userMentions"][0]}.`);
+                    } else {
+                        receivedMessage.author.send(`*${timeText}in ${startTimezone}* is **${convertedDateTime.toLocaleString(DateTime.TIME_24_SIMPLE)}** for ${arguments["userMentions"][0]}.`);
+                    }
                 } else {
-                    receivedMessage.author.send(`*${arguments["words"][0]} in ${startTimezone}* is **${convertedDateTime.toLocaleString(DateTime.TIME_24_SIMPLE)} in ${resultTimezone}**.`);
+                    if (shortcut) {
+                        receivedMessage.channel.send(`*${timeText}in ${startTimezone}* is **${convertedDateTime.toLocaleString(DateTime.TIME_24_SIMPLE)} in ${resultTimezone}**.`);
+                    } else {
+                        receivedMessage.author.send(`*${timeText}in ${startTimezone}* is **${convertedDateTime.toLocaleString(DateTime.TIME_24_SIMPLE)} in ${resultTimezone}**.`);
+                    }
                 }
             } else {
                 // Error Message

@@ -251,13 +251,17 @@ client.on('guildMemberRemove', (member) => {
 
 
 client.on('disconnect', (error, code) => {
-    console.log(`Disconnect encountered (Error code ${code}):\n${error}\n---Restarting`)
+    console.log(`Disconnect encountered (Error code ${code}):`);
+    console.log(error);
+    console.log(`---Restarting`);
     login();
 })
 
 
 client.on('error', (error) => {
-    console.log(`Error encountered:\n${error}\n---Restarting`);
+    console.log(`Error encountered:`);
+    console.log(error);
+    console.log(`---Restarting`);
     login();
 })
 

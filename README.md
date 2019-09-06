@@ -7,59 +7,112 @@ DirectoryBot is a Discord bot that stores friend codes, converts timezones, and 
 
 ### Optional
 * Use "@DirectoryBot setoprole (role)" to set up an operator role. Operators are allowed to use the operator commands without Discord administrator permissions.
+* Record your information for DirectoryBot's default platforms: time zone, possessive pronoun, and stream.
 * Check out BountyBot, another Imaginary Horizons Productions discord bot: (link coming soon)
 
+### Notes
+If you leave a server, DirectoryBot will delete all of your data. If you kick DirectoryBot, it will delete everyoe's data.
+
 ## Commands
-#### @DirectoryBot *help*
+#### help
+Syntax: `@DirectoryBot help`
+
 Lists commands and summaries of their functions.
 
-#### @DirectoryBot *help* (command)
+Syntax: `@DirectoryBot help (command)`
+
 Explains the function and syntax for (command).
 
-#### @DirectoryBot *record* (platform) (information)
+#### record
+Syntax: `@DirectoryBot record (platform) (information)`
+
 Stores the sender's (information) for the declared (platform).
 
-#### @DirectoryBot *lookup* (user) (platform)
+#### lookup
+Syntax: `@DirectoryBot lookup (user) (platform)`
+
 Private messages sender with (user)'s stored information for (platform).
 
-#### @DirectoryBot *lookup* (platform)
+Syntax: `@DirectoryBot lookup (platform)`
+
 Private messages sender with everyone's stored information for (platform).
 
-#### @DirectoryBot *delete* (platform)
+#### delete 
+Syntax: `@DirectoryBot delete (platform)`
+
 Deletes the information for the sender in (platform).
 
-#### @DirectoryBot *platforms*
+#### platforms
+Syntax: `@DirectoryBot platforms`
+
 States a list of platforms currently tracked by DirectoryBot.
 
-#### @DirectoryBot *credits*
+#### credits
+Syntax: `@DirectoryBot credits`
+
 Lists version info and contributors.
 
 ### Time Module
-#### @DirectoryBot *convert* (time) *in* (timezone1) *to* (timezone2)
+The time module contains commands for converting time zones, which users can store in the default platform "timezone".
+#### convert
+Syntax: `@DirectoryBot convert (time) in (timezone1) to (timezone2)`
+
 States the (time) in (timezone1) as its equivalent in (timezone2). Assumes sender's timezone if (timezone1) is omitted.
 
-#### @DirectoryBot *convert* (time) *in* (timezone) *for* (user)
+Syntax: `@DirectoryBot convert (time) in (timezone) for (user)`
+
 States the (time) in (timezone1) as its equivalent for (user) based on (user)'s declared timezone. Assumes sender's timezone if (timezone) is omitted.
 
-#### @DirectoryBot *countdown* (time) *in* (timezone)
+#### countdown
+Syntax: `@DirectoryBot countdown (time) in (timezone)`
+
 States how long until (time) in (timezone1) for the sender.
 
-### Twitch Module
-#### @DirectoryBot *multistream* (user1) (user2)... (layout)
+### Streaming Module
+The streaming module contains commands for supporting live-streamers.
+#### multistream
+Syntax: `@DirectoryBot multistream (list of users) (layout)`
+
 Generates a multistre.am link for all (user)s based on the users' recorded Twitch accounts with the specified (layout).
 
+#### shoutout
+Syntax: `@DirectoryBot shoutout (user)`
+
+Posts a link to the user's stream!
+
 ### Operator Commands
-#### @DirectoryBot *setoprole* (role)
+The following commands can only be used by server members who have Discord administrator privledges or the role determined by **setoprole**.
+#### setoprole
+Syntax: `@DirectoryBot setoprole (role)`
+
 Sets the operator role for DirectoryBot. Users with that role can use the operator commands without Discord administrator privileges.
 
-#### @DirectoryBot *newplatform* (platform)
+#### clearoprole
+Syntax: `@DirectoryBot clearoprole`
+
+Sets the operator role back to none.
+
+#### newplatform
+Syntax `@DirectoryBot newplatform (platform)`
+
 Adds (platform) to the list of tracked platforms, allowing users to add their information for that platform.
 
-#### @DirectoryBot *removeplatform* (platform)
+#### changeplatformterm
+Syntax: `@DirectoryBot changeplatformterm (platform) (term)`
+
+Changes what DirectoryBot calls information from the given platform (default is "username").
+
+#### removeplatform
+Syntax: `@DirectoryBot removeplatform (platform)`
+
 Removes (platform) from the list of tracked platforms.
 
-#### @DirectoryBot *setplatformrole* (platform) (role)
+#### setplatformrole
+Syntax: `@DirectoryBot setplatformrole (platform) (role)`
+
 Associates (role) with (platform) so that whenever a user adds information for (platform), they'll be given (role) automatically.
 
-#### @DirectoryBot *delete* (platform) (user)
+#### delete (for other users)
+Syntax: `@DirectoryBot delete (platform) (user)`
+
 Deletes the friend code for (user) in (platform).

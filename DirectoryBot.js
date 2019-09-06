@@ -1,13 +1,14 @@
 const Discord = require('discord.js');
 const fs = require('fs');
 var encrypter = require('crypto-js');
+var chrono = require('chrono-node');
 var timeModule = require('./DirectoryBot_TimeModule.js');
 var streamModule = require('./DirectoryBot_StreamModule.js');
 
 const client = new Discord.Client();
 
 class GuildSpecifics {
-    constructor(userDictionaryInput = {}, platformsListInput = { "possessivepronoun": new PlatformData("preference"), "timezone": new PlatformData("default"), "twitch": new PlatformData() }, opRoleInput = "") {
+    constructor(userDictionaryInput = {}, platformsListInput = { "possessivepronoun": new PlatformData("preference"), "timezone": new PlatformData("default"), "stream": new PlatformData() }, opRoleInput = "") {
         this.userDictionary = userDictionaryInput;
         this.platformsList = platformsListInput;
         this.opRole = opRoleInput;
@@ -56,29 +57,7 @@ var antiSpam = [];
 var commandLimit = 3;
 var infoLifetime = 3600000;
 
-fs.readFile(`encryptionKey.txt`, `utf8`, (error, keyInput) => {
-    if (error) {
-        console.log(error);
-    } else {
-        fs.readFile("guildsList.txt", 'utf8', (error, guildsListInput) => {
-            if (error) {
-                console.log(error);
-            } else {
-                participatingGuildsIDs = JSON.parse(encrypter.AES.decrypt(guildsListInput, keyInput).toString(encrypter.enc.Utf8))["list"];
-            }
-
-            fs.readFile("authentication.json", 'utf8', (error, authenticationInput) => {
-                if (error) {
-                    console.log(error);
-                } else {
-                    var authentication = {};
-                    Object.assign(authentication, JSON.parse(authenticationInput));
-                    client.login(authentication["token"]);
-                }
-            });
-        });
-    }
-})
+login();
 
 client.on('ready', () => {
     fs.readFile("encryptionKey.txt", 'utf8', (error, keyInput) => {
@@ -174,13 +153,13 @@ client.on('message', (receivedMessage) => {
                 var command = words[0];
                 words.shift();
                 var arguments = {
+                    "command": command, // The primary command
                     "userMentions": filterMentions(messageArray, receivedMessage.guild),
                     "roleMentions": filterRoleMentions(messageArray),
-                    "command": command, // The primary command
                     "words": words // All other non-command words
                 };
 
-                if (arguments["words"].length > 0) {
+                if (arguments["command"]) {
                     if (!guildDictionary[receivedMessage.guild.id].userDictionary[receivedMessage.author.id]) {
                         guildDictionary[receivedMessage.guild.id].userDictionary[receivedMessage.author.id] = {};
                         Object.keys(guildDictionary[receivedMessage.guild.id].platformsList).forEach((platformInList) => {
@@ -228,9 +207,11 @@ client.on('message', (receivedMessage) => {
                     } else if (setplatformroleOverloads.includes(arguments["command"])) {
                         setPlatformRoleCommand(arguments, receivedMessage);
                     } else if (Object.keys(guildDictionary[receivedMessage.guild.id].platformsList).includes(arguments["command"])) {
-                        lookupCommand(arguments, receivedMessage);
+                        lookupCommand(arguments, receivedMessage, true);
                         clearCommand = false;
-                    } else {//TODO convert command shortcut if input starts with a time
+                    } else if (chrono.parse(arguments["command"]).length > 0) {
+                        timeModule.convertCommand(arguments, receivedMessage, guildDictionary[receivedMessage.guild.id].userDictionary, true);
+                    } else {
                         receivedMessage.author.send(`${arguments["command"]} isn't a DirectoryBot command. Please check for typos or use \`@DirectoryBot help.\``)
                     }
 
@@ -251,12 +232,33 @@ client.on('message', (receivedMessage) => {
 
 
 client.on('guildCreate', (guild) => {
+    console.log(`Added to server: ${guild.name}`);
     guildCreate(guild.id);
 })
 
 
 client.on('guildDelete', (guild) => {
     guildDelete(guild.id);
+})
+
+
+client.on('guildMemberRemove', (member) => {
+    if (guildDictionary[member.guild.id].userDictionary[member.id]) {
+        delete guildDictionary[member.guild.id].userDictionary[member.id];
+        saveUserDictionary(member.guild.id);
+    }
+})
+
+
+client.on('disconnect', (error, code) => {
+    console.log(`Disconnect encountered (Error code ${code}):\n${error}\n---Restarting`)
+    login();
+})
+
+
+client.on('error', (error) => {
+    console.log(`Error encountered:\n${error}\n---Restarting`);
+    login();
 })
 
 
@@ -405,45 +407,50 @@ function recordCommand(arguments, receivedMessage) {
 }
 
 
-function lookupCommand(arguments, receivedMessage) {
+function lookupCommand(arguments, receivedMessage, shortcut = false) {
     let cachedGuild = guildDictionary[receivedMessage.guild.id];
 
     if (arguments["userMentions"].length == 1) {
-        var user = arguments["userMentions"][0].user;
+        if (arguments["userMentions"][0]) {
+            var user = arguments["userMentions"][0].user;
 
-        if (!user.bot) {
-            if (lookupOverloads.includes(arguments["command"])) {
-                var platform = arguments["words"][0].toLowerCase();
-            } else {
-                var platform = arguments["command"].toLowerCase();
-            }
-
-            if (Object.keys(cachedGuild.platformsList).includes(platform)) {
-                if (!cachedGuild.userDictionary[user.id] || !cachedGuild.userDictionary[user.id][platform].value) {
-                    // Error Message
-                    receivedMessage.channel.send(`${user} has not set a ${platform} ${cachedGuild.platformsList[platform].term} in this server's DirectoryBot yet.`);
+            if (!user.bot) {
+                if (shortcut) {
+                    var platform = arguments["command"].toLowerCase();
                 } else {
-                    receivedMessage.author.send(`${user} has set ${cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value ? cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value : 'their'} ${platform} ${cachedGuild.platformsList[platform].term} in ${receivedMessage.guild.name} as **${cachedGuild.userDictionary[user.id][platform].value}**.`).then(sentMessage => {
-                        setTimeout(function () {
-                            sentMessage.edit(`Your lookup of ${user}'s ${platform} ${cachedGuild.platformsList[platform].term} from ${receivedMessage.guild.name} has expired.`);
-                        }, infoLifetime);
-                    });
+                    var platform = arguments["words"][0].toLowerCase();
+                }
+
+                if (Object.keys(cachedGuild.platformsList).includes(platform)) {
+                    if (!cachedGuild.userDictionary[user.id] || !cachedGuild.userDictionary[user.id][platform].value) {
+                        // Error Message
+                        receivedMessage.channel.send(`${user} has not set a ${platform} ${cachedGuild.platformsList[platform].term} in this server's DirectoryBot yet.`);
+                    } else {
+                        receivedMessage.author.send(`${user} has set ${cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value ? cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value : 'their'} ${platform} ${cachedGuild.platformsList[platform].term} in ${receivedMessage.guild.name} as **${cachedGuild.userDictionary[user.id][platform].value}**.`).then(sentMessage => {
+                            setTimeout(function () {
+                                sentMessage.edit(`Your lookup of ${user}'s ${platform} ${cachedGuild.platformsList[platform].term} from ${receivedMessage.guild.name} has expired.`);
+                            }, infoLifetime);
+                        });
+                    }
+                } else {
+                    // Error Message
+                    receivedMessage.author.send(`${platform} is not currently being tracked in ${receivedMessage.guild}.`)
                 }
             } else {
                 // Error Message
-                receivedMessage.author.send(`${platform} is not currently being tracked in ${receivedMessage.guild}.`)
+                receivedMessage.author.send(`${user} is a bot. Though bots do not have friend codes, Imaginary Horizons Productions definitely welcomes our coming robot overlords.`);
             }
         } else {
             // Error Message
-            receivedMessage.author.send(`${user} is a bot. Though bots do not have friend codes, Imaginary Horizons Productions definitely welcomes our coming robot overlords.`);
+            receivedMessage.author.send(`That person isn't a member of ${receivedMessage.guild}.`);
         }
     } else {
         var platform = "";
 
-        if (lookupOverloads.includes(arguments["command"])) {
-            platform = arguments["words"][0].toLowerCase();
-        } else {
+        if (shortcut) {
             platform = arguments["command"].toLowerCase();
+        } else {
+            platform = arguments["words"][0].toLowerCase();
         }
 
         if (Object.keys(cachedGuild.platformsList).includes(platform)) {
@@ -470,23 +477,28 @@ function sendCommand(arguments, receivedMessage) {
     let cachedGuild = guildDictionary[receivedMessage.guild.id];
 
     if (arguments["userMentions"].length >= 1) {
-        var platform = arguments["words"][0].toLowerCase();
-        if (Object.keys(cachedGuild.platformsList).includes(platform)) {
-            if (cachedGuild.userDictionary[receivedMessage.author.id] && cachedGuild.userDictionary[receivedMessage.author.id][platform].value) {
-                arguments["userMentions"].forEach(recipient => {
-                    recipient.send(`${receivedMessage.author.username} has sent you ${cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value ? cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value : 'their'} ${platform} ${cachedGuild.platformsList[platform].term}. It is: ${cachedGuild.userDictionary[receivedMessage.author.id][platform].value}`).then(sentMessage => {
-                        setTimeout(function () {
-                            sentMessage.edit(`${receivedMessage.author.username} has sent you ${cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value ? cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value : 'their'} ${platform} ${cachedGuild.platformsList[platform].term}, but it's expired. You can look it up again with \`@DirectoryBot lookup @${receivedMessage.author.username} ${platform}\`.`);
-                        }, infoLifetime);
-                    });
-                })
+        if (arguments["userMentions"][0]) {
+            var platform = arguments["words"][0].toLowerCase();
+            if (Object.keys(cachedGuild.platformsList).includes(platform)) {
+                if (cachedGuild.userDictionary[receivedMessage.author.id] && cachedGuild.userDictionary[receivedMessage.author.id][platform].value) {
+                    arguments["userMentions"].forEach(recipient => {
+                        recipient.send(`${receivedMessage.author.username} has sent you ${cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value ? cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value : 'their'} ${platform} ${cachedGuild.platformsList[platform].term}. It is: ${cachedGuild.userDictionary[receivedMessage.author.id][platform].value}`).then(sentMessage => {
+                            setTimeout(function () {
+                                sentMessage.edit(`${receivedMessage.author.username} has sent you ${cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value ? cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value : 'their'} ${platform} ${cachedGuild.platformsList[platform].term}, but it's expired. You can look it up again with \`@DirectoryBot lookup @${receivedMessage.author.username} ${platform}\`.`);
+                            }, infoLifetime);
+                        });
+                    })
+                } else {
+                    // Error Message
+                    receivedMessage.author.send(`You have not recorded a ${platform} ${cachedGuild.platformsList[platform].term} in ${receivedMessage.guild}.`);
+                }
             } else {
                 // Error Message
-                receivedMessage.author.send(`You have not recorded a ${platform} ${cachedGuild.platformsList[platform].term} in ${receivedMessage.guild}.`);
+                receivedMessage.author.send(`${platform} is not currently being tracked in ${receivedMessage.guild}.`)
             }
         } else {
             // Error Message
-            receivedMessage.author.send(`${platform} is not currently being tracked in ${receivedMessage.guild}.`)
+            receivedMessage.author.send(`That person isn't a member of ${receivedMessage.guild}.`);
         }
     } else {
         // Error Message
@@ -529,27 +541,32 @@ function deleteCommand(arguments, receivedMessage) {
     var reason = msgList.join(" ");
 
     if (arguments["userMentions"].length == 1) {
-        if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(cachedGuild.opRole)) {
-            if (Object.keys(cachedGuild.platformsList).includes(platform)) {
-                var target = arguments["userMentions"][0];
+        if (arguments["userMentions"][0]) {
+            if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(cachedGuild.opRole)) {
+                if (Object.keys(cachedGuild.platformsList).includes(platform)) {
+                    var target = arguments["userMentions"][0];
 
-                if (cachedGuild.userDictionary[target.id] && cachedGuild.userDictionary[target.id][platform].value) {
-                    cachedGuild.userDictionary[target.id][platform] = new FriendCode();
-                    target.send(`Your ${platform} ${cachedGuild.platformsList[platform].term} has been removed from ${receivedMessage.guild} because ${reason}.`); //TODO allow a reason to be passed
-                    syncUserRolePlatform(target, platform, receivedMessage.guild.id);
-                    saveUserDictionary(receivedMessage.guild.id);
-                    receivedMessage.author.send(`You have removed ${target}'s ${platform} ${cachedGuild.platformsList[platform].term} from ${receivedMessage.guild}.`);
+                    if (cachedGuild.userDictionary[target.id] && cachedGuild.userDictionary[target.id][platform].value) {
+                        cachedGuild.userDictionary[target.id][platform] = new FriendCode();
+                        target.send(`Your ${platform} ${cachedGuild.platformsList[platform].term} has been removed${reason ? ` from ${receivedMessage.guild} because ${reason}` : ""}.`);
+                        syncUserRolePlatform(target, platform, receivedMessage.guild.id);
+                        saveUserDictionary(receivedMessage.guild.id);
+                        receivedMessage.author.send(`You have removed ${target}'s ${platform} ${cachedGuild.platformsList[platform].term} from ${receivedMessage.guild}.`);
+                    } else {
+                        // Error Message
+                        receivedMessage.author.send(`${target} does not have a ${platform} ${cachedGuild.platformsList[platform].term} recorded in ${receivedMessage.guild}.`);
+                    }
                 } else {
                     // Error Message
-                    receivedMessage.author.send(`${target} does not have a ${platform} ${cachedGuild.platformsList[platform].term} recorded in ${receivedMessage.guild}.`);
+                    receivedMessage.author.send(`You need a role with administrator privileges${cachedGuild.opRole ? ` or the role @${receivedMessage.guild.roles.get(cachedGuild.opRole).name}` : ""} to remove ${cachedGuild.platformsList[platform].term}s for others.`);
                 }
             } else {
                 // Error Message
-                receivedMessage.author.send(`You need a role with administrator privileges${cachedGuild.opRole ? ` or the role @${receivedMessage.guild.roles.get(cachedGuild.opRole).name}` : ""} to remove ${cachedGuild.platformsList[platform].term}s for others.`);
+                receivedMessage.author.send(`${platform} is not currently being tracked in ${receivedMessage.guild}.`)
             }
         } else {
             // Error Message
-            receivedMessage.author.send(`${platform} is not currently being tracked in ${receivedMessage.guild}.`)
+            receivedMessage.author.send(`That person isn't a member of ${receivedMessage.guild}.`);
         }
     } else {
         if (Object.keys(cachedGuild.platformsList).includes(platform)) {
@@ -747,6 +764,33 @@ function setPlatformRoleCommand(arguments, receivedMessage) {
         // Error Message
         receivedMessage.author.send(`You need a role with administrator privileges${cachedGuild.opRole ? ` or the role @${receivedMessage.guild.roles.get(cachedGuild.opRole).name}` : ""} to remove platforms.`);
     }
+}
+
+
+function login() {
+    fs.readFile(`encryptionKey.txt`, `utf8`, (error, keyInput) => {
+        if (error) {
+            console.log(error);
+        } else {
+            fs.readFile("guildsList.txt", 'utf8', (error, guildsListInput) => {
+                if (error) {
+                    console.log(error);
+                } else {
+                    participatingGuildsIDs = JSON.parse(encrypter.AES.decrypt(guildsListInput, keyInput).toString(encrypter.enc.Utf8))["list"];
+                }
+
+                fs.readFile("authentication.json", 'utf8', (error, authenticationInput) => {
+                    if (error) {
+                        console.log(error);
+                    } else {
+                        var authentication = {};
+                        Object.assign(authentication, JSON.parse(authenticationInput));
+                        client.login(authentication["token"]);
+                    }
+                });
+            });
+        }
+    })
 }
 
 

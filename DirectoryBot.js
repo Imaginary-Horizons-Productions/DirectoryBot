@@ -31,7 +31,7 @@ class PlatformData {
 }
 
 
-var helpOverloads = ["help"];
+var helpOverloads = ["help", "commands"];
 var convertOverloads = ["convert"];
 var countdownOverloads = ["countdown"];
 var multistreamOverloads = ["multistream", "multitwitch"];
@@ -44,6 +44,7 @@ var deleteOverloads = ["delete", "remove", "clear"];
 var platformsOverloads = ["platforms"];
 var creditsOverloads = ["credits", "creditz", "about"];
 var setoproleOverloads = ["setoprole"];
+var clearoproleOverloads = ["clearoprole"];
 var newplatformOverloads = ["newplatform", "addplatform"];
 var changeplatformtermOverloads = ["changeplatformterm", "setplatformterm"];
 var removeplatformOverloads = ["removeplatform"];
@@ -195,6 +196,8 @@ client.on('message', (receivedMessage) => {
                         creditsCommand(receivedMessage);
                     } else if (setoproleOverloads.includes(arguments["command"])) {
                         setOpRoleCommand(arguments, receivedMessage);
+                    } else if (clearoproleOverloads.includes(arguments["command"])) {
+                        clearOpRoleCommand(receivedMessage);
                     } else if (newplatformOverloads.includes(arguments["command"])) {
                         newPlatformCommand(arguments, receivedMessage);
                     } else if (changeplatformtermOverloads.includes(arguments["command"])) {
@@ -248,13 +251,17 @@ client.on('guildMemberRemove', (member) => {
 
 
 client.on('disconnect', (error, code) => {
-    console.log(`Disconnect encountered (Error code ${code}):\n${error}\n---Restarting`)
+    console.log(`Disconnect encountered (Error code ${code}):`);
+    console.log(error);
+    console.log(`---Restarting`);
     login();
 })
 
 
 client.on('error', (error) => {
-    console.log(`Error encountered:\n${error}\n---Restarting`);
+    console.log(`Error encountered:`);
+    console.log(error);
+    console.log(`---Restarting`);
     login();
 })
 
@@ -265,6 +272,8 @@ function helpCommand(arguments, receivedMessage) {
     if (arguments["words"][0] == "admin" || arguments["words"][0] == "op" || arguments["words"][0] == "operator") {
         if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(cachedGuild.opRole)) {
             receivedMessage.author.send(`The operator commands are as follows:\n\
+*setoprole* - Sets the operator role to the given role\n\
+*clearoprole* - Resets the operator role to none\n\
 *newplatform* - Setup a new game/service for users to record or retrieve information for\n\
 *changeplatformterm* - Changes what DirectoryBot calls information for the given platform\n\
 *removeplatform* - Stop recording and distributing user information for a game/service\n\
@@ -322,6 +331,13 @@ Syntax: \`@DirectoryBot setoprole (role)\``);
         } else {
             receivedMessage.author.send(`You need a role with administrator privileges${cachedGuild.opRole ? ` or the role @${receivedMessage.guild.roles.get(cachedGuild.opRole).name}` : ""} to view operator commands.`);
         }
+    } else if (clearoproleOverloads.includes(arguments["words"][0])) {
+        if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(cachedGuild.opRole)) {
+            receivedMessage.author.send(`The *clearoprole* command sets the operator role back to none.\n\
+Syntax: \`@DirectoryBot clearoprole\``);
+        } else {
+            receivedMessage.author.send(`You need a role with administrator privileges${cachedGuild.opRole ? ` or the role @${receivedMessage.guild.roles.get(cachedGuild.opRole).name}` : ""} to view operator commands.`);
+        }
     } else if (newplatformOverloads.includes(arguments["words"][0])) {
         if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(cachedGuild.opRole)) {
             receivedMessage.author.send(`The *newplatform* command sets up a new game/service for users to record and retrieve information. Optionally, you can set a term to call the information that is being stored (default is "username").\n\
@@ -355,12 +371,12 @@ Syntax: \`@DirectoryBot setplatformrole (platform) (role)\``)
 *convert* - Convert a time to someone else's timezone or a given timezone\n\
 *countdown* - How long until the given time\n\
 *multistream* - Generate a multistream link for the given users\n\
+*shoutout* - Have DirectoryBot post someone's stream information\n\
 *platforms* - List the games/services DirectoryBot can be used to record or retrieve information for (using help on this command uses the command)\n\
 *record* - Record your information for a platform\n\
 *lookup* - Look up someone else's information if they've recorded it\n\
 *send* - Have DirectoryBot send someone your information\n\
 *whois* - Ask DirectoryBot who a certain username belongs to\n\
-*shoutout* - Have DirectoryBot post someone's stream information\n\
 *delete* - Remove your information for a platform\n\
 *credits* - Version info and contributors (using help on this command uses the command)\n\
 (and *help*).\n\
@@ -619,6 +635,25 @@ You sent: ${receivedMessage}`);
     } else {
         // Error Message
         receivedMessage.author.send(`You need a role with administrator privileges${cachedGuild.opRole ? ` or the role @${receivedMessage.guild.roles.get(cachedGuild.opRole).name}` : ""} to change the operator role.`);
+    }
+}
+
+
+function clearOpRoleCommand(receivedMessage) {
+    let cachedGuild = guildDictionary[receivedMessage.guild.id];
+
+    if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(cachedGuild.opRole)) {
+        if (cachedGuild.opRole) {
+            cachedGuild.opRole = null;
+            receivedMessage.author.send(`The operator role for ${receivedMessage.guild}'s DirectoryBot has been cleared.`);
+            saveOpRole(receivedMessage.guild.id);
+        } else {
+            // Error Message
+            receivedMessage.author.send(`${receivedMessage.guild.name} is already lacking an operator role.`);
+        }
+    } else {
+        // Error Message
+        receivedMessage.author.send(`You need a role with administrator privileges${cachedGuild.opRole ? ` or the role @${receivedMessage.guild.roles.get(cachedGuild.opRole).name}` : ""} to clear the operator role.`);
     }
 }
 

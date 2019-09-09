@@ -69,6 +69,7 @@ Syntax: `@DirectoryBot convert (time) in (timezone) for (user)`
 States the (time) in (timezone1) as its equivalent for (user) based on (user)'s declared timezone. Assumes sender's timezone if (timezone) is omitted.
 
 Syntax: `@DirectoryBot (time) in (timezone) for (user)`
+\
 A shorter version of the previous syntax.
 
 Syntax: `@DirectoryBot convert (time) in (timezone1) to (timezone2)`

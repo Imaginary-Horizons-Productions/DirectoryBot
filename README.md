@@ -41,7 +41,7 @@ Syntax: `@DirectoryBot lookup (platform)`
 \
 Private messages sender with everyone's stored information for the (platform).
 
-### send (AKA: tell)
+#### send (AKA: tell)
 Syntax: `@DirectoryBot send (user) (platform)`
 \
 Private messages the (user) with your information for the (platform).

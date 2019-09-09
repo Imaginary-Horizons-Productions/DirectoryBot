@@ -14,27 +14,24 @@ DirectoryBot is a Discord bot that stores friend codes, converts timezones, and 
 If you leave a server, DirectoryBot will delete all of your data. If you kick DirectoryBot, it will delete everyoe's data.
 
 ## Commands
-#### help
-(AKA: commands)
-
+#### help (AKA: commands)
 Syntax: `@DirectoryBot help`
 \
-Lists commands and summaries of their functions.
+Lists all DirectoryBot's commands that are accessible to you and summaries of their functions.
 
 Syntax: `@DirectoryBot help (command)`
 \
-Explains the command and provides a syntax example.
+Explains the (command) and provides a syntax example.
 
-#### record
-(AKA: log)
+#### record (AKA: log)
 Syntax: `@DirectoryBot record (platform) (information)`
 \
-Stores the sender's information for the declared platform.
+Stores your (platform) (information). For example `@DirectoryBot timezone America/Los_Angeles` would have DirectoryBot record "America/Los_Angeles" as your entry for "timezone".
 
 #### lookup
 Syntax: `@DirectoryBot lookup (platform) (user)`
 \
-Private messages sender with user's stored information for the platform.
+Private messages sender with (user)'s stored information for the (platform).
 
 Syntax: `@DirectoryBot (platform) (user)`
 \
@@ -42,16 +39,14 @@ A shorter version of the previous syntax.
 
 Syntax: `@DirectoryBot lookup (platform)`
 \
-Private messages sender with everyone's stored information for platform.
+Private messages sender with everyone's stored information for the (platform).
 
-### send
-(AKA: tell)
+### send (AKA: tell)
 Syntax: `@DirectoryBot send (user) (platform)`
 \
-Private messages the user with your information for the platform.
+Private messages the (user) with your information for the (platform).
 
-#### delete
-(AKA: remove, clear)
+#### delete (AKA: remove, clear)
 Syntax: `@DirectoryBot delete (platform)`
 \
 Deletes the information for the sender in (platform).
@@ -61,8 +56,7 @@ Syntax: `@DirectoryBot platforms`
 \
 States a list of platforms currently tracked by DirectoryBot.
 
-#### creditz
-(AKA: credits, about)
+#### creditz (AKA: credits, about)
 Syntax: `@DirectoryBot credits`
 \
 Lists version info and contributors.
@@ -70,13 +64,16 @@ Lists version info and contributors.
 ### Time Module
 The time module contains commands for converting time zones, which users can store in the default platform "timezone".
 #### convert
-Syntax: `@DirectoryBot convert (time) in (timezone1) to (timezone2)`
-\
-States the (time) in (timezone1) as its equivalent in (timezone2). Assumes sender's timezone if (timezone1) is omitted.
-
 Syntax: `@DirectoryBot convert (time) in (timezone) for (user)`
 \
 States the (time) in (timezone1) as its equivalent for (user) based on (user)'s declared timezone. Assumes sender's timezone if (timezone) is omitted.
+
+Syntax: `@DirectoryBot (time) in (timezone) for (user)`
+A shorter version of the previous syntax.
+
+Syntax: `@DirectoryBot convert (time) in (timezone1) to (timezone2)`
+\
+States the (time) in (timezone1) as its equivalent in (timezone2). Assumes sender's timezone if (timezone1) is omitted.
 
 #### countdown
 Syntax: `@DirectoryBot countdown (time) in (timezone)`
@@ -85,15 +82,12 @@ States how long until (time) in (timezone1) for the sender.
 
 ### Streaming Module
 The streaming module contains commands for supporting live-streamers.
-#### multistream
-(AKA: multitwitch)
-
+#### multistream (AKA: multitwitch)
 Syntax: `@DirectoryBot multistream (list of users) (layout)`
 \
 Generates a multistre.am link for all (user)s based on the users' recorded Twitch accounts with the specified (layout).
 
-#### shoutout
-(AKA: streamshoutout)
+#### shoutout (AKA: streamshoutout)
 Syntax: `@DirectoryBot shoutout (user)`
 \
 Posts a link to the user's stream!
@@ -105,14 +99,12 @@ Syntax: `@DirectoryBot setoprole (role)`
 \
 Sets the operator role for DirectoryBot. Users with that role can use the operator commands without Discord administrator privileges. If no role is given, the op role will be cleared.
 
-#### newplatform
-(AKA: addplatform)
+#### newplatform (AKA: addplatform)
 Syntax `@DirectoryBot newplatform (platform)`
 \
 Adds (platform) to the list of tracked platforms, allowing users to add their information for that platform.
 
-#### changeplatformterm
-(AKA: setplatformterm)
+#### changeplatformterm (AKA: setplatformterm)
 Syntax: `@DirectoryBot changeplatformterm (platform) (term)`
 \
 Changes what DirectoryBot calls information from the given platform (default is "username").

@@ -15,7 +15,6 @@ If you leave a server, DirectoryBot will delete all of your data. If you kick Di
 
 ## Commands
 #### help
-\
 Syntax: `@DirectoryBot help`
 \
 Lists commands and summaries of their functions.
@@ -25,13 +24,11 @@ Syntax: `@DirectoryBot help (command)`
 Explains the command and provides a syntax example.
 
 #### record
-\
 Syntax: `@DirectoryBot record (platform) (information)`
 \
 Stores the sender's (information) for the declared (platform).
 
 #### lookup
-\
 Syntax: `@DirectoryBot lookup (user) (platform)`
 \
 Private messages sender with (user)'s stored information for (platform).
@@ -41,19 +38,16 @@ Syntax: `@DirectoryBot lookup (platform)`
 Private messages sender with everyone's stored information for (platform).
 
 #### delete
-\
 Syntax: `@DirectoryBot delete (platform)`
 \
 Deletes the information for the sender in (platform).
 
 #### platforms
-\
 Syntax: `@DirectoryBot platforms`
 \
 States a list of platforms currently tracked by DirectoryBot.
 
 #### credits
-\
 Syntax: `@DirectoryBot credits`
 \
 Lists version info and contributors.
@@ -61,7 +55,6 @@ Lists version info and contributors.
 ### Time Module
 The time module contains commands for converting time zones, which users can store in the default platform "timezone".
 #### convert
-\
 Syntax: `@DirectoryBot convert (time) in (timezone1) to (timezone2)`
 \
 States the (time) in (timezone1) as its equivalent in (timezone2). Assumes sender's timezone if (timezone1) is omitted.
@@ -71,7 +64,6 @@ Syntax: `@DirectoryBot convert (time) in (timezone) for (user)`
 States the (time) in (timezone1) as its equivalent for (user) based on (user)'s declared timezone. Assumes sender's timezone if (timezone) is omitted.
 
 #### countdown
-\
 Syntax: `@DirectoryBot countdown (time) in (timezone)`
 \
 States how long until (time) in (timezone1) for the sender.
@@ -79,13 +71,11 @@ States how long until (time) in (timezone1) for the sender.
 ### Streaming Module
 The streaming module contains commands for supporting live-streamers.
 #### multistream
-\
 Syntax: `@DirectoryBot multistream (list of users) (layout)`
 \
 Generates a multistre.am link for all (user)s based on the users' recorded Twitch accounts with the specified (layout).
 
 #### shoutout
-\
 Syntax: `@DirectoryBot shoutout (user)`
 \
 Posts a link to the user's stream!
@@ -93,25 +83,21 @@ Posts a link to the user's stream!
 ### Operator Commands
 The following commands can only be used by server members who have Discord administrator privledges or the role determined by **setoprole**.
 #### setoprole
-\
 Syntax: `@DirectoryBot setoprole (role)`
 \
 Sets the operator role for DirectoryBot. Users with that role can use the operator commands without Discord administrator privileges. If no role is given, the op role will be cleared.
 
 #### newplatform
-\
 Syntax `@DirectoryBot newplatform (platform)`
 \
 Adds (platform) to the list of tracked platforms, allowing users to add their information for that platform.
 
 #### changeplatformterm
-\
 Syntax: `@DirectoryBot changeplatformterm (platform) (term)`
 \
 Changes what DirectoryBot calls information from the given platform (default is "username").
 
 #### removeplatform
-\
 Syntax: `@DirectoryBot removeplatform (platform)`
 \
 Removes (platform) from the list of tracked platforms.

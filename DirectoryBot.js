@@ -44,7 +44,6 @@ var deleteOverloads = ["delete", "remove", "clear"];
 var platformsOverloads = ["platforms"];
 var creditsOverloads = ["credits", "creditz", "about"];
 var setoproleOverloads = ["setoprole"];
-var clearoproleOverloads = ["clearoprole"];
 var newplatformOverloads = ["newplatform", "addplatform"];
 var changeplatformtermOverloads = ["changeplatformterm", "setplatformterm"];
 var removeplatformOverloads = ["removeplatform"];
@@ -196,8 +195,6 @@ client.on('message', (receivedMessage) => {
                         creditsCommand(receivedMessage);
                     } else if (setoproleOverloads.includes(arguments["command"])) {
                         setOpRoleCommand(arguments, receivedMessage);
-                    } else if (clearoproleOverloads.includes(arguments["command"])) {
-                        clearOpRoleCommand(receivedMessage);
                     } else if (newplatformOverloads.includes(arguments["command"])) {
                         newPlatformCommand(arguments, receivedMessage);
                     } else if (changeplatformtermOverloads.includes(arguments["command"])) {
@@ -269,20 +266,7 @@ client.on('error', (error) => {
 function helpCommand(arguments, receivedMessage) {
     let cachedGuild = guildDictionary[receivedMessage.guild.id];
 
-    if (arguments["words"][0] == "admin" || arguments["words"][0] == "op" || arguments["words"][0] == "operator") {
-        if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(cachedGuild.opRole)) {
-            receivedMessage.author.send(`The operator commands are as follows:\n\
-*setoprole* - Sets the operator role to the given role\n\
-*clearoprole* - Resets the operator role to none\n\
-*newplatform* - Setup a new game/service for users to record or retrieve information for\n\
-*changeplatformterm* - Changes what DirectoryBot calls information for the given platform\n\
-*removeplatform* - Stop recording and distributing user information for a game/service\n\
-*setplatformrole* - Automatically give a role to users who record information for a platform\n\
-*delete* for other users`);
-        } else {
-            receivedMessage.author.send(`You need a role with administrator privileges${cachedGuild.opRole ? ` or the role @${receivedMessage.guild.roles.get(cachedGuild.opRole).name}` : ""} to view the operator commands.`);
-        }
-    } else if (convertOverloads.includes(arguments["words"][0])) {
+    if (convertOverloads.includes(arguments["words"][0])) {
         receivedMessage.author.send(`The *convert* command calculates a time for a given user. DirectoryBot uses IANA specified timezones.\n\
 Syntax: \`@DirectoryBot convert (time) in (starting timezone) for (user)\`\n\
 \n\
@@ -331,13 +315,6 @@ Syntax: \`@DirectoryBot setoprole (role)\``);
         } else {
             receivedMessage.author.send(`You need a role with administrator privileges${cachedGuild.opRole ? ` or the role @${receivedMessage.guild.roles.get(cachedGuild.opRole).name}` : ""} to view operator commands.`);
         }
-    } else if (clearoproleOverloads.includes(arguments["words"][0])) {
-        if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(cachedGuild.opRole)) {
-            receivedMessage.author.send(`The *clearoprole* command sets the operator role back to none.\n\
-Syntax: \`@DirectoryBot clearoprole\``);
-        } else {
-            receivedMessage.author.send(`You need a role with administrator privileges${cachedGuild.opRole ? ` or the role @${receivedMessage.guild.roles.get(cachedGuild.opRole).name}` : ""} to view operator commands.`);
-        }
     } else if (newplatformOverloads.includes(arguments["words"][0])) {
         if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(cachedGuild.opRole)) {
             receivedMessage.author.send(`The *newplatform* command sets up a new game/service for users to record and retrieve information. Optionally, you can set a term to call the information that is being stored (default is "username").\n\
@@ -367,20 +344,32 @@ Syntax: \`@DirectoryBot setplatformrole (platform) (role)\``)
             receivedMessage.author.send(`You need a role with administrator privileges${cachedGuild.opRole ? ` or the role @${receivedMessage.guild.roles.get(cachedGuild.opRole).name}` : ""} to view operator commands.`);
         }
     } else {
-        receivedMessage.author.send(`Here are all of DirectoryBot's commands:\n\
-*convert* - Convert a time to someone else's timezone or a given timezone\n\
-*countdown* - How long until the given time\n\
-*multistream* - Generate a multistream link for the given users\n\
-*shoutout* - Have DirectoryBot post someone's stream information\n\
-*platforms* - List the games/services DirectoryBot can be used to record or retrieve information for (using help on this command uses the command)\n\
-*record* - Record your information for a platform\n\
-*lookup* - Look up someone else's information if they've recorded it\n\
-*send* - Have DirectoryBot send someone your information\n\
-*whois* - Ask DirectoryBot who a certain username belongs to\n\
-*delete* - Remove your information for a platform\n\
-*credits* - Version info and contributors (using help on this command uses the command)\n\
-(and *help*).\n\
-You can type \`@directorybot help\` followed by one of those for specific instructions. If you are looking for operator commands, type \`@DirectoryBot help op\`.`);
+        var helpSummary = `Here are all of DirectoryBot's commands:\n\
+**record** - Record your information for a platform\n\
+**lookup** - Look up someone else's information if they've recorded it\n\
+**send** - Have DirectoryBot send someone your information\n\
+**whois** - Ask DirectoryBot who a certain username belongs to\n\
+**delete** - Remove your information for a platform\n\
+**platforms** - List the games/services DirectoryBot can be used to record or retrieve information for (using help on this command uses the command)\n\
+**convert** - Convert a time to someone else's timezone or a given timezone\n\
+**countdown** - How long until the given time\n\
+**multistream** - Generate a multistream link for the given users\n\
+**shoutout** - Have DirectoryBot post someone's stream information\n\
+**credits** - Version info and contributors (using help on this command uses the command)\n\
+(and *help*)`;
+
+        if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(cachedGuild.opRole)) {
+            helpSummary += `\n\nThe operator only commands are as follows:\n\
+**setoprole** - Sets the operator role to the given role; not mentioning a role resets the op role to none\n\
+**newplatform** - Setup a new game/service for users to record or retrieve information for\n\
+**changeplatformterm** - Changes what DirectoryBot calls information for the given platform\n\
+**removeplatform** - Stop recording and distributing user information for a game/service\n\
+**setplatformrole** - Automatically give a role to users who record information for a platform\n\
+**delete** for other users`;
+        }
+
+        helpSummary += `\n\nYou can type \`@directorybot help\` followed by one of those for specific instructions. If you are looking for operator commands, type \`@DirectoryBot help op\`.`;
+        receivedMessage.author.send(helpSummary);
     }
 }
 
@@ -620,40 +609,25 @@ function setOpRoleCommand(arguments, receivedMessage) {
         if (arguments["roleMentions"].length > 0) {
             if (cachedGuild.opRole != arguments["roleMentions"][0]) {
                 cachedGuild.opRole = arguments["roleMentions"][0];
-                receivedMessage.author.send(`The operator role for ${receivedMessage.guild}'s DirectoryBot has been set to @${receivedMessage.guild.roles.get(arguments["roleMentions"][0]).name}.`);
+                receivedMessage.channel.send(`The DirectoryBot operator role has been set to @${receivedMessage.guild.roles.get(arguments["roleMentions"][0]).name}.`);
                 saveOpRole(receivedMessage.guild.id);
             } else {
                 // Error Message
                 receivedMessage.author.send(`${receivedMessage.guild.name}'s operator role already is @${receivedMessage.guild.roles.get(arguments["roleMentions"][0]).name}.`);
             }
         } else {
-            // Error Message
-            receivedMessage.author.send(`Please mention a role to set the ${receivedMessage.guild}'s DirectoryBot operator role to.\n\
-\n\
-You sent: ${receivedMessage}`);
+            if (cachedGuild.opRole) {
+                cachedGuild.opRole = null;
+                receivedMessage.channel.send(`The DirectoryBot operator role has been cleared.`);
+                saveOpRole(receivedMessage.guild.id);
+            } else {
+                // Error Message
+                receivedMessage.author.send(`${receivedMessage.guild.name} is already lacking an operator role.`);
+            }
         }
     } else {
         // Error Message
         receivedMessage.author.send(`You need a role with administrator privileges${cachedGuild.opRole ? ` or the role @${receivedMessage.guild.roles.get(cachedGuild.opRole).name}` : ""} to change the operator role.`);
-    }
-}
-
-
-function clearOpRoleCommand(receivedMessage) {
-    let cachedGuild = guildDictionary[receivedMessage.guild.id];
-
-    if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(cachedGuild.opRole)) {
-        if (cachedGuild.opRole) {
-            cachedGuild.opRole = null;
-            receivedMessage.author.send(`The operator role for ${receivedMessage.guild}'s DirectoryBot has been cleared.`);
-            saveOpRole(receivedMessage.guild.id);
-        } else {
-            // Error Message
-            receivedMessage.author.send(`${receivedMessage.guild.name} is already lacking an operator role.`);
-        }
-    } else {
-        // Error Message
-        receivedMessage.author.send(`You need a role with administrator privileges${cachedGuild.opRole ? ` or the role @${receivedMessage.guild.roles.get(cachedGuild.opRole).name}` : ""} to clear the operator role.`);
     }
 }
 

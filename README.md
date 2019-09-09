@@ -15,6 +15,8 @@ If you leave a server, DirectoryBot will delete all of your data. If you kick Di
 
 ## Commands
 #### help
+(AKA: commands)
+
 Syntax: `@DirectoryBot help`
 \
 Lists commands and summaries of their functions.
@@ -24,20 +26,32 @@ Syntax: `@DirectoryBot help (command)`
 Explains the command and provides a syntax example.
 
 #### record
+(AKA: log)
 Syntax: `@DirectoryBot record (platform) (information)`
 \
-Stores the sender's (information) for the declared (platform).
+Stores the sender's information for the declared platform.
 
 #### lookup
-Syntax: `@DirectoryBot lookup (user) (platform)`
+Syntax: `@DirectoryBot lookup (platform) (user)`
 \
-Private messages sender with (user)'s stored information for (platform).
+Private messages sender with user's stored information for the platform.
+
+Syntax: `@DirectoryBot (platform) (user)`
+\
+A shorter version of the previous syntax.
 
 Syntax: `@DirectoryBot lookup (platform)`
 \
-Private messages sender with everyone's stored information for (platform).
+Private messages sender with everyone's stored information for platform.
+
+### send
+(AKA: tell)
+Syntax: `@DirectoryBot send (user) (platform)`
+\
+Private messages the user with your information for the platform.
 
 #### delete
+(AKA: remove, clear)
 Syntax: `@DirectoryBot delete (platform)`
 \
 Deletes the information for the sender in (platform).
@@ -47,7 +61,8 @@ Syntax: `@DirectoryBot platforms`
 \
 States a list of platforms currently tracked by DirectoryBot.
 
-#### credits
+#### creditz
+(AKA: credits, about)
 Syntax: `@DirectoryBot credits`
 \
 Lists version info and contributors.
@@ -71,11 +86,14 @@ States how long until (time) in (timezone1) for the sender.
 ### Streaming Module
 The streaming module contains commands for supporting live-streamers.
 #### multistream
+(AKA: multitwitch)
+
 Syntax: `@DirectoryBot multistream (list of users) (layout)`
 \
 Generates a multistre.am link for all (user)s based on the users' recorded Twitch accounts with the specified (layout).
 
 #### shoutout
+(AKA: streamshoutout)
 Syntax: `@DirectoryBot shoutout (user)`
 \
 Posts a link to the user's stream!
@@ -88,11 +106,13 @@ Syntax: `@DirectoryBot setoprole (role)`
 Sets the operator role for DirectoryBot. Users with that role can use the operator commands without Discord administrator privileges. If no role is given, the op role will be cleared.
 
 #### newplatform
+(AKA: addplatform)
 Syntax `@DirectoryBot newplatform (platform)`
 \
 Adds (platform) to the list of tracked platforms, allowing users to add their information for that platform.
 
 #### changeplatformterm
+(AKA: setplatformterm)
 Syntax: `@DirectoryBot changeplatformterm (platform) (term)`
 \
 Changes what DirectoryBot calls information from the given platform (default is "username").

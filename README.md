@@ -18,10 +18,10 @@ If you leave a server, DirectoryBot will delete all of your data. If you kick Di
 Syntax: `@DirectoryBot help`
 
 Lists commands and summaries of their functions.
-
+\n\
 Syntax: `@DirectoryBot help (command)`
 
-Explains the function and syntax for (command).
+Explains the command and provides a syntax example.
 
 #### record
 Syntax: `@DirectoryBot record (platform) (information)`
@@ -32,7 +32,7 @@ Stores the sender's (information) for the declared (platform).
 Syntax: `@DirectoryBot lookup (user) (platform)`
 
 Private messages sender with (user)'s stored information for (platform).
-
+\n\
 Syntax: `@DirectoryBot lookup (platform)`
 
 Private messages sender with everyone's stored information for (platform).
@@ -58,7 +58,7 @@ The time module contains commands for converting time zones, which users can sto
 Syntax: `@DirectoryBot convert (time) in (timezone1) to (timezone2)`
 
 States the (time) in (timezone1) as its equivalent in (timezone2). Assumes sender's timezone if (timezone1) is omitted.
-
+\n\
 Syntax: `@DirectoryBot convert (time) in (timezone) for (user)`
 
 States the (time) in (timezone1) as its equivalent for (user) based on (user)'s declared timezone. Assumes sender's timezone if (timezone) is omitted.
@@ -85,12 +85,7 @@ The following commands can only be used by server members who have Discord admin
 #### setoprole
 Syntax: `@DirectoryBot setoprole (role)`
 
-Sets the operator role for DirectoryBot. Users with that role can use the operator commands without Discord administrator privileges.
-
-#### clearoprole
-Syntax: `@DirectoryBot clearoprole`
-
-Sets the operator role back to none.
+Sets the operator role for DirectoryBot. Users with that role can use the operator commands without Discord administrator privileges. If no role is given, the op role will be cleared.
 
 #### newplatform
 Syntax `@DirectoryBot newplatform (platform)`

@@ -42,6 +42,7 @@ var streamshoutoutOverloads = ["shoutout", "streamshoutout"];
 var whoisOverloads = ["whois"];
 var deleteOverloads = ["delete", "remove", "clear"];
 var platformsOverloads = ["platforms"];
+var supportOverloads = ["support"];
 var creditsOverloads = ["credits", "creditz", "about"];
 var setoproleOverloads = ["setoprole"];
 var newplatformOverloads = ["newplatform", "addplatform"];
@@ -116,7 +117,7 @@ client.on('ready', () => {
         }
     })
 
-    client.user.setActivity("\"@DirectoryBot help\"", { type: "LISTENING" });
+    client.user.setActivity("\"@DirectoryBot help\"", { type: "LISTENING" }).catch(console.error);
     console.log("Connected as " + client.user.tag);
     client.guilds.forEach(guild => {
         console.log("Connected to: " + guild);
@@ -191,6 +192,8 @@ client.on('message', (receivedMessage) => {
                         deleteCommand(arguments, receivedMessage);
                     } else if (platformsOverloads.includes(arguments["command"])) {
                         platformsCommand(receivedMessage);
+                    } else if (supportOverloads.includes(arguments["command"])) {
+                        supportCommand(receivedMessage);
                     } else if (creditsOverloads.includes(arguments["command"])) {
                         creditsCommand(receivedMessage);
                     } else if (setoproleOverloads.includes(arguments["command"])) {
@@ -551,30 +554,30 @@ function deleteCommand(arguments, receivedMessage) {
                     }
                 } else {
                     // Error Message
-                    receivedMessage.author.send(`You need a role with administrator privileges${cachedGuild.opRole ? ` or the role @${receivedMessage.guild.roles.get(cachedGuild.opRole).name}` : ""} to remove ${cachedGuild.platformsList[platform].term}s for others.`);
+                    receivedMessage.author.send(`You need a role with administrator privileges${cachedGuild.opRole ? ` or the role @${receivedMessage.guild.roles.get(cachedGuild.opRole).name}` : ""} to remove ${cachedGuild.platformsList[platform].term}s for others.`).catch(console.error);
                 }
             } else {
                 // Error Message
-                receivedMessage.author.send(`${platform} is not currently being tracked in ${receivedMessage.guild}.`)
+                receivedMessage.author.send(`${platform} is not currently being tracked in ${receivedMessage.guild}.`).catch(console.error);
             }
         } else {
             // Error Message
-            receivedMessage.author.send(`That person isn't a member of ${receivedMessage.guild}.`);
+            receivedMessage.author.send(`That person isn't a member of ${receivedMessage.guild}.`).catch(console.error);
         }
     } else {
         if (Object.keys(cachedGuild.platformsList).includes(platform)) {
             if (cachedGuild.userDictionary[receivedMessage.author.id] && cachedGuild.userDictionary[receivedMessage.author.id][platform].value) {
                 cachedGuild.userDictionary[receivedMessage.author.id][platform] = new FriendCode();
-                receivedMessage.author.send(`You have removed your ${platform} ${cachedGuild.platformsList[platform].term} from ${receivedMessage.guild}.`);
+                receivedMessage.author.send(`You have removed your ${platform} ${cachedGuild.platformsList[platform].term} from ${receivedMessage.guild}.`).catch(console.error);
                 syncUserRolePlatform(receivedMessage.member, platform, receivedMessage.guild.id);
                 saveUserDictionary(receivedMessage.guild.id);
             } else {
                 // Error Message
-                receivedMessage.author.send(`You do not currently have a ${platform} ${cachedGuild.platformsList[platform].term} recorded in ${receivedMessage.guild}.`);
+                receivedMessage.author.send(`You do not currently have a ${platform} ${cachedGuild.platformsList[platform].term} recorded in ${receivedMessage.guild}.`).catch(console.error);
             }
         } else {
             // Error Message
-            receivedMessage.author.send(`${platform} is not currently being tracked in ${receivedMessage.guild}.`)
+            receivedMessage.author.send(`${platform} is not currently being tracked in ${receivedMessage.guild}.`).catch(console.error);
         }
     }
 }
@@ -583,7 +586,22 @@ function deleteCommand(arguments, receivedMessage) {
 function platformsCommand(receivedMessage) {
     let processedText = Object.keys(guildDictionary[receivedMessage.guild.id].platformsList).toString().replace(/,/g, ', ');
 
-    receivedMessage.channel.send(`This server's tracked platforms are: ${processedText}`);
+    receivedMessage.channel.send(`This server's tracked platforms are: ${processedText}`).catch(console.error);
+}
+
+
+function supportCommand(receivedMessage) {
+    receivedMessage.author.send(`Thank you for using DirectoryBot! Here are some ways to support its development:\n\
+__Vote for us on top.gg__\n\
+top.gg is a Discord bot listing and distrabution service. Voting for DirectoryBot causes it to appear earlier in searches. (Link coming soon)\n\n\
+__Contribute code__\n\
+Check out our github and tackle some issues! <https://github.com/ntseng/DirectoryBot>\n\n\
+__Create some social media buzz__\n\
+Use the hashtags #DirectoryBotDiscord or #ImaginaryHorizonsProductions\n\n\
+__Help us design some graphics__\n\
+We're looking for someone to draw DirectoryBot's avatar icon! Contact <https://twitter.com/Archainis>!\n\n\
+__Chip in for server costs__\n\
+Imaginary Horizons Productions has a Patreon for all of our products and games. Check it out here: https://www.patreon.com/imaginaryhorizonsproductions `).catch(console.error);
 }
 
 
@@ -598,7 +616,7 @@ Lucas Ensign ( <@112785244733628416> | <https://twitter.com/SillySalamndr> )\n\
 DirectoryBot supporters from Patreon: https://www.patreon.com/imaginaryhorizonsproductions\n\
 \n\
 Icon from <https://game-icons.net/1x1/delapouite/spell-book.html> (unedited) under CC BY 3.0 (<https://creativecommons.org/licenses/by/3.0/>)\n\
-If you'd like to contribute an icon (for money), contact <@106122478715150336>!`);
+If you'd like to contribute an icon (for money), contact <@106122478715150336>!`).catch(console.error);
 }
 
 
@@ -609,25 +627,25 @@ function setOpRoleCommand(arguments, receivedMessage) {
         if (arguments["roleMentions"].length > 0) {
             if (cachedGuild.opRole != arguments["roleMentions"][0]) {
                 cachedGuild.opRole = arguments["roleMentions"][0];
-                receivedMessage.channel.send(`The DirectoryBot operator role has been set to @${receivedMessage.guild.roles.get(arguments["roleMentions"][0]).name}.`);
+                receivedMessage.channel.send(`The DirectoryBot operator role has been set to @${receivedMessage.guild.roles.get(arguments["roleMentions"][0]).name}.`).catch(console.error);
                 saveOpRole(receivedMessage.guild.id);
             } else {
                 // Error Message
-                receivedMessage.author.send(`${receivedMessage.guild.name}'s operator role already is @${receivedMessage.guild.roles.get(arguments["roleMentions"][0]).name}.`);
+                receivedMessage.author.send(`${receivedMessage.guild.name}'s operator role already is @${receivedMessage.guild.roles.get(arguments["roleMentions"][0]).name}.`).catch(console.error);
             }
         } else {
             if (cachedGuild.opRole) {
                 cachedGuild.opRole = null;
-                receivedMessage.channel.send(`The DirectoryBot operator role has been cleared.`);
+                receivedMessage.channel.send(`The DirectoryBot operator role has been cleared.`).catch(console.error);
                 saveOpRole(receivedMessage.guild.id);
             } else {
                 // Error Message
-                receivedMessage.author.send(`${receivedMessage.guild.name} is already lacking an operator role.`);
+                receivedMessage.author.send(`${receivedMessage.guild.name} is already lacking an operator role.`).catch(console.error);
             }
         }
     } else {
         // Error Message
-        receivedMessage.author.send(`You need a role with administrator privileges${cachedGuild.opRole ? ` or the role @${receivedMessage.guild.roles.get(cachedGuild.opRole).name}` : ""} to change the operator role.`);
+        receivedMessage.author.send(`You need a role with administrator privileges${cachedGuild.opRole ? ` or the role @${receivedMessage.guild.roles.get(cachedGuild.opRole).name}` : ""} to change the operator role.`).catch(console.error);
     }
 }
 

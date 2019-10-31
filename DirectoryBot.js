@@ -4,6 +4,7 @@ var encrypter = require('crypto-js');
 var chrono = require('chrono-node');
 var timeModule = require('./DirectoryBot_TimeModule.js');
 var streamModule = require('./DirectoryBot_StreamModule.js');
+var helpers = require('./DirectoryBot_Helpers.js');
 
 const client = new Discord.Client();
 
@@ -422,11 +423,12 @@ function lookupCommand(arguments, receivedMessage, shortcut = false) {
                         // Error Message
                         receivedMessage.channel.send(`${user} has not set a ${platform} ${cachedGuild.platformsList[platform].term} in this server's DirectoryBot yet.`);
                     } else {
-                        receivedMessage.author.send(`${user} has set ${cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value ? cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value : 'their'} ${platform} ${cachedGuild.platformsList[platform].term} in ${receivedMessage.guild.name} as **${cachedGuild.userDictionary[user.id][platform].value}**.`).then(sentMessage => {
+                        receivedMessage.author.send(`${user} has set ${cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value ? cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value : 'their'} ${platform} ${cachedGuild.platformsList[platform].term} in ${receivedMessage.guild.name} as **${cachedGuild.userDictionary[user.id][platform].value}**.\n\n\
+This message will expire in about ${helpers.millisecondsToHours(infoLifetime)}.`).then(sentMessage => {
                             setTimeout(function () {
                                 sentMessage.edit(`Your lookup of ${user}'s ${platform} ${cachedGuild.platformsList[platform].term} from ${receivedMessage.guild.name} has expired.`);
                             }, infoLifetime);
-                        });
+                        }).catch(console.error);
                     }
                 } else {
                     // Error Message
@@ -453,14 +455,15 @@ function lookupCommand(arguments, receivedMessage, shortcut = false) {
             var text = `Here are all the ${platform} ${cachedGuild.platformsList[platform].term}s in ${receivedMessage.guild}'s DirectoryBot:\n`;
             Object.keys(cachedGuild.userDictionary).forEach(user => {
                 if (cachedGuild.userDictionary[user][platform].value) {
-                    text += receivedMessage.guild.members.get(user).displayName + ": " + cachedGuild.userDictionary[user][platform].value + "\n";
+                    text += `${receivedMessage.guild.members.get(user).displayName}: ${cachedGuild.userDictionary[user][platform].value}\n\n\
+This message will expire in about ${helpers.millisecondsToHours(infoLifetime)}.`;
                 }
             })
             receivedMessage.author.send(text).then(sentMessage => {
                 setTimeout(function () {
                     sentMessage.edit(`Your lookup of ${platform} ${cachedGuild.platformsList[platform].term}s from ${receivedMessage.guild.name} has expired.`);
                 }, infoLifetime);
-            });
+            }).catch(console.error);
         } else {
             // Error Message
             receivedMessage.author.send(`${platform} is not currently being tracked in ${receivedMessage.guild}.`)
@@ -478,11 +481,12 @@ function sendCommand(arguments, receivedMessage) {
             if (Object.keys(cachedGuild.platformsList).includes(platform)) {
                 if (cachedGuild.userDictionary[receivedMessage.author.id] && cachedGuild.userDictionary[receivedMessage.author.id][platform].value) {
                     arguments["userMentions"].forEach(recipient => {
-                        recipient.send(`${receivedMessage.author.username} has sent you ${cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value ? cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value : 'their'} ${platform} ${cachedGuild.platformsList[platform].term}. It is: ${cachedGuild.userDictionary[receivedMessage.author.id][platform].value}`).then(sentMessage => {
+                        recipient.send(`${receivedMessage.author.username} has sent you ${cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value ? cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value : 'their'} ${platform} ${cachedGuild.platformsList[platform].term}. It is: ${cachedGuild.userDictionary[receivedMessage.author.id][platform].value}\n\n\
+This message will expire in about ${helpers.millisecondsToHours(infoLifetime)}.`).then(sentMessage => {
                             setTimeout(function () {
                                 sentMessage.edit(`${receivedMessage.author.username} has sent you ${cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value ? cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value : 'their'} ${platform} ${cachedGuild.platformsList[platform].term}, but it's expired. You can look it up again with \`@DirectoryBot lookup @${receivedMessage.author.username} ${platform}\`.`);
                             }, infoLifetime);
-                        });
+                        }).catch(console.error);
                     })
                 } else {
                     // Error Message

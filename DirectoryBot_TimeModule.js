@@ -1,5 +1,6 @@
 const { DateTime, IANAZone, LocalZone } = require("luxon");
 var chrono = require('chrono-node');
+var helpers = require('./DirectoryBot_Helpers.js');
 
 exports.convertCommand = function (arguments, receivedMessage, userDictionary, shortcut = false) {
     var timeText = "";
@@ -113,16 +114,11 @@ exports.countdownCommand = function (arguments, receivedMessage, userDictionary)
     }
     inputTime[0].start.assign("timezoneOffset", IANAZone.create(startTimezone).offset(Date.now()));
     var dateTimeObject = DateTime.fromJSDate(inputTime[0].start.date());
-    var countdown = dateTimeObject.diffNow("minutes").toString();
-    countdown = countdown.replace(/[a-zA-Z]/g, '');
-    countdown = parseInt(countdown);
-    if (countdown < 0) {
-        countdown += 1440;
+    var duration = dateTimeObject.diffNow("milliseconds").normalize();
+    if (duration.milliseconds < 0) {
+        duration = duration.plus(86400000); // 86400000 is a day in milliseconds
+        duration.normalize();
+        console.log(duration);
     }
-
-    if (countdown > 60) {
-        receivedMessage.author.send(`*${arguments["words"][0]} in ${startTimezone}* is about **${Math.floor(countdown / 60)} hours and ${countdown % 60} minutes** from now.`);
-    } else {
-        receivedMessage.author.send(`*${arguments["words"][0]} in ${startTimezone}* is about **${countdown} minutes** from now.`);
-    }
+    receivedMessage.author.send(`*${arguments["words"][0]} in ${startTimezone}* is about **${helpers.millisecondsToHours(duration.milliseconds, true)}** from now.`);
 }

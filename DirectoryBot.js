@@ -504,6 +504,7 @@ This message will expire in about ${helpers.millisecondsToHours(infoLifetime)}.`
                                 }, infoLifetime);
                             }).catch(console.error);
                         })
+                        receivedMessage.author.send(`Your ${platform} ${cachedGuild.platformsList[platform].term} has been sent to ${arguments["userMentions"].toString()}.`).catch(console.error);
                     } else {
                         // Error Message
                         receivedMessage.author.send(`You have not recorded a ${platform} ${cachedGuild.platformsList[platform].term} in ${receivedMessage.guild}.`);
@@ -680,7 +681,6 @@ function setOpRoleCommand(arguments, receivedMessage) {
 
 function newPlatformCommand(arguments, receivedMessage) {
     let cachedGuild = guildDictionary[receivedMessage.guild.id];
-
 
     if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(cachedGuild.opRole)) {
         if (arguments["words"].length > 0) {

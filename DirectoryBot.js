@@ -636,7 +636,7 @@ Imaginary Horizons Productions has a Patreon for all of our products and games. 
 
 
 function creditsCommand(receivedMessage) {
-    receivedMessage.author.send(`Version B1.2.1 <https://github.com/ntseng/DirectoryBot>\n\
+    receivedMessage.author.send(`Version B1.2.3 <https://github.com/ntseng/DirectoryBot>\n\
 __Design & Engineering__\n\
 Nathaniel Tseng ( <@106122478715150336> | <https://twitter.com/Archainis> )\n\
 \n\

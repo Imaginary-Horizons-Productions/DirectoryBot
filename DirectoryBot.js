@@ -244,9 +244,13 @@ client.on('guildDelete', (guild) => {
 
 
 client.on('guildMemberRemove', (member) => {
-    if (guildDictionary[member.guild.id].userDictionary[member.id]) {
-        delete guildDictionary[member.guild.id].userDictionary[member.id];
-        saveUserDictionary(member.guild.id);
+    if (guildDictionary[member.guild.id]) {
+        if (guildDictionary[member.guild.id].userDictionary[member.id]) {
+            delete guildDictionary[member.guild.id].userDictionary[member.id];
+            saveUserDictionary(member.guild.id);
+        }
+    } else {
+        guildCreate(member.guild.id);
     }
 })
 

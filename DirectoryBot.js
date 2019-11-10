@@ -647,7 +647,7 @@ Nathaniel Tseng ( <@106122478715150336> | <https://twitter.com/Archainis> )\n\
 __Engineering__\n\
 Lucas Ensign ( <@112785244733628416> | <https://twitter.com/SillySalamndr> )\n\n\
 DirectoryBot supporters from Patreon: https://www.patreon.com/imaginaryhorizonsproductions\n\
-<@100871930214637568>\n\n\
+Stacy Lane\n\n\
 Icon from <https://game-icons.net/1x1/delapouite/spell-book.html> (unedited) under CC BY 3.0 (<https://creativecommons.org/licenses/by/3.0/>)\n\
 If you'd like to contribute an icon (for money), contact <@106122478715150336>!`).catch(console.error);
 }

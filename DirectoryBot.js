@@ -157,6 +157,7 @@ client.on('message', (receivedMessage) => {
                     "command": command, // The primary command
                     "userMentions": filterMentions(messageArray, receivedMessage.guild),
                     "roleMentions": filterRoleMentions(messageArray),
+                    "channelMentions": filterChannelMentions(messageArray),
                     "words": words // All other non-command words
                 };
 
@@ -864,6 +865,16 @@ function filterRoleMentions(msgArray) { // Fetch role mention snowflakes
     var mentionArray = [];
     for (var i = 0; i < msgArray.length; i += 1) {
         if (/<@&[0-9]+>/.test(msgArray[i])) {
+            mentionArray.push(msgArray[i].replace(/\D/g, ''));
+        }
+    }
+    return mentionArray;
+}
+
+function filterChannelMentions(msgArray) { // Fetch channel mention snowflakes
+    var mentionArray = [];
+    for (var i = 0; i < msgArray.length; i += 1) {
+        if (/<#[0-9]+>/.test(msgArray[i])) {
             mentionArray.push(msgArray[i].replace(/\D/g, ''));
         }
     }

@@ -118,7 +118,7 @@ client.on('ready', () => {
         }
     })
 
-    client.user.setActivity("\"@DirectoryBot help\"", { type: "LISTENING" }).catch(console.error);
+    client.user.setActivity(`@DirectoryBot help`, { type: "LISTENING" }).catch(console.error);
     console.log("Connected as " + client.user.tag);
     client.guilds.forEach(guild => {
         console.log("Connected to: " + guild);
@@ -213,7 +213,7 @@ client.on('message', (receivedMessage) => {
                     } else if (chrono.parse(arguments["command"]).length > 0) {
                         timeModule.convertCommand(arguments, receivedMessage, guildDictionary[receivedMessage.guild.id].userDictionary, true);
                     } else {
-                        receivedMessage.author.send(`${arguments["command"]} isn't a DirectoryBot command. Please check for typos or use \`@DirectoryBot help.\``)
+                        receivedMessage.author.send(`${arguments["command"]} isn't a ${client.user} command. Please check for typos or use ${client.user}\`help.\``)
                     }
 
                     antiSpam.push(receivedMessage.author.id);
@@ -225,7 +225,7 @@ client.on('message', (receivedMessage) => {
                     }
                 }
             } else {
-                receivedMessage.author.send(`To prevent excessive messaging, users are unable to enter more than ${commandLimit} commands in 5 seconds. You can use \`@DirectoryBot lookup (platform)\` to look up everyone's information for the given platform at once.`);
+                receivedMessage.author.send(`To prevent excessive messaging, users are unable to enter more than ${commandLimit} commands in 5 seconds. You can use ${client.user} \`lookup (platform)\` to look up everyone's information for the given platform at once.`);
             }
         }
     }
@@ -275,42 +275,42 @@ function helpCommand(arguments, receivedMessage) {
     let cachedGuild = guildDictionary[receivedMessage.guild.id];
 
     if (convertOverloads.includes(arguments["words"][0])) {
-        receivedMessage.author.send(`The *convert* command calculates a time for a given user. DirectoryBot uses IANA specified timezones.\n\
-Syntax: \`@DirectoryBot convert (time) in (starting timezone) for (user)\`\n\
+        receivedMessage.author.send(`The *convert* command calculates a time for a given user. ${client.user} uses IANA specified timezones.\n\
+Syntax: ${client.user} \`convert (time) in (starting timezone) for (user)\`\n\
 \n\
 The command can also be used to switch a time to a given timezone.\n\
-Syntax: \`@DirectoryBot convert (time) in (starting timezone) to (resulting timezone)\`\n\
+Syntax: ${client.user} \`convert (time) in (starting timezone) to (resulting timezone)\`\n\
 \n\
 If you omit the starting timezone, the bot will assume you mean the timezone you've recorded for the \"timezone\" platform.`);
     } else if (countdownOverloads.includes(arguments["words"][0])) {
-        receivedMessage.author.send(`The *countdown* command states the time until the given time. DirectoryBot uses IANA specified timezones. If no timezone is given DirectoryBot will try with the user's timezone default, then the server's local timezone failing that.\n\
-Syntax: \`@DirectoryBot countdown (time) in (timezone)\``);
+        receivedMessage.author.send(`The *countdown* command states the time until the given time. ${client.user} uses IANA specified timezones. If no timezone is given ${client.user} will try with the user's timezone default, then the server's local timezone failing that.\n\
+Syntax: ${client.user} \`countdown (time) in (timezone)\``);
     } else if (streamshoutoutOverloads.includes(arguments["words"][0])) {
         receivedMessage.author.send(`The *shoutout* command posts the given user's stream information.\n\
-Syntax: \`@DirectoryBot shoutout (user)\``);
+Syntax: ${client.user} \`shoutout (user)\``);
     } else if (multistreamOverloads.includes(arguments["words"][0])) {
         receivedMessage.author.send(`The *multistream* command generates a link to watch multiple streams simultaneously. Optionally, you can enter the layout number last if you want to specify that.\n\
-Syntax: \`@DirectoryBot multistream (user1) (user2)... (layout)\``);
+Syntax: ${client.user} \`multistream (user1) (user2)... (layout)\``);
     } else if (recordOverloads.includes(arguments["words"][0])) {
         receivedMessage.author.send(`The *record* command adds the code information you gave for the given platform so that the bot can use that information and people can ask the bot for it.\n\
-Syntax: \`@DirectoryBot record (platform) (code)\``);
+Syntax: ${client.user} \`record (platform) (code)\``);
     } else if (lookupOverloads.includes(arguments["words"][0])) {
         receivedMessage.author.send(`The *lookup* command tells you the information associted with the given user for the given platform.\n\
-Syntax: \`@DirectoryBot lookup (user) (platform)\`\n\
-If you leave out the user mention, DirectoryBot will instead tell you everyone's information for that platform instead.\n\
-Syntax: \`@DirectoryBot lookup (platform)`);
+Syntax: ${client.user} \`lookup (user) (platform)\`\n\
+If you leave out the user mention, ${client.user} will instead tell you everyone's information for that platform instead.\n\
+Syntax: ${client.user} \`lookup (platform)`);
     } else if (sendOverloads.includes(arguments["words"][0])) {
         receivedMessage.author.send(`The *send* command sends your information on the given platform to the given user.\n\
-Syntax: \`@DirectoryBot send (platform) (user)\``);
+Syntax: ${client.user} \`send (platform) (user)\``);
     } else if (whoisOverloads.includes(arguments["words"][0])) {
         receivedMessage.author.send(`The *whois* command checks if anyone uses the given username and private messages you the result.\n\
-Syntax: \`@DirectoryBot whois (username)\``);
+Syntax: ${client.user} \`whois (username)\``);
     } else if (deleteOverloads.includes(arguments["words"][0])) {
         receivedMessage.author.send(`The *delete* command removes your information for the given platform.\n\
-Syntax: \`@DirectoryBot delete (platform)\``);
+Syntax: ${client.user} \`delete (platform)\``);
         if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(cachedGuild.opRole)) {
             receivedMessage.author.send(`Operators can use the *delete* command to remove information for other users.\n\
-Syntax: \`@DirectoryBot clear (user) (platform)\``);
+Syntax: ${client.user} \`clear (user) (platform)\``);
         }
     } else if (platformsOverloads.includes(arguments["words"][0])) {
         platformsCommand(receivedMessage);
@@ -318,51 +318,51 @@ Syntax: \`@DirectoryBot clear (user) (platform)\``);
         creditsCommand(receivedMessage);
     } else if (setoproleOverloads.includes(arguments["words"][0])) {
         if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(cachedGuild.opRole)) {
-            receivedMessage.author.send(`The *setoprole* command updates the operator role for DirectoryBot. Users with this role use operator features of this bot without serverwide administrator privileges.\n\
-Syntax: \`@DirectoryBot setoprole (role)\``);
+            receivedMessage.author.send(`The *setoprole* command updates the operator role for ${client.user}. Users with this role use operator features of this bot without serverwide administrator privileges.\n\
+Syntax: ${client.user} \`setoprole (role)\``);
         } else {
             receivedMessage.author.send(`You need a role with administrator privileges${cachedGuild.opRole ? ` or the role @${receivedMessage.guild.roles.get(cachedGuild.opRole).name}` : ""} to view operator commands.`);
         }
     } else if (newplatformOverloads.includes(arguments["words"][0])) {
         if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(cachedGuild.opRole)) {
             receivedMessage.author.send(`The *newplatform* command sets up a new game/service for users to record and retrieve information. Optionally, you can set a term to call the information that is being stored (default is "username").\n\
-Syntax: \`@DirectoryBot newplatform (platform name) (information term)\``);
+Syntax: ${client.user} \`newplatform (platform name) (information term)\``);
         } else {
             receivedMessage.author.send(`You need a role with administrator privileges${cachedGuild.opRole ? ` or the role @${receivedMessage.guild.roles.get(cachedGuild.opRole).name}` : ""} to view operator commands.`);
         }
     } else if (changeplatformtermOverloads.includes(arguments["words"][0])) {
         if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(cachedGuild.opRole)) {
-            receivedMessage.author.send(`The *changeplatformterm* changes what DirectoryBot calls information from the given platform (default is "username").\n\
-Syntax: \`@DirectoryBot changeplatformterm (platform name) (new term)\``);
+            receivedMessage.author.send(`The *changeplatformterm* changes what ${client.user} calls information from the given platform (default is "username").\n\
+Syntax: ${client.user} \`changeplatformterm (platform name) (new term)\``);
         } else {
             receivedMessage.author.send(`You need a role with administrator privileges${cachedGuild.opRole ? ` or the role @${receivedMessage.guild.roles.get(cachedGuild.opRole).name}` : ""} to view operator commands.`);
         }
     } else if (removeplatformOverloads.includes(arguments["words"][0])) {
         if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(cachedGuild.opRole)) {
-            receivedMessage.author.send(`The *removeplatform* command specifies a platform for DirectoryBot to stop recording and distributing information for. Note: this command does not remove roles associated with platforms in case someone has that role but wasn't given it by DirectoryBot.\n\
-Syntax: \`@DirectoryBot removeplatform (platform to remove)\``)
+            receivedMessage.author.send(`The *removeplatform* command specifies a platform for ${client.user} to stop recording and distributing information for. Note: this command does not remove roles associated with platforms in case someone has that role but wasn't given it by ${client.user}.\n\
+Syntax: ${client.user} \`removeplatform (platform to remove)\``)
         } else {
             receivedMessage.author.send(`You need a role with administrator privileges${cachedGuild.opRole ? ` or the role @${receivedMessage.guild.roles.get(cachedGuild.opRole).name}` : ""} to view operator commands.`);
         }
     } else if (setplatformroleOverloads.includes(arguments["words"][0])) {
         if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(cachedGuild.opRole)) {
             receivedMessage.author.send(`The *setplatformrole* command associates the given role and platform. Anyone who records information for that platform will be automatically given the associated role.\n\
-Syntax: \`@DirectoryBot setplatformrole (platform) (role)\``)
+Syntax: ${client.user} \`setplatformrole (platform) (role)\``)
         } else {
             receivedMessage.author.send(`You need a role with administrator privileges${cachedGuild.opRole ? ` or the role @${receivedMessage.guild.roles.get(cachedGuild.opRole).name}` : ""} to view operator commands.`);
         }
     } else {
-        var helpSummary = `Here are all of DirectoryBot's commands:\n\
+        var helpSummary = `Here are all of ${client.user}'s commands:\n\
 **record** - Record your information for a platform\n\
 **lookup** - Look up someone else's information if they've recorded it\n\
-**send** - Have DirectoryBot send someone your information\n\
-**whois** - Ask DirectoryBot who a certain username belongs to\n\
+**send** - Have ${client.user} send someone your information\n\
+**whois** - Ask ${client.user} who a certain username belongs to\n\
 **delete** - Remove your information for a platform\n\
-**platforms** - List the games/services DirectoryBot can be used to record or retrieve information for (using help on this command uses the command)\n\
+**platforms** - List the games/services ${client.user} can be used to record or retrieve information for (using help on this command uses the command)\n\
 **convert** - Convert a time to someone else's timezone or a given timezone\n\
 **countdown** - How long until the given time\n\
 **multistream** - Generate a multistream link for the given users\n\
-**shoutout** - Have DirectoryBot post someone's stream information\n\
+**shoutout** - Have ${client.user} post someone's stream information\n\
 **credits** - Version info and contributors (using help on this command uses the command)\n\
 (and *help*)`;
 
@@ -370,13 +370,13 @@ Syntax: \`@DirectoryBot setplatformrole (platform) (role)\``)
             helpSummary += `\n\nThe operator only commands are as follows:\n\
 **setoprole** - Sets the operator role to the given role; not mentioning a role resets the op role to none\n\
 **newplatform** - Setup a new game/service for users to record or retrieve information for\n\
-**changeplatformterm** - Changes what DirectoryBot calls information for the given platform\n\
+**changeplatformterm** - Changes what ${client.user} calls information for the given platform\n\
 **removeplatform** - Stop recording and distributing user information for a game/service\n\
 **setplatformrole** - Automatically give a role to users who record information for a platform\n\
 **delete** for other users`;
         }
 
-        helpSummary += `\n\nYou can type \`@directorybot help\` followed by one of those for specific instructions. If you are looking for operator commands, type \`@DirectoryBot help op\`.`;
+        helpSummary += `\n\nYou can type ${client.user} \`help\` followed by one of those for specific instructions.`;
         receivedMessage.author.send(helpSummary);
     }
 }
@@ -436,7 +436,7 @@ function lookupCommand(arguments, receivedMessage, shortcut = false) {
                     if (Object.keys(cachedGuild.platformsList).includes(platform)) {
                         if (!cachedGuild.userDictionary[user.id] || !cachedGuild.userDictionary[user.id][platform].value) {
                             // Error Message
-                            receivedMessage.channel.send(`${user} has not set a ${platform} ${cachedGuild.platformsList[platform].term} in this server's DirectoryBot yet.`);
+                            receivedMessage.channel.send(`${user} has not set a ${platform} ${cachedGuild.platformsList[platform].term} in this server's ${client.user} yet.`);
                         } else {
                             receivedMessage.author.send(`${user} has set ${cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value ? cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value : 'their'} ${platform} ${cachedGuild.platformsList[platform].term} in ${receivedMessage.guild.name} as **${cachedGuild.userDictionary[user.id][platform].value}**.\n\n\
 This message will expire in about ${helpers.millisecondsToHours(infoLifetime)}.`).then(sentMessage => {
@@ -467,7 +467,7 @@ This message will expire in about ${helpers.millisecondsToHours(infoLifetime)}.`
             }
 
             if (Object.keys(cachedGuild.platformsList).includes(platform)) {
-                var text = `Here are all the ${platform} ${cachedGuild.platformsList[platform].term}s in ${receivedMessage.guild}'s DirectoryBot:\n`;
+                var text = `Here are all the ${platform} ${cachedGuild.platformsList[platform].term}s in ${receivedMessage.guild}'s ${client.user}:\n`;
                 Object.keys(cachedGuild.userDictionary).forEach(user => {
                     if (cachedGuild.userDictionary[user][platform].value) {
                         text += `${receivedMessage.guild.members.get(user).displayName}: ${cachedGuild.userDictionary[user][platform].value}\n\n\
@@ -504,7 +504,7 @@ function sendCommand(arguments, receivedMessage) {
                             recipient.send(`${receivedMessage.author.username} has sent you ${cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value ? cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value : 'their'} ${platform} ${cachedGuild.platformsList[platform].term}. It is: ${cachedGuild.userDictionary[receivedMessage.author.id][platform].value}\n\n\
 This message will expire in about ${helpers.millisecondsToHours(infoLifetime)}.`).then(sentMessage => {
                                 setTimeout(function () {
-                                    sentMessage.edit(`${receivedMessage.author.username} has sent you ${cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value ? cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value : 'their'} ${platform} ${cachedGuild.platformsList[platform].term}, but it's expired. You can look it up again with \`@DirectoryBot lookup @${receivedMessage.author.username} ${platform}\`.`);
+                                    sentMessage.edit(`${receivedMessage.author.username} has sent you ${cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value ? cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value : 'their'} ${platform} ${cachedGuild.platformsList[platform].term}, but it's expired. You can look it up again with ${client.user} \`lookup @${receivedMessage.author.username} ${platform}\`.`);
                                 }, infoLifetime);
                             }).catch(console.error);
                         })
@@ -625,7 +625,7 @@ function platformsCommand(receivedMessage) {
 
 
 function supportCommand(receivedMessage) {
-    receivedMessage.author.send(`Thank you for using DirectoryBot! Here are some ways to support its development:\n\
+    receivedMessage.author.send(`Thank you for using DirectoryBot (${client.user})! Here are some ways to support its development:\n\
 __Vote for us on top.gg__\n\
 top.gg is a Discord bot listing and distrabution service. Voting for DirectoryBot causes it to appear earlier in searches. (Link coming soon)\n\n\
 __Contribute code__\n\
@@ -640,13 +640,15 @@ Imaginary Horizons Productions has a Patreon for all of our products and games. 
 
 
 function creditsCommand(receivedMessage) {
-    receivedMessage.author.send(`Version B1.2.3 <https://github.com/ntseng/DirectoryBot>\n\
+    receivedMessage.author.send(`Version B1.2.4 <https://github.com/ntseng/DirectoryBot>\n\
+__Known Issues__\n\
+ - The bot will crash if AM or PM is omitted from time commands\n\n\
 __Design & Engineering__\n\
 Nathaniel Tseng ( <@106122478715150336> | <https://twitter.com/Archainis> )\n\
 \n\
 __Engineering__\n\
 Lucas Ensign ( <@112785244733628416> | <https://twitter.com/SillySalamndr> )\n\n\
-DirectoryBot supporters from Patreon: https://www.patreon.com/imaginaryhorizonsproductions\n\
+__Patreon Supporters__ https://www.patreon.com/imaginaryhorizonsproductions\n\
 Stacy Lane\n\n\
 Icon from <https://game-icons.net/1x1/delapouite/spell-book.html> (unedited) under CC BY 3.0 (<https://creativecommons.org/licenses/by/3.0/>)\n\
 If you'd like to contribute an icon (for money), contact <@106122478715150336>!`).catch(console.error);
@@ -660,7 +662,7 @@ function setOpRoleCommand(arguments, receivedMessage) {
         if (arguments["roleMentions"].length > 0) {
             if (cachedGuild.opRole != arguments["roleMentions"][0]) {
                 cachedGuild.opRole = arguments["roleMentions"][0];
-                receivedMessage.channel.send(`The DirectoryBot operator role has been set to @${receivedMessage.guild.roles.get(arguments["roleMentions"][0]).name}.`).catch(console.error);
+                receivedMessage.channel.send(`The ${client.user} operator role has been set to @${receivedMessage.guild.roles.get(arguments["roleMentions"][0]).name}.`).catch(console.error);
                 saveOpRole(receivedMessage.guild.id);
             } else {
                 // Error Message
@@ -669,7 +671,7 @@ function setOpRoleCommand(arguments, receivedMessage) {
         } else {
             if (cachedGuild.opRole) {
                 cachedGuild.opRole = null;
-                receivedMessage.channel.send(`The DirectoryBot operator role has been cleared.`).catch(console.error);
+                receivedMessage.channel.send(`The ${client.user} operator role has been cleared.`).catch(console.error);
                 saveOpRole(receivedMessage.guild.id);
             } else {
                 // Error Message

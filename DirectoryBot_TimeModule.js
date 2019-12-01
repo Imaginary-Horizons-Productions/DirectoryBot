@@ -58,27 +58,32 @@ You sent: ${receivedMessage}`);
         if (resultTimezone) {
             if (IANAZone.isValidZone(resultTimezone)) {
                 var inputTime = new chrono.parse(timeText);
-                inputTime[0].start.assign("timezoneOffset", IANAZone.create(startTimezone).offset(Date.now()));
-                var dateTimeObject = DateTime.fromJSDate(inputTime[0].start.date(), { zone: startTimezone });
-                var convertedDateTime = dateTimeObject.setZone(resultTimezone);
+                if (inputTime.length > 0) {
+                    inputTime[0].start.assign("timezoneOffset", IANAZone.create(startTimezone).offset(Date.now()));
+                    var dateTimeObject = DateTime.fromJSDate(inputTime[0].start.date(), { zone: startTimezone });
+                    var convertedDateTime = dateTimeObject.setZone(resultTimezone);
 
-                if (arguments["userMentions"].length == 1) {
-                    if (shortcut) {
-                        receivedMessage.channel.send(`*${timeText}in ${startTimezone}* is **${convertedDateTime.toLocaleString(DateTime.TIME_24_SIMPLE)}** for ${arguments["userMentions"][0]}.`);
+                    if (arguments["userMentions"].length == 1) {
+                        if (shortcut) {
+                            receivedMessage.channel.send(`*${timeText}in ${startTimezone}* is **${convertedDateTime.toLocaleString(DateTime.TIME_24_SIMPLE)}** for ${arguments["userMentions"][0]}.`);
+                        } else {
+                            receivedMessage.author.send(`*${timeText}in ${startTimezone}* is **${convertedDateTime.toLocaleString(DateTime.TIME_24_SIMPLE)}** for ${arguments["userMentions"][0]}.`);
+                        }
                     } else {
-                        receivedMessage.author.send(`*${timeText}in ${startTimezone}* is **${convertedDateTime.toLocaleString(DateTime.TIME_24_SIMPLE)}** for ${arguments["userMentions"][0]}.`);
+                        if (shortcut) {
+                            receivedMessage.channel.send(`*${timeText}in ${startTimezone}* is **${convertedDateTime.toLocaleString(DateTime.TIME_24_SIMPLE)} in ${resultTimezone}**.`);
+                        } else {
+                            receivedMessage.author.send(`*${timeText}in ${startTimezone}* is **${convertedDateTime.toLocaleString(DateTime.TIME_24_SIMPLE)} in ${resultTimezone}**.`);
+                        }
                     }
                 } else {
-                    if (shortcut) {
-                        receivedMessage.channel.send(`*${timeText}in ${startTimezone}* is **${convertedDateTime.toLocaleString(DateTime.TIME_24_SIMPLE)} in ${resultTimezone}**.`);
-                    } else {
-                        receivedMessage.author.send(`*${timeText}in ${startTimezone}* is **${convertedDateTime.toLocaleString(DateTime.TIME_24_SIMPLE)} in ${resultTimezone}**.`);
-                    }
+                    // Error Message
+                    receivedMessage.author.send(`The time you provided could not be parsed. (Remember to specify AM or PM.)\n\n\
+You sent: ${receivedMessage}`);
                 }
             } else {
                 // Error Message
-                receivedMessage.author.send(`Please use the IANA timezone format for the **result timezone**. You can look up timezones here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones\n\
-\n\
+                receivedMessage.author.send(`Please use the IANA timezone format for the **result timezone**. You can look up timezones here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones \n\n\
 You sent: ${receivedMessage}`);
             }
         } else {
@@ -88,8 +93,7 @@ You sent: ${receivedMessage}`);
         }
     } else {
         // Error Message
-        receivedMessage.author.send(`Please use the IANA timezone format for the **starting timezone**. You can look up timezones here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones\n\
-\n\
+        receivedMessage.author.send(`Please use the IANA timezone format for the **starting timezone**. You can look up timezones here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones \n\n\
 You sent: ${receivedMessage}`);
     }
 }
@@ -109,16 +113,22 @@ exports.countdownCommand = function (arguments, receivedMessage, userDictionary)
 
 
     var inputTime = new chrono.parse(timeText);
-    if (!IANAZone.isValidZone(startTimezone) && userDictionary[receivedMessage.author.id] && userDictionary[receivedMessage.author.id]["timezone"].value) {
-        startTimezone = userDictionary[receivedMessage.author.id]["timezone"].value;
+    if (inputTime.length > 0) {
+        if (!IANAZone.isValidZone(startTimezone) && userDictionary[receivedMessage.author.id] && userDictionary[receivedMessage.author.id]["timezone"].value) {
+            startTimezone = userDictionary[receivedMessage.author.id]["timezone"].value;
+        }
+        inputTime[0].start.assign("timezoneOffset", IANAZone.create(startTimezone).offset(Date.now()));
+        var dateTimeObject = DateTime.fromJSDate(inputTime[0].start.date());
+        var duration = dateTimeObject.diffNow("milliseconds").normalize();
+        if (duration.milliseconds < 0) {
+            duration = duration.plus(86400000); // 86400000 is a day in milliseconds
+            duration.normalize();
+            console.log(duration);
+        }
+        receivedMessage.author.send(`*${arguments["words"][0]} in ${startTimezone}* is about **${helpers.millisecondsToHours(duration.milliseconds, true)}** from now.`);
+    } else {
+        // Error Message
+        receivedMessage.author.send(`The time you provided could not be parsed. (Remember to specify AM or PM.)\n\n\
+You sent: ${receivedMessage}`);
     }
-    inputTime[0].start.assign("timezoneOffset", IANAZone.create(startTimezone).offset(Date.now()));
-    var dateTimeObject = DateTime.fromJSDate(inputTime[0].start.date());
-    var duration = dateTimeObject.diffNow("milliseconds").normalize();
-    if (duration.milliseconds < 0) {
-        duration = duration.plus(86400000); // 86400000 is a day in milliseconds
-        duration.normalize();
-        console.log(duration);
-    }
-    receivedMessage.author.send(`*${arguments["words"][0]} in ${startTimezone}* is about **${helpers.millisecondsToHours(duration.milliseconds, true)}** from now.`);
 }

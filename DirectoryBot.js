@@ -56,6 +56,7 @@ var guildDictionary = {};
 
 var antiSpam = [];
 var commandLimit = 3;
+var antiSpamInterval = 5000;
 var infoLifetime = 3600000;
 
 login();
@@ -220,13 +221,13 @@ client.on('message', (receivedMessage) => {
                     antiSpam.push(receivedMessage.author.id);
                     setTimeout(function () {
                         antiSpam.shift();
-                    }, 5000);
+                    }, antiSpamInterval);
                     if (clearCommand) {
                         receivedMessage.delete();
                     }
                 }
             } else {
-                receivedMessage.author.send(`To prevent excessive messaging, users are unable to enter more than ${commandLimit} commands in 5 seconds. You can use ${client.user} \`lookup (platform)\` to look up everyone's information for the given platform at once.`);
+                receivedMessage.author.send(`To prevent excessive messaging, users are unable to enter more than ${commandLimit} commands in ${helpers.millisecondsToHours(antiSpamInterval, true, true)}. You can use ${client.user} \`lookup (platform)\` to look up everyone's information for the given platform at once.`);
             }
         }
     }

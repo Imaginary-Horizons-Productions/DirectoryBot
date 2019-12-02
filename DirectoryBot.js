@@ -471,9 +471,11 @@ This message will expire in about ${helpers.millisecondsToHours(infoLifetime)}.`
             if (Object.keys(cachedGuild.platformsList).includes(platform)) {
                 var text = `Here are all the ${platform} ${cachedGuild.platformsList[platform].term}s in ${receivedMessage.guild}'s ${client.user}:\n`;
                 Object.keys(cachedGuild.userDictionary).forEach(user => {
-                    if (cachedGuild.userDictionary[user][platform].value) {
-                        text += `${receivedMessage.guild.members.get(user).displayName}: ${cachedGuild.userDictionary[user][platform].value}\n\n\
+                    if (cachedGuild.userDictionary[user][platform]) {
+                        if (cachedGuild.userDictionary[user][platform].value) {
+                            text += `${receivedMessage.guild.members.get(user).displayName}: ${cachedGuild.userDictionary[user][platform].value}\n\n\
 This message will expire in about ${helpers.millisecondsToHours(infoLifetime)}.`;
+                        }
                     }
                 })
                 receivedMessage.author.send(text).then(sentMessage => {

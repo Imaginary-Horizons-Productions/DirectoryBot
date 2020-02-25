@@ -3,12 +3,12 @@ exports.multistreamCommand = function (arguments, receivedMessage, userDictionar
     var layout = arguments["words"][0];
 
     var missingUsers = [];
-    for (var i = 0; i < arguments["userMentions"].length; i++) {
-        if (arguments["userMentions"][i]) {
-            if (!userDictionary[arguments["userMentions"][i].id] || !userDictionary[arguments["userMentions"][i].id]["stream"].value) {
-                missingUsers.push(arguments["userMentions"][i].user);
+    for (var i = 0; i < arguments["guildMemberMentions"].length; i++) {
+        if (arguments["guildMemberMentions"][i]) {
+            if (!userDictionary[arguments["guildMemberMentions"][i].id] || !userDictionary[arguments["guildMemberMentions"][i].id]["stream"].value) {
+                missingUsers.push(arguments["guildMemberMentions"][i].user);
             } else {
-                url += userDictionary[arguments["userMentions"][i].id]["stream"].value + "/";
+                url += userDictionary[arguments["guildMemberMentions"][i].id]["stream"].value + "/";
             }
         } else {
             // Error Message
@@ -42,8 +42,8 @@ exports.multistreamCommand = function (arguments, receivedMessage, userDictionar
 }
 
 exports.streamShoutoutCommand = function (arguments, receivedMessage, userDictionary) {
-    if (arguments["userMentions"][0]) {
-        var user = arguments["userMentions"][0];
+    if (arguments["guildMemberMentions"][0]) {
+        var user = arguments["guildMemberMentions"][0];
 
         if (userDictionary[user.id] && userDictionary[user.id]["stream"].value) {
             var url = "https://www.twitch.tv/" + userDictionary[user.id]["stream"].value;

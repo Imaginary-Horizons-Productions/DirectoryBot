@@ -491,7 +491,7 @@ This message will expire in about ${helpers.millisecondsToHours(cachedGuild.info
                 })
                 receivedMessage.author.send(text).then(sentMessage => {
                     setTimeout(function () {
-                        sentMessage.edit(`Your lookup of ${platform} ${cachedGuild.platformsList[platform].term}s from ${receivedMessage.guild.name} has expired.`);
+                        sentMessage.edit(`Your lookup of ${receivedMessage.guild.name}'s ${platform} ${cachedGuild.platformsList[platform].term} has expired.`);
                     }, cachedGuild.infoLifetime);
                 }).catch(console.error);
             } else {
@@ -519,7 +519,7 @@ function sendCommand(arguments, receivedMessage) {
                             recipient.send(`${receivedMessage.author.username} has sent you ${cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value ? cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value : 'their'} ${platform} ${cachedGuild.platformsList[platform].term}. It is: ${cachedGuild.userDictionary[receivedMessage.author.id][platform].value}\n\n\
 This message will expire in about ${helpers.millisecondsToHours(cachedGuild.infoLifetime)}.`).then(sentMessage => {
                                 setTimeout(function () {
-                                    sentMessage.edit(`${receivedMessage.author.username} has sent you ${cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value ? cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value : 'their'} ${platform} ${cachedGuild.platformsList[platform].term}, but it's expired. You can look it up again with ${client.user} \`lookup @${receivedMessage.author.username} ${platform}\`.`);
+                                    sentMessage.edit(`${receivedMessage.author.username} had sent you ${cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value ? cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value : 'their'} ${platform} ${cachedGuild.platformsList[platform].term}, but it's expired. You can look it up again with ${client.user} \`lookup @${receivedMessage.author.username} ${platform}\`.`);
                                 }, cachedGuild.infoLifetime);
                             }).catch(console.error);
                         })
@@ -664,7 +664,6 @@ function creditsCommand(receivedMessage) {
         .addField(`Art`, `Angela Lee ( https://www.angelasylee.com/ )`)
         .addBlankField()
         .addField(`Patreon Explorers - https://www.patreon.com/imaginaryhorizonsproductions `, `Stacy Lane, Eric Hu`)
-        .addField(`Known Issues`, ` - The bot will crash if AM or PM is omitted from time commands`)
         .setFooter(`Support development with "@DirectoryBot support"`, client.user.avatarURL)
         .setTimestamp();
     receivedMessage.author.send(embed).catch(console.error);

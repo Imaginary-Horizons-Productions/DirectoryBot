@@ -11,8 +11,8 @@ exports.convertCommand = function (arguments, receivedMessage, userDictionary, s
         timeText += arguments["command"] + " ";
     }
 
-    if (arguments["userMentions"].length == 1) {
-        if (arguments["userMentions"][0]) {
+    if (arguments["guildMemberMentions"].length == 1) {
+        if (arguments["guildMemberMentions"][0]) {
             for (var i = 0; i < arguments["words"].length; i++) {
                 if (arguments["words"][i] == "in") {
                     startTimezone = arguments["words"][i + 1]
@@ -23,7 +23,7 @@ exports.convertCommand = function (arguments, receivedMessage, userDictionary, s
                     timeText += arguments["words"][i] + " ";
                 }
             }
-            resultTimezone = userDictionary[arguments["userMentions"][0].id]["timezone"].value;
+            resultTimezone = userDictionary[arguments["guildMemberMentions"][0].id]["timezone"].value;
         } else {
             // Error Message
             receivedMessage.author.send(`That person isn't a member of ${receivedMessage.guild}.`);
@@ -63,11 +63,11 @@ You sent: ${receivedMessage}`);
                     var dateTimeObject = DateTime.fromJSDate(inputTime[0].start.date(), { zone: startTimezone });
                     var convertedDateTime = dateTimeObject.setZone(resultTimezone);
 
-                    if (arguments["userMentions"].length == 1) {
+                    if (arguments["guildMemberMentions"].length == 1) {
                         if (shortcut) {
-                            receivedMessage.channel.send(`*${timeText}in ${startTimezone}* is **${convertedDateTime.toLocaleString(DateTime.TIME_24_SIMPLE)}** for ${arguments["userMentions"][0]}.`);
+                            receivedMessage.channel.send(`*${timeText}in ${startTimezone}* is **${convertedDateTime.toLocaleString(DateTime.TIME_24_SIMPLE)}** for ${arguments["guildMemberMentions"][0]}.`);
                         } else {
-                            receivedMessage.author.send(`*${timeText}in ${startTimezone}* is **${convertedDateTime.toLocaleString(DateTime.TIME_24_SIMPLE)}** for ${arguments["userMentions"][0]}.`);
+                            receivedMessage.author.send(`*${timeText}in ${startTimezone}* is **${convertedDateTime.toLocaleString(DateTime.TIME_24_SIMPLE)}** for ${arguments["guildMemberMentions"][0]}.`);
                         }
                     } else {
                         if (shortcut) {

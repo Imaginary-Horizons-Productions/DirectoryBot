@@ -4,7 +4,6 @@
 
 /.vs
 /node_modules
-/package-lock.json
 /authentication.json
 /guildsList.txt
 /encryptionKey.txt

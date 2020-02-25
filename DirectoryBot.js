@@ -190,9 +190,20 @@ client.on('message', (receivedMessage) => {
                     } else if (countdownOverloads.includes(arguments["command"])) {
                         timeModule.countdownCommand(arguments, receivedMessage, guildDictionary[receivedMessage.guild.id].userDictionary);
                     } else if (multistreamOverloads.includes(arguments["command"])) {
-                        streamModule.multistreamCommand(arguments, receivedMessage, guildDictionary[receivedMessage.guild.id].userDictionary);
+                        if (Object.keys(guildDictionary[receivedMessage.guild.id].platformsList).includes("stream")) {
+                            streamModule.multistreamCommand(arguments, receivedMessage, guildDictionary[receivedMessage.guild.id].userDictionary);
+                        } else {
+                            // Error Message
+                            receivedMessage.author.send(`Your multistream command could not be completed. ${receivedMessage.guild} does not seem to be tracking stream information.`);
+                        }
                     } else if (streamshoutoutOverloads.includes(arguments["command"])) {
-                        streamModule.streamShoutoutCommand(arguments, receivedMessage, guildDictionary[receivedMessage.guild.id].userDictionary)
+                        console.log(Object.keys(guildDictionary[receivedMessage.guild.id].platformsList));
+                        if (Object.keys(guildDictionary[receivedMessage.guild.id].platformsList).includes("stream")) {
+                            streamModule.streamShoutoutCommand(arguments, receivedMessage, guildDictionary[receivedMessage.guild.id].userDictionary)
+                        } else {
+                            // Error Message
+                            receivedMessage.author.send(`Your shoutout command could not be completed. ${receivedMessage.guild} does not seem to be tracking stream information.`);
+                        }
                     } else if (recordOverloads.includes(arguments["command"])) {
                         recordCommand(arguments, receivedMessage);
                     } else if (lookupOverloads.includes(arguments["command"])) {
@@ -257,13 +268,17 @@ client.on('guildDelete', (guild) => {
 
 
 client.on('guildMemberRemove', (member) => {
-    if (guildDictionary[member.guild.id]) {
-        if (guildDictionary[member.guild.id].userDictionary[member.id]) {
-            delete guildDictionary[member.guild.id].userDictionary[member.id];
-            saveUserDictionary(member.guild.id);
+    var guildID = member.guild.id;
+    var cachedGuild = guildDictionary[guildID];
+    var memberID = member.id;
+
+    if (cachedGuild) {
+        if (cachedGuild.userDictionary[memberID]) {
+            delete cachedGuild.userDictionary[memberID];
+            saveUserDictionary(guildID);
         }
     } else {
-        guildCreate(member.guild.id);
+        guildCreate(guildID);
     }
 })
 
@@ -451,7 +466,7 @@ function lookupCommand(arguments, receivedMessage, shortcut = false) {
                             // Error Message
                             receivedMessage.channel.send(`${user} has not set a ${platform} ${cachedGuild.platformsList[platform].term} in this server's ${client.user} yet.`);
                         } else {
-                            receivedMessage.author.send(`${user} has set ${cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value ? cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value : 'their'} ${platform} ${cachedGuild.platformsList[platform].term} in ${receivedMessage.guild.name} as **${cachedGuild.userDictionary[user.id][platform].value}**.\n\n\
+                            receivedMessage.author.send(`${user} has set ${cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"] && cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value ? cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value : 'their'} ${platform} ${cachedGuild.platformsList[platform].term} in ${receivedMessage.guild.name} as **${cachedGuild.userDictionary[user.id][platform].value}**.\n\n\
 This message will expire in about ${helpers.millisecondsToHours(cachedGuild.infoLifetime)}.`).then(sentMessage => {
                                 setTimeout(function () {
                                     sentMessage.edit(`Your lookup of ${user}'s ${platform} ${cachedGuild.platformsList[platform].term} from ${receivedMessage.guild.name} has expired.`);
@@ -515,11 +530,13 @@ function sendCommand(arguments, receivedMessage) {
                 var platform = arguments["words"][0].toLowerCase();
                 if (Object.keys(cachedGuild.platformsList).includes(platform)) {
                     if (cachedGuild.userDictionary[receivedMessage.author.id] && cachedGuild.userDictionary[receivedMessage.author.id][platform].value) {
+                        var senderInfo = `${receivedMessage.author.username} from ${receivedMessage.guild} has sent you ${cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"] && cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value ? cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value : 'their'} ${platform} ${cachedGuild.platformsList[platform].term}`;
+
                         arguments["guildMemberMentions"].forEach(recipient => {
-                            recipient.send(`${receivedMessage.author.username} has sent you ${cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value ? cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value : 'their'} ${platform} ${cachedGuild.platformsList[platform].term}. It is: ${cachedGuild.userDictionary[receivedMessage.author.id][platform].value}\n\n\
+                            recipient.send(senderInfo + `. It is: ${cachedGuild.userDictionary[receivedMessage.author.id][platform].value}\n\n\
 This message will expire in about ${helpers.millisecondsToHours(cachedGuild.infoLifetime)}.`).then(sentMessage => {
                                 setTimeout(function () {
-                                    sentMessage.edit(`${receivedMessage.author.username} had sent you ${cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value ? cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value : 'their'} ${platform} ${cachedGuild.platformsList[platform].term}, but it's expired. You can look it up again with ${client.user} \`lookup @${receivedMessage.author.username} ${platform}\`.`);
+                                    sentMessage.edit(senderInfo + `, but it has expired. You can look it up again with ${client.user} \`lookup @${receivedMessage.author.username} ${platform}\`.`);
                                 }, cachedGuild.infoLifetime);
                             }).catch(console.error);
                         })
@@ -850,7 +867,6 @@ function login() {
                         participatingGuildsIDs = [];
                         saveParticipatingGuildsIDs();
                     } else {
-                        console.log(guildsListInput);
                         participatingGuildsIDs = JSON.parse(encrypter.AES.decrypt(guildsListInput, keyInput).toString(encrypter.enc.Utf8))["list"];
                     }
                 }
@@ -872,12 +888,11 @@ function login() {
 
 function guildCreate(guildID) {
     participatingGuildsIDs.push(guildID);
-
     guildDictionary[guildID] = new GuildSpecifics();
+
     saveOpRole(guildID);
     savePlatformsList(guildID);
     saveUserDictionary(guildID);
-
     saveParticipatingGuildsIDs();
 }
 

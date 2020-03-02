@@ -673,8 +673,8 @@ Imaginary Horizons Productions has a Patreon for all of our products and games. 
 
 function creditsCommand(receivedMessage) {
     var embed = new Discord.RichEmbed()
-        .setAuthor(`Imaginary Horizons Productions presents`, `https://cdn.discordapp.com/icons/393489099731763230/873fccfb6d29bd359f9832f6283eb240.jpg `, `https://www.patreon.com/imaginaryhorizonsproductions `)
-        .setTitle(`DirectoryBot Version B1.3`)
+        .setAuthor(`Imaginary Horizons Productions`, `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `, `https://www.patreon.com/imaginaryhorizonsproductions `)
+        .setTitle(`DirectoryBot Credits (Version B1.3)`)
         .setURL(`https://github.com/ntseng/DirectoryBot `)
         .addField(`Design & Engineering`, `Nathaniel Tseng ( <@106122478715150336> | https://twitter.com/Archainis )`)
         .addField(`Engineering`, `Lucas Ensign ( <@112785244733628416> | https://twitter.com/SillySalamndr )`)

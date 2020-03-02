@@ -11,19 +11,25 @@ exports.convertCommand = function (arguments, receivedMessage, userDictionary, s
         timeText += arguments["command"] + " ";
     }
 
-    if (arguments["userMentions"].length == 1) {
-        if (arguments["userMentions"][0]) {
-            for (var i = 0; i < arguments["words"].length; i++) {
-                if (arguments["words"][i] == "in") {
-                    startTimezone = arguments["words"][i + 1]
-                    i++;
-                } else if (arguments["words"][i] == "for") {
-                    break;
-                } else {
-                    timeText += arguments["words"][i] + " ";
+    if (arguments["guildMemberMentions"].length == 1) {
+        if (arguments["guildMemberMentions"][0]) {
+            if (userDictionary[arguments["guildMemberMentions"][0].id]["timezone"]) {
+                for (var i = 0; i < arguments["words"].length; i++) {
+                    if (arguments["words"][i] == "in") {
+                        startTimezone = arguments["words"][i + 1]
+                        i++;
+                    } else if (arguments["words"][i] == "for") {
+                        break;
+                    } else {
+                        timeText += arguments["words"][i] + " ";
+                    }
                 }
+                resultTimezone = userDictionary[arguments["guildMemberMentions"][0].id]["timezone"].value;
+            } else {
+                // Error Message
+                receivedMessage.author.send(`Your time could not be converted to ${arguments["guildMemberMentions"][0]}'s time zone. ${receivedMessage.guild} does not seem to be tracking time zones.`);
+                return;
             }
-            resultTimezone = userDictionary[arguments["userMentions"][0].id]["timezone"].value;
         } else {
             // Error Message
             receivedMessage.author.send(`That person isn't a member of ${receivedMessage.guild}.`);
@@ -43,12 +49,18 @@ exports.convertCommand = function (arguments, receivedMessage, userDictionary, s
         }
     }
     if (startTimezone == "") {
-        if (userDictionary[receivedMessage.author.id] && userDictionary[receivedMessage.author.id]["timezone"].value) {
-            startTimezone = userDictionary[receivedMessage.author.id]["timezone"].value;
+        if (userDictionary[receivedMessage.author.id]["timezone"]) {
+            if (userDictionary[receivedMessage.author.id] && userDictionary[receivedMessage.author.id]["timezone"].value) {
+                startTimezone = userDictionary[receivedMessage.author.id]["timezone"].value;
+            } else {
+                // Error Message
+                receivedMessage.author.send(`Please either specifiy a starting time zone or record your default with \`@DirectoryBot record timezone (timezone)\`.\n\n\
+You sent: ${receivedMessage}`);
+                return;
+            }
         } else {
             // Error Message
-            receivedMessage.author.send(`Please either specifiy a starting timezone or record your default with \`@DirectoryBot record timezone (timezone)\`.\n\
-\n\
+            receivedMessage.author.send(`Please specify a starting time zone.\n\n\
 You sent: ${receivedMessage}`);
             return;
         }
@@ -63,11 +75,11 @@ You sent: ${receivedMessage}`);
                     var dateTimeObject = DateTime.fromJSDate(inputTime[0].start.date(), { zone: startTimezone });
                     var convertedDateTime = dateTimeObject.setZone(resultTimezone);
 
-                    if (arguments["userMentions"].length == 1) {
+                    if (arguments["guildMemberMentions"].length == 1) {
                         if (shortcut) {
-                            receivedMessage.channel.send(`*${timeText}in ${startTimezone}* is **${convertedDateTime.toLocaleString(DateTime.TIME_24_SIMPLE)}** for ${arguments["userMentions"][0]}.`);
+                            receivedMessage.channel.send(`*${timeText}in ${startTimezone}* is **${convertedDateTime.toLocaleString(DateTime.TIME_24_SIMPLE)}** for ${arguments["guildMemberMentions"][0]}.`);
                         } else {
-                            receivedMessage.author.send(`*${timeText}in ${startTimezone}* is **${convertedDateTime.toLocaleString(DateTime.TIME_24_SIMPLE)}** for ${arguments["userMentions"][0]}.`);
+                            receivedMessage.author.send(`*${timeText}in ${startTimezone}* is **${convertedDateTime.toLocaleString(DateTime.TIME_24_SIMPLE)}** for ${arguments["guildMemberMentions"][0]}.`);
                         }
                     } else {
                         if (shortcut) {
@@ -114,8 +126,15 @@ exports.countdownCommand = function (arguments, receivedMessage, userDictionary)
 
     var inputTime = new chrono.parse(timeText);
     if (inputTime.length > 0) {
-        if (!IANAZone.isValidZone(startTimezone) && userDictionary[receivedMessage.author.id] && userDictionary[receivedMessage.author.id]["timezone"].value) {
-            startTimezone = userDictionary[receivedMessage.author.id]["timezone"].value;
+        if (userDictionary[receivedMessage.author.id]["timezone"]) {
+            if (!IANAZone.isValidZone(startTimezone) && userDictionary[receivedMessage.author.id] && userDictionary[receivedMessage.author.id]["timezone"].value) {
+                startTimezone = userDictionary[receivedMessage.author.id]["timezone"].value;
+            }
+        } else {
+            // Error Message
+            receivedMessage.author.send(`Please specify a time zone for the time to count down to.\n\n\
+You sent: ${receivedMessage}`);
+            return;
         }
         inputTime[0].start.assign("timezoneOffset", IANAZone.create(startTimezone).offset(Date.now()));
         var dateTimeObject = DateTime.fromJSDate(inputTime[0].start.date());

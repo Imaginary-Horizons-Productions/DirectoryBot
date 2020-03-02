@@ -9,24 +9,30 @@ var helpers = require('./DirectoryBot_Helpers.js');
 const client = new Discord.Client();
 
 class GuildSpecifics {
-    constructor(userDictionaryInput = {}, platformsListInput = { "possessivepronoun": new PlatformData("preference"), "timezone": new PlatformData("default"), "stream": new PlatformData() }, opRoleInput = "") {
+    constructor(userDictionaryInput = {}, platformsListInput = {
+        "possessivepronoun": new PlatformData("setting", "The user's possessive pronoun, for use in bot messaging."),
+        "timezone": new PlatformData("default", "The user's time zone, for use in time conversions."),
+        "stream": new PlatformData(undefined, "The user's stream username. Currently supported: Twitch")
+    }, opRoleInput = "", infoLifetimeInput = 3600000) {
         this.userDictionary = userDictionaryInput;
         this.platformsList = platformsListInput;
         this.opRole = opRoleInput;
+        this.infoLifetime = infoLifetimeInput;
     }
 }
 
 class FriendCode {
     constructor(input = null) {
         this.value = input;
+        this.id;
     }
 }
 
 class PlatformData {
     //TODO have multiple entries per platform
-    constructor(input = "username") {
-        this.term = input;
-        this.description;
+    constructor(termInput = "username", descriptionInput = "") {
+        this.term = termInput;
+        this.description = descriptionInput;
         this.role;
     }
 }
@@ -57,7 +63,6 @@ var guildDictionary = {};
 var antiSpam = [];
 var commandLimit = 3;
 var antiSpamInterval = 5000;
-var infoLifetime = 3600000;
 
 login();
 
@@ -120,7 +125,7 @@ client.on('ready', () => {
     })
 
     client.user.setActivity(`@DirectoryBot help`, { type: "LISTENING" }).catch(console.error);
-    console.log("Connected as " + client.user.tag);
+    console.log("Connected as " + client.user.tag + "\n");
     client.guilds.forEach(guild => {
         console.log("Connected to: " + guild);
     })
@@ -150,17 +155,23 @@ client.on('message', (receivedMessage) => {
                 var messageArray = splitMessage.filter(function (element) {
                     return element != "";
                 });
-                messageArray = messageArray.slice(1);
-                var words = filterWords(messageArray);
-                var command = words[0];
-                words.shift();
+                messageArray = messageArray.slice(1); // Discard bot mention
                 var arguments = {
-                    "command": command, // The primary command
-                    "userMentions": filterMentions(messageArray, receivedMessage.guild),
-                    "roleMentions": filterRoleMentions(messageArray),
-                    "channelMentions": filterChannelMentions(messageArray),
-                    "words": words // All other non-command words
+                    "command": messageArray[0], // The primary command
+                    "guildMemberMentions": [],
+                    "roleMentions": [],
+                    "words": [] // All other non-command words
                 };
+                messageArray = messageArray.slice(1); // Discard (already stored) command
+                for (var i = 0; i < messageArray.length; i += 1) {
+                    if (messageArray[i].match(Discord.MessageMentions.USERS_PATTERN)) {
+                        arguments["guildMemberMentions"].push(receivedMessage.guild.members.get(messageArray[i].replace(/\D/g, '')));
+                    } else if (messageArray[i].match(Discord.MessageMentions.ROLES_PATTERN)) {
+                        arguments["roleMentions"].push(receivedMessage.guild.roles.get(messageArray[i].replace(/\D/g, '')));
+                    } else {
+                        arguments["words"].push(messageArray[i]);
+                    }
+                }
 
                 if (arguments["command"]) {
                     if (!guildDictionary[receivedMessage.guild.id].userDictionary[receivedMessage.author.id]) {
@@ -179,9 +190,20 @@ client.on('message', (receivedMessage) => {
                     } else if (countdownOverloads.includes(arguments["command"])) {
                         timeModule.countdownCommand(arguments, receivedMessage, guildDictionary[receivedMessage.guild.id].userDictionary);
                     } else if (multistreamOverloads.includes(arguments["command"])) {
-                        streamModule.multistreamCommand(arguments, receivedMessage, guildDictionary[receivedMessage.guild.id].userDictionary);
+                        if (Object.keys(guildDictionary[receivedMessage.guild.id].platformsList).includes("stream")) {
+                            streamModule.multistreamCommand(arguments, receivedMessage, guildDictionary[receivedMessage.guild.id].userDictionary);
+                        } else {
+                            // Error Message
+                            receivedMessage.author.send(`Your multistream command could not be completed. ${receivedMessage.guild} does not seem to be tracking stream information.`);
+                        }
                     } else if (streamshoutoutOverloads.includes(arguments["command"])) {
-                        streamModule.streamShoutoutCommand(arguments, receivedMessage, guildDictionary[receivedMessage.guild.id].userDictionary)
+                        console.log(Object.keys(guildDictionary[receivedMessage.guild.id].platformsList));
+                        if (Object.keys(guildDictionary[receivedMessage.guild.id].platformsList).includes("stream")) {
+                            streamModule.streamShoutoutCommand(arguments, receivedMessage, guildDictionary[receivedMessage.guild.id].userDictionary)
+                        } else {
+                            // Error Message
+                            receivedMessage.author.send(`Your shoutout command could not be completed. ${receivedMessage.guild} does not seem to be tracking stream information.`);
+                        }
                     } else if (recordOverloads.includes(arguments["command"])) {
                         recordCommand(arguments, receivedMessage);
                     } else if (lookupOverloads.includes(arguments["command"])) {
@@ -246,13 +268,17 @@ client.on('guildDelete', (guild) => {
 
 
 client.on('guildMemberRemove', (member) => {
-    if (guildDictionary[member.guild.id]) {
-        if (guildDictionary[member.guild.id].userDictionary[member.id]) {
-            delete guildDictionary[member.guild.id].userDictionary[member.id];
-            saveUserDictionary(member.guild.id);
+    var guildID = member.guild.id;
+    var cachedGuild = guildDictionary[guildID];
+    var memberID = member.id;
+
+    if (cachedGuild) {
+        if (cachedGuild.userDictionary[memberID]) {
+            delete cachedGuild.userDictionary[memberID];
+            saveUserDictionary(guildID);
         }
     } else {
-        guildCreate(member.guild.id);
+        guildCreate(guildID);
     }
 })
 
@@ -397,9 +423,9 @@ function recordCommand(arguments, receivedMessage) {
                 if (cachedGuild.userDictionary[receivedMessage.author.id][platform]) {
                     if (cachedGuild.userDictionary[receivedMessage.author.id][platform].value != friendcode) {
                         cachedGuild.userDictionary[receivedMessage.author.id][platform].value = friendcode;
-                        syncUserRolePlatform(receivedMessage.member, platform, receivedMessage.guild.id);
+                        syncUserRolePlatform(receivedMessage.member, platform, cachedGuild);
                         saveUserDictionary(receivedMessage.guild.id);
-                        receivedMessage.author.send(`Your ${platform} ${cachedGuild.platformsList[platform].term} has been recorded as ${friendcode} in ${receivedMessage.guild}.`);
+                        receivedMessage.channel.send(`${receivedMessage.author} has recorded a ${platform} ${cachedGuild.platformsList[platform].term}.`);
                     } else {
                         // Error Message
                         receivedMessage.author.send(`You have already recorded ${friendcode} as your ${platform} ${cachedGuild.platformsList[platform].term} in ${receivedMessage.guild}.`)
@@ -424,9 +450,9 @@ function lookupCommand(arguments, receivedMessage, shortcut = false) {
     let cachedGuild = guildDictionary[receivedMessage.guild.id];
 
     if (arguments["words"].length > 0) {
-        if (arguments["userMentions"].length == 1) {
-            if (arguments["userMentions"][0]) {
-                var user = arguments["userMentions"][0].user;
+        if (arguments["guildMemberMentions"].length == 1) {
+            if (arguments["guildMemberMentions"][0]) {
+                var user = arguments["guildMemberMentions"][0].user;
 
                 if (!user.bot) {
                     if (shortcut) {
@@ -440,11 +466,11 @@ function lookupCommand(arguments, receivedMessage, shortcut = false) {
                             // Error Message
                             receivedMessage.channel.send(`${user} has not set a ${platform} ${cachedGuild.platformsList[platform].term} in this server's ${client.user} yet.`);
                         } else {
-                            receivedMessage.author.send(`${user} has set ${cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value ? cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value : 'their'} ${platform} ${cachedGuild.platformsList[platform].term} in ${receivedMessage.guild.name} as **${cachedGuild.userDictionary[user.id][platform].value}**.\n\n\
-This message will expire in about ${helpers.millisecondsToHours(infoLifetime)}.`).then(sentMessage => {
+                            receivedMessage.author.send(`${user} has set ${cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"] && cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value ? cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value : 'their'} ${platform} ${cachedGuild.platformsList[platform].term} in ${receivedMessage.guild.name} as **${cachedGuild.userDictionary[user.id][platform].value}**.\n\n\
+This message will expire in about ${helpers.millisecondsToHours(cachedGuild.infoLifetime)}.`).then(sentMessage => {
                                 setTimeout(function () {
                                     sentMessage.edit(`Your lookup of ${user}'s ${platform} ${cachedGuild.platformsList[platform].term} from ${receivedMessage.guild.name} has expired.`);
-                                }, infoLifetime);
+                                }, cachedGuild.infoLifetime);
                             }).catch(console.error);
                         }
                     } else {
@@ -474,14 +500,14 @@ This message will expire in about ${helpers.millisecondsToHours(infoLifetime)}.`
                     if (cachedGuild.userDictionary[user][platform]) {
                         if (cachedGuild.userDictionary[user][platform].value) {
                             text += `${receivedMessage.guild.members.get(user).displayName}: ${cachedGuild.userDictionary[user][platform].value}\n\n\
-This message will expire in about ${helpers.millisecondsToHours(infoLifetime)}.`;
+This message will expire in about ${helpers.millisecondsToHours(cachedGuild.infoLifetime)}.`;
                         }
                     }
                 })
                 receivedMessage.author.send(text).then(sentMessage => {
                     setTimeout(function () {
-                        sentMessage.edit(`Your lookup of ${platform} ${cachedGuild.platformsList[platform].term}s from ${receivedMessage.guild.name} has expired.`);
-                    }, infoLifetime);
+                        sentMessage.edit(`Your lookup of ${receivedMessage.guild.name}'s ${platform} ${cachedGuild.platformsList[platform].term} has expired.`);
+                    }, cachedGuild.infoLifetime);
                 }).catch(console.error);
             } else {
                 // Error Message
@@ -498,21 +524,23 @@ This message will expire in about ${helpers.millisecondsToHours(infoLifetime)}.`
 function sendCommand(arguments, receivedMessage) {
     let cachedGuild = guildDictionary[receivedMessage.guild.id];
 
-    if (arguments["userMentions"].length >= 1) {
-        if (arguments["userMentions"][0]) {
+    if (arguments["guildMemberMentions"].length >= 1) {
+        if (arguments["guildMemberMentions"][0]) {
             if (arguments["words"].length > 0) {
                 var platform = arguments["words"][0].toLowerCase();
                 if (Object.keys(cachedGuild.platformsList).includes(platform)) {
                     if (cachedGuild.userDictionary[receivedMessage.author.id] && cachedGuild.userDictionary[receivedMessage.author.id][platform].value) {
-                        arguments["userMentions"].forEach(recipient => {
-                            recipient.send(`${receivedMessage.author.username} has sent you ${cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value ? cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value : 'their'} ${platform} ${cachedGuild.platformsList[platform].term}. It is: ${cachedGuild.userDictionary[receivedMessage.author.id][platform].value}\n\n\
-This message will expire in about ${helpers.millisecondsToHours(infoLifetime)}.`).then(sentMessage => {
+                        var senderInfo = `${receivedMessage.author.username} from ${receivedMessage.guild} has sent you ${cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"] && cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value ? cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value : 'their'} ${platform} ${cachedGuild.platformsList[platform].term}`;
+
+                        arguments["guildMemberMentions"].forEach(recipient => {
+                            recipient.send(senderInfo + `. It is: ${cachedGuild.userDictionary[receivedMessage.author.id][platform].value}\n\n\
+This message will expire in about ${helpers.millisecondsToHours(cachedGuild.infoLifetime)}.`).then(sentMessage => {
                                 setTimeout(function () {
-                                    sentMessage.edit(`${receivedMessage.author.username} has sent you ${cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value ? cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value : 'their'} ${platform} ${cachedGuild.platformsList[platform].term}, but it's expired. You can look it up again with ${client.user} \`lookup @${receivedMessage.author.username} ${platform}\`.`);
-                                }, infoLifetime);
+                                    sentMessage.edit(senderInfo + `, but it has expired. You can look it up again with ${client.user} \`lookup @${receivedMessage.author.username} ${platform}\`.`);
+                                }, cachedGuild.infoLifetime);
                             }).catch(console.error);
                         })
-                        receivedMessage.author.send(`Your ${platform} ${cachedGuild.platformsList[platform].term} has been sent to ${arguments["userMentions"].toString()}.`).catch(console.error);
+                        receivedMessage.author.send(`Your ${platform} ${cachedGuild.platformsList[platform].term} has been sent to ${arguments["guildMemberMentions"].toString()}.`).catch(console.error);
                     } else {
                         // Error Message
                         receivedMessage.author.send(`You have not recorded a ${platform} ${cachedGuild.platformsList[platform].term} in ${receivedMessage.guild}.`);
@@ -570,16 +598,16 @@ function deleteCommand(arguments, receivedMessage) {
         var msgList = arguments["words"].slice(1);
         var reason = msgList.join(" ");
 
-        if (arguments["userMentions"].length == 1) {
-            if (arguments["userMentions"][0]) {
+        if (arguments["guildMemberMentions"].length == 1) {
+            if (arguments["guildMemberMentions"][0]) {
                 if (receivedMessage.member.hasPermission('ADMINISTRATOR') || receivedMessage.member.roles.has(cachedGuild.opRole)) {
                     if (Object.keys(cachedGuild.platformsList).includes(platform)) {
-                        var target = arguments["userMentions"][0];
+                        var target = arguments["guildMemberMentions"][0];
 
                         if (cachedGuild.userDictionary[target.id] && cachedGuild.userDictionary[target.id][platform].value) {
                             cachedGuild.userDictionary[target.id][platform] = new FriendCode();
                             target.send(`Your ${platform} ${cachedGuild.platformsList[platform].term} has been removed${reason ? ` from ${receivedMessage.guild} because ${reason}` : ""}.`);
-                            syncUserRolePlatform(target, platform, receivedMessage.guild.id);
+                            syncUserRolePlatform(target, platform, cachedGuild);
                             saveUserDictionary(receivedMessage.guild.id);
                             receivedMessage.author.send(`You have removed ${target}'s ${platform} ${cachedGuild.platformsList[platform].term} from ${receivedMessage.guild}.`);
                         } else {
@@ -603,7 +631,7 @@ function deleteCommand(arguments, receivedMessage) {
                 if (cachedGuild.userDictionary[receivedMessage.author.id] && cachedGuild.userDictionary[receivedMessage.author.id][platform].value) {
                     cachedGuild.userDictionary[receivedMessage.author.id][platform] = new FriendCode();
                     receivedMessage.author.send(`You have removed your ${platform} ${cachedGuild.platformsList[platform].term} from ${receivedMessage.guild}.`).catch(console.error);
-                    syncUserRolePlatform(receivedMessage.member, platform, receivedMessage.guild.id);
+                    syncUserRolePlatform(receivedMessage.member, platform, cachedGuild);
                     saveUserDictionary(receivedMessage.guild.id);
                 } else {
                     // Error Message
@@ -644,18 +672,18 @@ Imaginary Horizons Productions has a Patreon for all of our products and games. 
 
 
 function creditsCommand(receivedMessage) {
-    receivedMessage.author.send(`Version B1.2.4 <https://github.com/ntseng/DirectoryBot>\n\
-__Known Issues__\n\
- - The bot will crash if AM or PM is omitted from time commands\n\n\
-__Design & Engineering__\n\
-Nathaniel Tseng ( <@106122478715150336> | <https://twitter.com/Archainis> )\n\
-\n\
-__Engineering__\n\
-Lucas Ensign ( <@112785244733628416> | <https://twitter.com/SillySalamndr> )\n\n\
-__Patreon Supporters__ https://www.patreon.com/imaginaryhorizonsproductions\n\
-Stacy Lane, Eric Hu\n\n\
-Icon from <https://game-icons.net/1x1/delapouite/spell-book.html> (unedited) under CC BY 3.0 (<https://creativecommons.org/licenses/by/3.0/>)\n\
-If you'd like to contribute an icon (for money), contact <@106122478715150336>!`).catch(console.error);
+    var embed = new Discord.RichEmbed()
+        .setAuthor(`Imaginary Horizons Productions`, `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `, `https://www.patreon.com/imaginaryhorizonsproductions `)
+        .setTitle(`DirectoryBot Credits (Version B1.3)`)
+        .setURL(`https://github.com/ntseng/DirectoryBot `)
+        .addField(`Design & Engineering`, `Nathaniel Tseng ( <@106122478715150336> | https://twitter.com/Archainis )`)
+        .addField(`Engineering`, `Lucas Ensign ( <@112785244733628416> | https://twitter.com/SillySalamndr )`)
+        .addField(`Art`, `Angela Lee ( https://www.angelasylee.com/ )`)
+        .addBlankField()
+        .addField(`Patreon Explorers - https://www.patreon.com/imaginaryhorizonsproductions `, `Stacy Lane, Eric Hu`)
+        .setFooter(`Support development with "@DirectoryBot support"`, client.user.avatarURL)
+        .setTimestamp();
+    receivedMessage.author.send(embed).catch(console.error);
 }
 
 
@@ -666,11 +694,11 @@ function setOpRoleCommand(arguments, receivedMessage) {
         if (arguments["roleMentions"].length > 0) {
             if (cachedGuild.opRole != arguments["roleMentions"][0]) {
                 cachedGuild.opRole = arguments["roleMentions"][0];
-                receivedMessage.channel.send(`The ${client.user} operator role has been set to @${receivedMessage.guild.roles.get(arguments["roleMentions"][0]).name}.`).catch(console.error);
+                receivedMessage.channel.send(`The ${client.user} operator role has been set to @${arguments["roleMentions"][0].name}.`).catch(console.error);
                 saveOpRole(receivedMessage.guild.id);
             } else {
                 // Error Message
-                receivedMessage.author.send(`${receivedMessage.guild.name}'s operator role already is @${receivedMessage.guild.roles.get(arguments["roleMentions"][0]).name}.`).catch(console.error);
+                receivedMessage.author.send(`${receivedMessage.guild.name}'s operator role already is @${arguments["roleMentions"][0].name}.`).catch(console.error);
             }
         } else {
             if (cachedGuild.opRole) {
@@ -799,13 +827,13 @@ function setPlatformRoleCommand(arguments, receivedMessage) {
                         cachedGuild.platformsList[platform].role = role;
                         savePlatformsList(receivedMessage.guild.id);
                         Object.keys(cachedGuild.userDictionary).forEach(user => {
-                            syncUserRolePlatform(receivedMessage.guild.members.get(user), platform, receivedMessage.guild.id);
+                            syncUserRolePlatform(receivedMessage.guild.members.get(user), platform, cachedGuild);
                         })
                         saveUserDictionary(receivedMessage.guild.id);
-                        receivedMessage.channel.send(`Server members who set a ${platform} ${cachedGuild.platformsList[platform].term} will now automatically be given the role @${receivedMessage.guild.roles.get(role).name}.`);
+                        receivedMessage.channel.send(`Server members who set a ${platform} ${cachedGuild.platformsList[platform].term} will now automatically be given the role @${role.name}.`);
                     } else {
                         // Error Message
-                        receivedMessage.author.send(`The role @${receivedMessage.guild.roles.get(role).name} is already associated with ${platform} in ${receivedMessage.guild}.`);
+                        receivedMessage.author.send(`The role @${role.name} is already associated with ${platform} in ${receivedMessage.guild}.`);
                     }
                 } else {
                     // Error Message
@@ -835,7 +863,12 @@ function login() {
                 if (error) {
                     console.log(error);
                 } else {
-                    participatingGuildsIDs = JSON.parse(encrypter.AES.decrypt(guildsListInput, keyInput).toString(encrypter.enc.Utf8))["list"];
+                    if (guildsListInput == "") {
+                        participatingGuildsIDs = [];
+                        saveParticipatingGuildsIDs();
+                    } else {
+                        participatingGuildsIDs = JSON.parse(encrypter.AES.decrypt(guildsListInput, keyInput).toString(encrypter.enc.Utf8))["list"];
+                    }
                 }
 
                 fs.readFile("authentication.json", 'utf8', (error, authenticationInput) => {
@@ -853,55 +886,13 @@ function login() {
 }
 
 
-function filterMentions(messageArray, guild) { // Fetch user mentions
-    var mentionArray = [];
-    for (var i = 0; i < messageArray.length; i += 1) {
-        if (/<@!*[0-9]+>/.test(messageArray[i])) {
-            var snowflakeString = messageArray[i].replace(/\D/g, '');
-            mentionArray.push(guild.members.get(snowflakeString));
-        }
-    }
-    return mentionArray;
-}
-
-function filterRoleMentions(msgArray) { // Fetch role mention snowflakes
-    var mentionArray = [];
-    for (var i = 0; i < msgArray.length; i += 1) {
-        if (/<@&[0-9]+>/.test(msgArray[i])) {
-            mentionArray.push(msgArray[i].replace(/\D/g, ''));
-        }
-    }
-    return mentionArray;
-}
-
-function filterChannelMentions(msgArray) { // Fetch channel mention snowflakes
-    var mentionArray = [];
-    for (var i = 0; i < msgArray.length; i += 1) {
-        if (/<#[0-9]+>/.test(msgArray[i])) {
-            mentionArray.push(msgArray[i].replace(/\D/g, ''));
-        }
-    }
-    return mentionArray;
-}
-
-function filterWords(msgArray) { // Fetch arguments that are not mentions
-    var argArray = [];
-    for (var i = 0; i < msgArray.length; i += 1) {
-        if (!/<@[!&]*[0-9]+>/.test(msgArray[i])) {
-            argArray.push(msgArray[i]);
-        }
-    }
-    return argArray;
-}
-
 function guildCreate(guildID) {
     participatingGuildsIDs.push(guildID);
-
     guildDictionary[guildID] = new GuildSpecifics();
+
     saveOpRole(guildID);
     savePlatformsList(guildID);
     saveUserDictionary(guildID);
-
     saveParticipatingGuildsIDs();
 }
 
@@ -1088,11 +1079,11 @@ function saveParticipatingGuildsIDs(backup = false) {
     })
 }
 
-function syncUserRolePlatform(member, platform, guildID) {
-    if (guildDictionary[guildID].userDictionary[member.id]) {
-        if (guildDictionary[guildID].platformsList[platform].role) {
-            if (guildDictionary[guildID].userDictionary[member.id][platform].value) {
-                member.addRole(guildDictionary[guildID].platformsList[platform].role);
+function syncUserRolePlatform(member, platformName, guildSpecifics) {
+    if (guildSpecifics.userDictionary[member.id]) {
+        if (guildSpecifics.platformsList[platformName].role) {
+            if (guildSpecifics.userDictionary[member.id][platformName].value) {
+                member.addRole(guildSpecifics.platformsList[platformName].role);
             }
         }
     }

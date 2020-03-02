@@ -664,8 +664,6 @@ __Contribute code__\n\
 Check out our github and tackle some issues! <https://github.com/ntseng/DirectoryBot>\n\n\
 __Create some social media buzz__\n\
 Use the hashtags #DirectoryBotDiscord or #ImaginaryHorizonsProductions\n\n\
-__Help us design some graphics__\n\
-We're looking for someone to draw DirectoryBot's avatar icon! Contact <https://twitter.com/Archainis>!\n\n\
 __Chip in for server costs__\n\
 Imaginary Horizons Productions has a Patreon for all of our products and games. Check it out here: https://www.patreon.com/imaginaryhorizonsproductions `).catch(console.error);
 }

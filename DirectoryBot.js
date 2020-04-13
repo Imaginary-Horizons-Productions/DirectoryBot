@@ -316,7 +316,7 @@ Syntax: ${client.user} \`shoutout (user)\``);
         receivedMessage.author.send(`The *multistream* command generates a link to watch multiple streams simultaneously. Optionally, you can enter the layout number last if you want to specify that.\n\
 Syntax: ${client.user} \`multistream (user1) (user2)... (layout)\``);
     } else if (recordOverloads.includes(arguments["words"][0])) {
-        receivedMessage.author.send(`The *record* command adds the code information you gave for the given platform so that the bot can use that information and people can ask the bot for it.\n\
+        receivedMessage.author.send(`The *record* command adds your information for given platform so people can ask the bot for it. The message containing the command will be deleted for security purposes.\n\
 Syntax: ${client.user} \`record (platform) (code)\``);
     } else if (lookupOverloads.includes(arguments["words"][0])) {
         receivedMessage.author.send(`The *lookup* command tells you the information associted with the given user for the given platform.\n\
@@ -421,7 +421,7 @@ function recordCommand(arguments, receivedMessage) {
                         cachedGuild.userDictionary[receivedMessage.author.id][platform].value = friendcode;
                         syncUserRolePlatform(receivedMessage.member, platform, cachedGuild);
                         saveUserDictionary(receivedMessage.guild.id);
-                        receivedMessage.channel.send(`${receivedMessage.author} has recorded a ${platform} ${cachedGuild.platformsList[platform].term}.`);
+                        receivedMessage.channel.send(`${receivedMessage.author} has recorded a ${platform} ${cachedGuild.platformsList[platform].term}. Check it with "${client.user} lookup ${receivedMessage.author} ${platform}".`);
                     } else {
                         // Error Message
                         receivedMessage.author.send(`You have already recorded ${friendcode} as your ${platform} ${cachedGuild.platformsList[platform].term} in ${receivedMessage.guild}.`)

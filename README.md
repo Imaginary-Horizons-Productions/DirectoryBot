@@ -26,7 +26,7 @@ Explains the (command) and provides a syntax example.
 #### record (AKA: log)
 Syntax: `@DirectoryBot record (platform) (information)`
 \
-Stores your (platform) (information). For example `@DirectoryBot timezone America/Los_Angeles` would have DirectoryBot record "America/Los_Angeles" as your entry for "timezone".
+Stores your (platform) (information). For example `@DirectoryBot timezone America/Los_Angeles` would have DirectoryBot record "America/Los_Angeles" as your entry for "timezone". The message with this command will be deleted for security purposes.
 
 #### lookup
 Syntax: `@DirectoryBot lookup (platform) (user)`

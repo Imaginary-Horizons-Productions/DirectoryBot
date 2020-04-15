@@ -57,8 +57,8 @@ var creditsOverloads = ["credits", "creditz", "about"];
 var setoproleOverloads = ["setoprole"];
 var newplatformOverloads = ["newplatform", "addplatform"];
 var changeplatformtermOverloads = ["changeplatformterm", "setplatformterm"];
-var removeplatformOverloads = ["removeplatform"];
 var setplatformroleOverloads = ["setplatformrole"];
+var removeplatformOverloads = ["removeplatform"];
 
 var participatingGuildsIDs = [];
 var guildDictionary = {};
@@ -299,42 +299,42 @@ function helpCommand(arguments, receivedMessage) {
     let cachedGuild = guildDictionary[receivedMessage.guild.id];
 
     if (convertOverloads.includes(arguments["words"][0])) {
-        receivedMessage.author.send(`The *convert* command calculates a time for a given user. ${client.user} uses IANA specified timezones.\n\
-Syntax: ${client.user} \`convert (time) in (starting timezone) for (user)\`\n\
+        receivedMessage.author.send(`The *${arguments["words"][0]}* command calculates a time for a given user. ${client.user} uses IANA specified timezones.\n\
+Syntax: ${client.user} \`${arguments["words"][0]} (time) in (starting timezone) for (user)\`\n\
 \n\
 The command can also be used to switch a time to a given timezone.\n\
-Syntax: ${client.user} \`convert (time) in (starting timezone) to (resulting timezone)\`\n\
+Syntax: ${client.user} \`${arguments["words"][0]} (time) in (starting timezone) to (resulting timezone)\`\n\
 \n\
 If you omit the starting timezone, the bot will assume you mean the timezone you've recorded for the \"timezone\" platform.`);
     } else if (countdownOverloads.includes(arguments["words"][0])) {
-        receivedMessage.author.send(`The *countdown* command states the time until the given time. ${client.user} uses IANA specified timezones. If no timezone is given ${client.user} will try with the user's timezone default, then the server's local timezone failing that.\n\
-Syntax: ${client.user} \`countdown (time) in (timezone)\``);
+        receivedMessage.author.send(`The *${arguments["words"][0]}* command states the time until the given time. ${client.user} uses IANA specified timezones. If no timezone is given ${client.user} will try with the user's timezone default, then the server's local timezone failing that.\n\
+Syntax: ${client.user} \`${arguments["words"][0]} (time) in (timezone)\``);
     } else if (streamshoutoutOverloads.includes(arguments["words"][0])) {
-        receivedMessage.author.send(`The *shoutout* command posts the given user's stream information.\n\
-Syntax: ${client.user} \`shoutout (user)\``);
+        receivedMessage.author.send(`The *${arguments["words"][0]}* command posts the given user's stream information.\n\
+Syntax: ${client.user} \`${arguments["words"][0]} (user)\``);
     } else if (multistreamOverloads.includes(arguments["words"][0])) {
-        receivedMessage.author.send(`The *multistream* command generates a link to watch multiple streams simultaneously. Optionally, you can enter the layout number last if you want to specify that.\n\
-Syntax: ${client.user} \`multistream (user1) (user2)... (layout)\``);
+        receivedMessage.author.send(`The *${arguments["words"][0]}* command generates a link to watch multiple streams simultaneously. Optionally, you can enter the layout number last if you want to specify that.\n\
+Syntax: ${client.user} \`${arguments["words"][0]} (user1) (user2)... (layout)\``);
     } else if (recordOverloads.includes(arguments["words"][0])) {
-        receivedMessage.author.send(`The *record* command adds your information for given platform so people can ask the bot for it. The message containing the command will be deleted for security purposes.\n\
-Syntax: ${client.user} \`record (platform) (code)\``);
+        receivedMessage.author.send(`The *${arguments["words"][0]}* command adds your information for given platform so people can ask the bot for it. The message containing the command will be deleted for security purposes.\n\
+Syntax: ${client.user} \`${arguments["words"][0]} (platform) (code)\``);
     } else if (lookupOverloads.includes(arguments["words"][0])) {
-        receivedMessage.author.send(`The *lookup* command tells you the information associted with the given user for the given platform.\n\
-Syntax: ${client.user} \`lookup (user) (platform)\`\n\
+        receivedMessage.author.send(`The *${arguments["words"][0]}* command tells you the information associted with the given user for the given platform.\n\
+Syntax: ${client.user} \`${arguments["words"][0]} (user) (platform)\`\n\
 If you leave out the user mention, ${client.user} will instead tell you everyone's information for that platform instead.\n\
-Syntax: ${client.user} \`lookup (platform)`);
+Syntax: ${client.user} \`${arguments["words"][0]} (platform)`);
     } else if (sendOverloads.includes(arguments["words"][0])) {
-        receivedMessage.author.send(`The *send* command sends your information on the given platform to the given user.\n\
-Syntax: ${client.user} \`send (platform) (user)\``);
+        receivedMessage.author.send(`The *${arguments["words"][0]}* command sends your information on the given platform to the given user.\n\
+Syntax: ${client.user} \`${arguments["words"][0]} (platform) (user)\``);
     } else if (whoisOverloads.includes(arguments["words"][0])) {
-        receivedMessage.author.send(`The *whois* command checks if anyone uses the given username and private messages you the result.\n\
-Syntax: ${client.user} \`whois (username)\``);
+        receivedMessage.author.send(`The *${arguments["words"][0]}* command checks if anyone uses the given username and private messages you the result.\n\
+Syntax: ${client.user} \`${arguments["words"][0]} (username)\``);
     } else if (deleteOverloads.includes(arguments["words"][0])) {
-        receivedMessage.author.send(`The *delete* command removes your information for the given platform.\n\
-Syntax: ${client.user} \`delete (platform)\``);
+        receivedMessage.author.send(`The *${arguments["words"][0]}* command removes your information for the given platform.\n\
+Syntax: ${client.user} \`${arguments["words"][0]} (platform)\``);
         if (receivedMessage.member.hasPermission(Discord.Permissions.FLAGS.ADMINISTRATOR) || receivedMessage.member.roles.cache.has(cachedGuild.opRole)) {
-            receivedMessage.author.send(`Operators can use the *delete* command to remove information for other users.\n\
-Syntax: ${client.user} \`clear (user) (platform)\``);
+            receivedMessage.author.send(`Operators can use the *${arguments["words"][0]}* command to remove information for other users.\n\
+Syntax: ${client.user} \`${arguments["words"][0]} (user) (platform)\``);
         }
     } else if (platformsOverloads.includes(arguments["words"][0])) {
         platformsCommand(receivedMessage);
@@ -342,66 +342,71 @@ Syntax: ${client.user} \`clear (user) (platform)\``);
         creditsCommand(receivedMessage);
     } else if (setoproleOverloads.includes(arguments["words"][0])) {
         if (receivedMessage.member.hasPermission(Discord.Permissions.FLAGS.ADMINISTRATOR) || receivedMessage.member.roles.cache.has(cachedGuild.opRole)) {
-            receivedMessage.author.send(`The *setoprole* command updates the operator role for ${client.user}. Users with this role use operator features of this bot without serverwide administrator privileges.\n\
-Syntax: ${client.user} \`setoprole (role)\``);
+            receivedMessage.author.send(`The *${arguments["words"][0]}* command updates the operator role for ${client.user}. Users with this role use operator features of this bot without serverwide administrator privileges.\n\
+Syntax: ${client.user} \`${arguments["words"][0]} (role)\``);
         } else {
             receivedMessage.author.send(`You need a role with administrator privileges${cachedGuild.opRole ? ` or the role @${receivedMessage.guild.roles.resolve(cachedGuild.opRole).name}` : ""} to view operator commands.`);
         }
     } else if (newplatformOverloads.includes(arguments["words"][0])) {
         if (receivedMessage.member.hasPermission(Discord.Permissions.FLAGS.ADMINISTRATOR) || receivedMessage.member.roles.cache.has(cachedGuild.opRole)) {
-            receivedMessage.author.send(`The *newplatform* command sets up a new game/service for users to record and retrieve information. Optionally, you can set a term to call the information that is being stored (default is "username").\n\
-Syntax: ${client.user} \`newplatform (platform name) (information term)\``);
+            receivedMessage.author.send(`The *${arguments["words"][0]}* command sets up a new game/service for users to record and retrieve information. Optionally, you can set a term to call the information that is being stored (default is "username").\n\
+Syntax: ${client.user} \`${arguments["words"][0]} (platform name) (information term)\``);
         } else {
             receivedMessage.author.send(`You need a role with administrator privileges${cachedGuild.opRole ? ` or the role @${receivedMessage.guild.roles.resolve(cachedGuild.opRole).name}` : ""} to view operator commands.`);
         }
     } else if (changeplatformtermOverloads.includes(arguments["words"][0])) {
         if (receivedMessage.member.hasPermission(Discord.Permissions.FLAGS.ADMINISTRATOR) || receivedMessage.member.roles.cache.has(cachedGuild.opRole)) {
-            receivedMessage.author.send(`The *changeplatformterm* changes what ${client.user} calls information from the given platform (default is "username").\n\
-Syntax: ${client.user} \`changeplatformterm (platform name) (new term)\``);
+            receivedMessage.author.send(`The *${arguments["words"][0]}* changes what ${client.user} calls information from the given platform (default is "username").\n\
+Syntax: ${client.user} \`${arguments["words"][0]} (platform name) (new term)\``);
         } else {
             receivedMessage.author.send(`You need a role with administrator privileges${cachedGuild.opRole ? ` or the role @${receivedMessage.guild.roles.resolve(cachedGuild.opRole).name}` : ""} to view operator commands.`);
         }
     } else if (removeplatformOverloads.includes(arguments["words"][0])) {
         if (receivedMessage.member.hasPermission(Discord.Permissions.FLAGS.ADMINISTRATOR) || receivedMessage.member.roles.cache.has(cachedGuild.opRole)) {
-            receivedMessage.author.send(`The *removeplatform* command specifies a platform for ${client.user} to stop recording and distributing information for. Note: this command does not remove roles associated with platforms in case someone has that role but wasn't given it by ${client.user}.\n\
-Syntax: ${client.user} \`removeplatform (platform to remove)\``)
+            receivedMessage.author.send(`The *${arguments["words"][0]}* command specifies a platform for ${client.user} to stop recording and distributing information for. Note: this command does not remove roles associated with platforms in case someone has that role but wasn't given it by ${client.user}.\n\
+Syntax: ${client.user} \`${arguments["words"][0]} (platform to remove)\``)
         } else {
             receivedMessage.author.send(`You need a role with administrator privileges${cachedGuild.opRole ? ` or the role @${receivedMessage.guild.roles.resolve(cachedGuild.opRole).name}` : ""} to view operator commands.`);
         }
     } else if (setplatformroleOverloads.includes(arguments["words"][0])) {
         if (receivedMessage.member.hasPermission(Discord.Permissions.FLAGS.ADMINISTRATOR) || receivedMessage.member.roles.cache.has(cachedGuild.opRole)) {
-            receivedMessage.author.send(`The *setplatformrole* command associates the given role and platform. Anyone who records information for that platform will be automatically given the associated role.\n\
-Syntax: ${client.user} \`setplatformrole (platform) (role)\``)
+            receivedMessage.author.send(`The *${arguments["words"][0]}* command associates the given role and platform. Anyone who records information for that platform will be automatically given the associated role.\n\
+Syntax: ${client.user} \`${arguments["words"][0]} (platform) (role)\``)
         } else {
             receivedMessage.author.send(`You need a role with administrator privileges${cachedGuild.opRole ? ` or the role @${receivedMessage.guild.roles.resolve(cachedGuild.opRole).name}` : ""} to view operator commands.`);
         }
     } else {
-        var helpSummary = `Here are all of ${client.user}'s commands:\n\
-**record** - Record your information for a platform\n\
-**lookup** - Look up someone else's information if they've recorded it\n\
-**send** - Have ${client.user} send someone your information\n\
-**whois** - Ask ${client.user} who a certain username belongs to\n\
-**delete** - Remove your information for a platform\n\
-**platforms** - List the games/services ${client.user} can be used to record or retrieve information for (using help on this command uses the command)\n\
-**convert** - Convert a time to someone else's timezone or a given timezone\n\
-**countdown** - How long until the given time\n\
-**multistream** - Generate a multistream link for the given users\n\
-**shoutout** - Have ${client.user} post someone's stream information\n\
-**credits** - Version info and contributors (using help on this command uses the command)\n\
-(and *help*)`;
+        var embed = new Discord.MessageEmbed().setColor(`6b81eb`)
+            .setAuthor(`Imaginary Horizons Productions`, `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `, `https://discord.gg/bcE3Syu `)
+            .setTitle(`DirectoryBot Commands`)
+            .addField(`${recordOverloads}`, `Record your information for a platform`)
+            .addField(`${lookupOverloads}`, `Look up someone else's information if they've recorded it`)
+            .addField(`${sendOverloads}`, `Have ${client.user} send someone your information`)
+            .addField(`${whoisOverloads}`, `Ask ${client.user} who a certain username belongs to`)
+            .addField(`${deleteOverloads}`, `Remove your information for a platform`)
+            .addField(`${platformsOverloads}`, `List the games/services ${client.user} can be used to record or retrieve information for (using help on this command uses the command)`)
+            .addField(`${supportOverloads}`, `Lists the ways to support development of ${client.user}`)
+            .addField(`${creditsOverloads}`, `Version info and contributors (using help on this command uses the command)`)
+            .addField(`${convertOverloads}`, `Convert a time to someone else's timezone or a given timezone`)
+            .addField(`${countdownOverloads}`, `How long until the given time`)
+            .addField(`${multistreamOverloads}`, `Generate a multistream link for the given users`)
+            .addField(`${streamshoutoutOverloads}`, `Have ${client.user} post someone's stream information`)
+            .addField(`${helpOverloads}`, `You can type ${client.user} \`help\` followed by one of those for specific instructions.`)
+            .setFooter(`Support development with "@DirectoryBot support"`, client.user.avatarURL())
+            .setTimestamp();
 
         if (receivedMessage.member.hasPermission(Discord.Permissions.FLAGS.ADMINISTRATOR) || receivedMessage.member.roles.cache.has(cachedGuild.opRole)) {
-            helpSummary += `\n\nThe operator only commands are as follows:\n\
-**setoprole** - Sets the operator role to the given role; not mentioning a role resets the op role to none\n\
-**newplatform** - Setup a new game/service for users to record or retrieve information for\n\
-**changeplatformterm** - Changes what ${client.user} calls information for the given platform\n\
-**removeplatform** - Stop recording and distributing user information for a game/service\n\
-**setplatformrole** - Automatically give a role to users who record information for a platform\n\
-**delete** for other users`;
+            embed
+                .addField(`\u200B`, `__Manager Commands__`)
+                .addField(`${setoproleOverloads}`, `Sets the operator role to the given role; not mentioning a role resets the op role to none`)
+                .addField(`${newplatformOverloads}`, `Setup a new game/service for users to record or retrieve information for`)
+                .addField(`${changeplatformtermOverloads}`, `Changes what ${client.user} calls information for the given platform`)
+                .addField(`${setplatformroleOverloads}`, `Automatically give a role to users who record information for a platform`)
+                .addField(`${removeplatformOverloads}`, `Stop recording and distributing user information for a game/service`)
+                .addField(`delete`, `Bot managers can use delete for other users`);
         }
 
-        helpSummary += `\n\nYou can type ${client.user} \`help\` followed by one of those for specific instructions.`;
-        receivedMessage.author.send(helpSummary);
+        receivedMessage.author.send(``, embed);
     }
 }
 
@@ -666,7 +671,7 @@ Imaginary Horizons Productions has a Patreon for all of our products and games. 
 
 
 function creditsCommand(receivedMessage) {
-    var embed = new Discord.MessageEmbed()
+    var embed = new Discord.MessageEmbed().setColor(`6b81eb`)
         .setAuthor(`Imaginary Horizons Productions`, `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `, `https://discord.gg/bcE3Syu `)
         .setTitle(`DirectoryBot Credits (Version B1.3)`)
         .setURL(`https://github.com/ntseng/DirectoryBot `)

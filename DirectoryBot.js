@@ -85,6 +85,35 @@ client.on('ready', () => {
     client.user.setActivity(`@DirectoryBot help`, { type: "LISTENING" }).catch(console.error);
 })
 
+//TODO going live notification
+/*
+ * We don't currently have a URL (which is required for the Twitch API subscriber model).
+ * When we get to implementing this after having a URL, we should consider using a helper module
+ * like the one at https://openbase.io/js/twitch-webhook
+ */
+// exports.twitchSubscriber = function() {
+//     //create server to send request to twitch API
+//     https.get(``, response => {
+
+//     }).on('error', console.error);
+//     //create server to handle response
+//     //save the way that we handle the subscription
+// }
+
+// exports.twitchUnsubscriber = function() {
+//     //create server to send request to twitch API
+//     https.get(``, response => {
+
+//     }).on('error', console.error);
+//     //create server to handle response
+//     //remove saved information on how we handle the subscription
+// }
+
+// twitchEventHandler = https.createServer((request, response) => {
+//     const {hearders, method, url} = request;
+
+// });
+
 client.on('message', (receivedMessage) => {
     if (receivedMessage.author == client.user || !receivedMessage.guild) {
         return;

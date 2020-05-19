@@ -38,14 +38,19 @@ command.execute = (receivedMessage, state, metrics) => {
             receivedMessage.author.send(`Please specify a time zone for the time to count down to.`);
             return;
         }
-        inputTime[0].start.assign("timezoneOffset", IANAZone.create(startTimezone).offset(Date.now()));
-        var dateTimeObject = DateTime.fromJSDate(inputTime[0].start.date());
-        var duration = dateTimeObject.diffNow("milliseconds").normalize();
-        if (duration.milliseconds < 0) {
-            duration = duration.plus(86400000); // 86400000 is a day in milliseconds
-            duration.normalize();
+        if (IANAZone.isValidZone(startTimezone)) {
+            inputTime[0].start.assign("timezoneOffset", IANAZone.create(startTimezone).offset(Date.now()));
+            var dateTimeObject = DateTime.fromJSDate(inputTime[0].start.date());
+            var duration = dateTimeObject.diffNow("milliseconds").normalize();
+            if (duration.milliseconds < 0) {
+                duration = duration.plus(86400000); // 86400000 is a day in milliseconds
+                duration.normalize();
+            }
+            receivedMessage.author.send(`*${state.messageArray[0]} in ${startTimezone}* is about **${millisecondsToHours(duration.milliseconds, true)}** from now.`);
+        } else {
+            // Error message
+            receivedMessage.author.send(`The time zone you entered could not be parsed.`).catch(console.error);
         }
-        receivedMessage.author.send(`*${state.messageArray[0]} in ${startTimezone}* is about **${millisecondsToHours(duration.milliseconds, true)}** from now.`);
     } else {
         // Error Message
         receivedMessage.author.send(`The time you provided could not be parsed (Remember to specify AM or PM).`);

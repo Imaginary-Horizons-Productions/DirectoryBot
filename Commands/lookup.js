@@ -1,5 +1,5 @@
 const Command = require('./../Classes/Command.js');
-const { millisecondsToHours } = require('./../helpers.js');
+const { platformsBuilder, millisecondsToHours } = require('./../helpers.js');
 
 var command = new Command();
 command.names = ["lookup"];
@@ -8,9 +8,9 @@ command.managerCommand = false;
 
 command.help = (clientUser, state) => {
     return `The *${state.messageArray[0]}* command tells you everyone's information associted with the given platform.\n\
-Syntax: ${clientUser} \`${state.messageArray[0]} (platform)\`\n\
-you can limit your results to a set of users by mentioning them at the end of the command.\n\
-Syntax: ${client.user} \`${state.messageArray[0]} (platform) (user set)`;
+Syntax: ${clientUser} \`${state.messageArray[0]} (platform)\`\n\n\
+You can limit your results to a set of users by mentioning them at the end of the command.\n\
+Syntax: ${clientUser} \`${state.messageArray[0]} (platform) (user set)\n\n` + platformsBuilder(state.cachedGuild.platformsList);
 }
 
 command.execute = (receivedMessage, state, metrics) => {

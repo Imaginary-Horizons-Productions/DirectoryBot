@@ -37,6 +37,12 @@ exports.syncUserRolePlatform = function (member, platformName, guildSpecifics) {
     }
 }
 
+exports.platformsBuilder = function (platformsList, guild) {
+    let processedText = Object.keys(platformsList).toString().replace(/,/g, ', ');
+
+    return `This server's tracked platforms are: ${processedText}`;
+}
+
 exports.creditsBuilder = function (footerURL) {
     return new MessageEmbed().setColor(`6b81eb`)
         .setAuthor(`Imaginary Horizons Productions`, `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `, `https://discord.gg/bcE3Syu `)

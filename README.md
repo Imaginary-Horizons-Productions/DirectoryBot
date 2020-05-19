@@ -29,17 +29,13 @@ Syntax: `@DirectoryBot record (platform) (information)`
 Stores your (platform) (information). For example `@DirectoryBot timezone America/Los_Angeles` would have DirectoryBot record "America/Los_Angeles" as your entry for "timezone". The message with this command will be deleted for security purposes.
 
 #### lookup
-Syntax: `@DirectoryBot lookup (platform) (user)`
-\
-Private messages sender with (user)'s stored information for the (platform).
-
-Syntax: `@DirectoryBot (platform) (user)`
-\
-A shorter version of the previous syntax.
-
 Syntax: `@DirectoryBot lookup (platform)`
 \
-Private messages sender with everyone's stored information for the (platform).
+Tells you everyone's information associted with the given platform.
+
+Syntax: `@DirectoryBot (platform) (user set)`
+\
+You can limit your results to a set of users by mentioning them at the end of the command.
 
 #### send (AKA: tell)
 Syntax: `@DirectoryBot send (user) (platform)`

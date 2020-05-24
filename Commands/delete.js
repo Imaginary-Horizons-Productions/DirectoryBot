@@ -17,7 +17,7 @@ command.execute = (receivedMessage, state, metrics) => {
     // Command specifications go here
     if (state.messageArray.length > 0) {
         let mentionedGuildMembers = receivedMessage.mentions.members.array().filter(member => member.id != receivedMessage.client.user.id);
-        var platform = state.messageArray[0].toLowerCase();
+        var platform = state.messageArray.filter(word => !word.match(MessageMentions.USERS_PATTERN))[0].toLowerCase();
         var msgList = state.messageArray.slice(1);
         var reason = msgList.join(" ");
 

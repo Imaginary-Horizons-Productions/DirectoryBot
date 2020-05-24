@@ -28,9 +28,7 @@ command.execute = (receivedMessage, state, metrics) => {
                         if (!recipient.bot) {
                             recipient.send(senderInfo + `. It is:\n\t${state.cachedGuild.userDictionary[receivedMessage.author.id][platform].value}\n\n\
 This message will expire in about ${millisecondsToHours(state.cachedGuild.infoLifetime)}.`).then(sentMessage => {
-                                setTimeout(function () {
-                                    sentMessage.edit(senderInfo + `, but it has expired. You can look it up again with ${receivedMessage.client.user} \`lookup @${receivedMessage.author.username} ${platform}\`.`);
-                                }, state.cachedGuild.infoLifetime);
+                                sentMessage.setToExpire(state.cachedGuild, receivedMessage.guild.id, senderInfo + `, but it has expired. You can look it up again with ${receivedMessage.client.user} \`lookup @${receivedMessage.author.username} ${platform}\`.`);
                             }).catch(console.error);
                         }
                     })

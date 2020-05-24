@@ -1,6 +1,41 @@
-const { MessageEmbed } = require('discord.js');
+const { MessageEmbed, Message } = require('discord.js');
 const fs = require('fs');
 var encrypter = require('crypto-js');
+
+MessageEmbed.prototype.addBlankField = function (inline = false) {
+    return this.addField('\u200B', '\u200B', inline);
+}
+
+Message.prototype.setToExpire = function (guildSpecifics, guildID, expirationText) {
+    if (!guildSpecifics.expiringMessages[this.channel.id]) {
+        guildSpecifics.expiringMessages[this.channel.id] = [this.id];
+    } else {
+        guildSpecifics.expiringMessages[this.channel.id].push(this.id);
+    }
+    fs.readFile("encryptionKey.txt", 'utf8', (error, keyInput) => {
+        if (error) {
+            console.log(error);
+        } else {
+            if (!fs.existsSync('./data')) {
+                fs.mkdirSync('./data');
+            }
+            if (!fs.existsSync('./data/' + guildID)) {
+                fs.mkdirSync('./data/' + guildID);
+            }
+            var filePath = `./data/${guildID}/expiringMessages.txt`;
+            fs.writeFile(filePath, encrypter.AES.encrypt(JSON.stringify(guildSpecifics.expiringMessages), keyInput).toString(), 'utf8', (error) => {
+                if (error) {
+                    console.log(error);
+                }
+            })
+        }
+    })
+
+    setTimeout(function () {
+        this.edit(expirationText);
+        guildSpecifics.expiringMessages[this.channel.id].shift();
+    }, guildSpecifics.infoLifetime);
+}
 
 exports.millisecondsToHours = function (milliseconds, showMinutes = false, showSeconds = false) {
     var text = "less than an hour";

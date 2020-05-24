@@ -11,5 +11,6 @@ module.exports = class GuildSpecifics {
         this.managerRoleID = managerRoleInput;
         this.permissionsRoleID = permissionsRoleInput;
         this.infoLifetime = infoLifetimeInput;
+        this.expiringMessages = {};
     }
 }

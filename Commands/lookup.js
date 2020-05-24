@@ -42,9 +42,7 @@ command.execute = (receivedMessage, state, metrics) => {
             text += `\n\nThis message will expire in about ${millisecondsToHours(state.cachedGuild.infoLifetime)}.`;
             if (text.length < 2001) {
                 receivedMessage.author.send(text).then(sentMessage => {
-                    setTimeout(function () {
-                        sentMessage.edit(`Your lookup of ${receivedMessage.guild.name}'s ${platform} ${state.cachedGuild.platformsList[platform].term} has expired.`);
-                    }, state.cachedGuild.infoLifetime);
+                    sentMessage.setToExpire(state.cachedGuild, receivedMessage.guild.id, `Your lookup of ${receivedMessage.guild.name}'s ${platform} ${state.cachedGuild.platformsList[platform].term} has expired.`);
                 }).catch(console.error);
             } else {
                 // Error Message

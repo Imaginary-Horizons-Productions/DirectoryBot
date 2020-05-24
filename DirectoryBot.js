@@ -1,7 +1,4 @@
 const Discord = require('discord.js');
-Discord.MessageEmbed.prototype.addBlankField = function (inline = false) {
-    return this.addField('\u200B', '\u200B', inline);
-}
 const fs = require('fs');
 var encrypter = require('crypto-js');
 
@@ -64,17 +61,35 @@ client.on('ready', () => {
                                         Object.assign(guildDictionary[guildID].platformsList, JSON.parse(encrypter.AES.decrypt(platformsListInput, keyInput).toString(encrypter.enc.Utf8)));
                                     }
 
-                                    helpers.savePermissionsRole(guildID, guildDictionary[guildID].permissionsRoleID);
+                                    fs.readFile(`./data/${guildID}/expiringMessages.txt`, 'utf8', (error, expiringMessagesInput) => {
+                                        if (error) {
+                                            console.log(error);
+                                        } else {
+                                            let expiringMessages = JSON.parse(encrypter.AES.decrypt(expiringMessagesInput, keyInput).toString(encrypter.enc.Utf8));
+                                            Object.keys(expiringMessages).forEach(channelID => {
+                                                let channel = client.channels.fetch(channelID).then(DMChannel => {
+                                                    expiringMessages[channelID].forEach(messageID => {
+                                                        DMChannel.messages.fetch(messageID).then(message => {
+                                                            message.edit(`This message has expired.`);
+                                                        })
+                                                    })
+                                                });
+                                            })
+                                            guildDictionary[guildID].expiringMessages = {};
+                                        }
 
-                                    setInterval(() => {
-                                        saveParticipatingGuildsIDs(true);
-                                        Object.keys(guildDictionary).forEach((guildID) => {
-                                            helpers.saveManagerRole(guildID, guildDictionary[guildID].managerRoleID, true);
-                                            helpers.savePermissionsRole(guildID, guildDictionary[guildID].permissionsRoleID, true);
-                                            helpers.savePlatformsList(guildID, guildDictionary[guildID].platformsList, true);
-                                            helpers.saveUserDictionary(guildID, guildDictionary[guildID].userDictionary, true);
-                                        })
-                                    }, 3600000)
+                                        helpers.savePermissionsRole(guildID, guildDictionary[guildID].permissionsRoleID);
+
+                                        setInterval(() => {
+                                            saveParticipatingGuildsIDs(true);
+                                            Object.keys(guildDictionary).forEach((guildID) => {
+                                                helpers.saveManagerRole(guildID, guildDictionary[guildID].managerRoleID, true);
+                                                helpers.savePermissionsRole(guildID, guildDictionary[guildID].permissionsRoleID, true);
+                                                helpers.savePlatformsList(guildID, guildDictionary[guildID].platformsList, true);
+                                                helpers.saveUserDictionary(guildID, guildDictionary[guildID].userDictionary, true);
+                                            })
+                                        }, 3600000)
+                                    })
                                 });
                             });
                         })

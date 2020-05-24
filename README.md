@@ -6,9 +6,10 @@ DirectoryBot is a Discord bot that stores friend codes, converts timezones, and 
 2. Move the DirectoryBot role above any roles you'd like it to be able to automatically add (new roles get added at the bottom)
 
 ### Optional
-* Use "@DirectoryBot setoprole (role)" to set up an operator role. Operators are allowed to use the operator commands without Discord administrator permissions.
+* Use "@DirectoryBot setpermissionsrole (role)" to store the permissions role. This allows the bot to interpret accidental mentions of the role as command messages.
+* Use "@DirectoryBot setmanagerrole (role)" to set up a manager role. Bot managers are allowed to use manager-only commands without Discord administrator permissions.
 * Record your information for DirectoryBot's default platforms: time zone, possessive pronoun, and stream.
-* Check out BountyBot, another Imaginary Horizons Productions discord bot: (link coming soon)
+* Check out the Imaginary Horizons Productions Patreon: https://www.patreon.com/imaginaryhorizonsproductions
 
 ### Notes
 If you leave a server, DirectoryBot will delete all of your data. If you kick DirectoryBot, it will delete everyoe's data.
@@ -85,12 +86,17 @@ Syntax: `@DirectoryBot shoutout (user)`
 \
 Posts a link to the user's stream!
 
-### Operator Commands
-The following commands can only be used by server members who have Discord administrator privledges or the role determined by **setoprole**.
-#### setoprole
-Syntax: `@DirectoryBot setoprole (role)`
+### Bot Manager Commands
+The following commands can only be used by server members who have Discord administrator privledges or the role determined by **setmanagerrole**.
+#### setpermissionsrole
+Syntax: `@DirectoryBot setpermissionsrole (role)`
 \
-Sets the operator role for DirectoryBot. Users with that role can use the operator commands without Discord administrator privileges. If no role is given, the op role will be cleared.
+Stores DirectoryBot's permissions role, allowing DirectoryBot to interpret accidental mentions of the role as command messages. If no role is given, the setting will be cleared.
+
+#### setmanagerrole
+Syntax: `@DirectoryBot setmanagerrole (role)`
+\
+Sets the manager role for DirectoryBot. Users with that role can use the manager-only commands without Discord administrator privileges. If no role is given, the setting will be cleared.
 
 #### newplatform (AKA: addplatform)
 Syntax `@DirectoryBot newplatform (platform)`

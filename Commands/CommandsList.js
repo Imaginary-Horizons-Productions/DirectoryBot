@@ -9,7 +9,7 @@ exports.commandList = {
     "General Commands": ['help.js', 'record.js', 'send.js', 'lookup.js', 'whois.js', 'delete.js', 'platforms.js', 'support.js', 'credits.js'],
     "Time Zone Commands": ['convert.js', 'countdown.js'],
     "Stream Commands": ['multistream.js', 'shoutout.js'],
-    "Configuration Commands": ['managerrole.js', 'newplatform.js', 'setplatformterm.js', 'setplatformrole.js', 'removeplatform.js']
+    "Configuration Commands": ['permissionsrole.js', 'managerrole.js', 'newplatform.js', 'setplatformterm.js', 'setplatformrole.js', 'removeplatform.js']
 };
 
 var commandFileNames = [];

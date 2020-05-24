@@ -1,9 +1,9 @@
 const Command = require('./../Classes/Command.js');
-const { saveOpRole } = require('./../helpers.js');
+const { saveManagerRole } = require('./../helpers.js');
 
 var command = new Command();
 command.names = ["managerrole", "setoprole"];
-command.summary = `Sets the operator role to the given role; not mentioning a role resets the op role to none`;
+command.summary = `Sets the bot manager role; not mentioning a role clears the setting`;
 command.managerCommand = true;
 
 command.help = (clientUser, state) => {
@@ -15,13 +15,13 @@ command.execute = (receivedMessage, state, metrics) => {
     // Stores or clears the manager role id
     let roleMentions = receivedMessage.mentions.roles.array();
     if (roleMentions.length > 0) {
-        state.cachedGuild.opRole = roleMentions[0].id;
-        receivedMessage.channel.send(`The ${receivedMessage.client.user} operator role has been set to @${roleMentions[0].name}.`).catch(console.error);
-        saveOpRole(receivedMessage.guild.id, state.cachedGuild.opRole);
+        state.cachedGuild.managerRoleID = roleMentions[0].id;
+        receivedMessage.channel.send(`The ${receivedMessage.client.user} manager role has been set to @${roleMentions[0].name}.`).catch(console.error);
+        saveManagerRole(receivedMessage.guild.id, state.cachedGuild.managerRoleID);
     } else {
-        state.cachedGuild.opRole = null;
-        receivedMessage.channel.send(`The ${receivedMessage.client.user} operator role has been cleared.`).catch(console.error);
-        saveOpRole(receivedMessage.guild.id, state.cachedGuild.opRole);
+        state.cachedGuild.managerRoleID = null;
+        receivedMessage.channel.send(`The ${receivedMessage.client.user} manager role has been cleared.`).catch(console.error);
+        saveManagerRole(receivedMessage.guild.id, state.cachedGuild.managerRoleID);
     }
 }
 

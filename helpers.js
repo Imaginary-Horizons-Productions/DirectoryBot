@@ -71,14 +71,14 @@ exports.supportBuilder = function (footerURL) {
         .setTimestamp();
 }
 
-exports.saveOpRole = function (guildID, managerRole, backup = false) {
+exports.saveManagerRole = function (guildID, managerRoleID, backup = false) {
     fs.readFile(`encryptionKey.txt`, 'utf8', (error, keyInput) => {
         if (error) {
             console.log(error);
         } else {
             var filePath = `./`;
             if (backup) {
-                filePath += 'backups/' + guildID + '/opRole.txt';
+                filePath += 'backups/';
                 if (!fs.existsSync('./backups')) {
                     fs.mkdirSync('./backups');
                 }
@@ -86,7 +86,7 @@ exports.saveOpRole = function (guildID, managerRole, backup = false) {
                     fs.mkdirSync('./backups/' + guildID);
                 }
             } else {
-                filePath += 'data/' + guildID + '/opRole.txt';
+                filePath += 'data/';
                 if (!fs.existsSync('./data')) {
                     fs.mkdirSync('./data');
                 }
@@ -94,7 +94,41 @@ exports.saveOpRole = function (guildID, managerRole, backup = false) {
                     fs.mkdirSync('./data/' + guildID);
                 }
             }
-            fs.writeFile(filePath, encrypter.AES.encrypt(managerRole, keyInput).toString(), 'utf8', (error) => {
+            filePath += guildID + '/managerRole.txt';
+            fs.writeFile(filePath, encrypter.AES.encrypt(managerRoleID, keyInput).toString(), 'utf8', (error) => {
+                if (error) {
+                    console.log(error);
+                }
+            })
+        }
+    })
+}
+
+exports.savePermissionsRole = function (guildID, permissionsRoleID, backup = false) {
+    fs.readFile(`encryptionKey.txt`, 'utf8', (error, keyInput) => {
+        if (error) {
+            console.log(error);
+        } else {
+            var filePath = `./`;
+            if (backup) {
+                filePath += 'backups/';
+                if (!fs.existsSync('./backups')) {
+                    fs.mkdirSync('./backups');
+                }
+                if (!fs.existsSync('./backups/' + guildID)) {
+                    fs.mkdirSync('./backups/' + guildID);
+                }
+            } else {
+                filePath += 'data/';
+                if (!fs.existsSync('./data')) {
+                    fs.mkdirSync('./data');
+                }
+                if (!fs.existsSync('./data/' + guildID)) {
+                    fs.mkdirSync('./data/' + guildID);
+                }
+            }
+            filePath += guildID + '/permissionsRole.txt';
+            fs.writeFile(filePath, encrypter.AES.encrypt(permissionsRoleID, keyInput).toString(), 'utf8', (error) => {
                 if (error) {
                     console.log(error);
                 }

@@ -1,4 +1,5 @@
 const Command = require('./../Classes/Command.js');
+const { MessageMentions } = require('discord.js');
 const { platformsBuilder, millisecondsToHours } = require('./../helpers.js');
 
 var command = new Command();
@@ -16,7 +17,7 @@ Syntax: ${clientUser} \`${state.messageArray[0]} (platform) (user set)\n\n` + pl
 command.execute = (receivedMessage, state, metrics) => {
     // Looks up platform data for the server or a set of users and sends it to the command user
     if (state.messageArray.length > 0) {
-        var platform = state.messageArray[0].toLowerCase();
+        var platform = state.messageArray.filter(word => !word.match(MessageMentions.USERS_PATTERN))[0].toLowerCase();
 
         if (Object.keys(state.cachedGuild.platformsList).includes(platform)) {
             var text = `Here are all the ${platform} ${state.cachedGuild.platformsList[platform].term}s in ${receivedMessage.guild}'s ${receivedMessage.client.user}:\n`;

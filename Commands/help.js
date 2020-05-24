@@ -25,7 +25,7 @@ help.execute = (receivedMessage, state, metrics) => {
             if (state.botManager || !lookedUpCommand.managerCommand) {
                 receivedMessage.author.send(lookedUpCommand.help(receivedMessage.client.user, state));
             } else {
-                receivedMessage.author.send(`You need a role with the administrator flag${state.cachedGuild.opRole != "" ? ` or the @${receivedMessage.guild.roles.resolve(state.cachedGuild.opRole).name} role` : ``} to view manager commands.`);
+                receivedMessage.author.send(`You need a role with the administrator flag${state.cachedGuild.managerRoleID != "" ? ` or the @${receivedMessage.guild.roles.resolve(state.cachedGuild.managerRoleID).name} role` : ``} to view manager commands.`);
             }
         } else {
             receivedMessage.author.send(`**${commandName}** does not appear to be a ${receivedMessage.client.user} command. Please check for typos!`);

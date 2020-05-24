@@ -39,7 +39,7 @@ command.execute = (receivedMessage, state, metrics) => {
                         }
                     } else {
                         // Error Message
-                        receivedMessage.author.send(`You need a role with administrator privileges${state.cachedGuild.opRole ? ` or the role @${receivedMessage.guild.roles.resolve(cachedGuild.opRole).name}` : ""} to remove ${state.cachedGuild.platformsList[platform].term}s for others.`).catch(console.error);
+                        receivedMessage.author.send(`You need a role with administrator privileges${state.cachedGuild.managerRoleID ? ` or the role @${receivedMessage.guild.roles.resolve(cachedGuild.managerRoleID).name}` : ""} to remove ${state.cachedGuild.platformsList[platform].term}s for others.`).catch(console.error);
                     }
                 } else {
                     // Error Message

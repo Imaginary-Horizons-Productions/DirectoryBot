@@ -7,7 +7,7 @@ command.names = ["support"];
 command.summary = `Lists the ways to support development of DirectoryBot`;
 command.managerCommand = false;
 
-command.help = (clientUser, state) => { // function for constructing examples with used overloads
+command.help = (clientUser, state) => {
     return supportBuilder(clientUser.displayAvatarURL());
 }
 

@@ -139,13 +139,14 @@ client.on('message', (receivedMessage) => {
         return;
     }
 
-    if (receivedMessage.mentions.users.has(client.user.id)) {
+    if (receivedMessage.mentions.users.has(client.user.id) || receivedMessage.mentions.roles.has(guildDictionary[receivedMessage.guild.id].permissionsRoleID)) {
         if (!participatingGuildsIDs.includes(receivedMessage.guild.id)) {
             guildCreate(receivedMessage.guild.id);
         }
 
         var splitMessage = receivedMessage.content.split(" ");
-        if (splitMessage[0].replace(/\D/g, "") == client.user.id) {
+        let firstWord = splitMessage.shift().replace(/\D/g, "");
+        if (firstWord == client.user.id || firstWord == guildDictionary[receivedMessage.guild.id].permissionsRoleID) {
             var recentInteractions = 0;
 
             antiSpam.forEach(user => {
@@ -158,7 +159,6 @@ client.on('message', (receivedMessage) => {
                 var messageArray = splitMessage.filter(function (element) {
                     return element != "";
                 });
-                messageArray = messageArray.slice(1); // Discard bot mention
 
                 if (messageArray.length > 0) {
                     var command = messageArray.shift();

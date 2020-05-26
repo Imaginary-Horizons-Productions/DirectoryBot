@@ -189,9 +189,11 @@ client.on('message', (receivedMessage) => {
                         }, antiSpamInterval);
                     } else {
                         receivedMessage.author.send(`${command} isn't a ${client.user} command. Please check for typos or use ${client.user}\`help.\``)
+                            .catch(console.error);
                     }
                 } else {
-                    receivedMessage.author.send(`To prevent excessive messaging, users are unable to enter more than ${commandLimit} commands in ${helpers.millisecondsToHours(antiSpamInterval, true, true)}. You can use ${client.user} \`lookup (platform)\` to look up everyone's information for the given platform at once.`);
+                    receivedMessage.author.send(`To prevent excessive messaging, users are unable to enter more than ${commandLimit} commands in ${helpers.millisecondsToHours(antiSpamInterval, true, true)}. You can use ${client.user} \`lookup (platform)\` to look up everyone's information for the given platform at once.`)
+                        .catch(console.error);
                 }
             }
         }
@@ -286,72 +288,26 @@ function guildCreate(guildID) {
 }
 
 function guildDelete(guildID) {
-    if (fs.existsSync(`./data/${guildID}`)) {
-        if (fs.existsSync(`./data/${guildID}/managerRole.txt`)) {
-            fs.unlinkSync(`./data/${guildID}/managerRole.txt`, (error) => {
+    let fileSets = ['data', 'backups'];
+    let fileNames = ['expiringMessages.txt', 'managerRole.txt', 'permissionsRole.txt', 'platformsList.txt', 'userDictionary.txt'];
+    fileSets.forEach(fileSet => {
+        if (fs.existsSync(`./${fileSet}/${guildID}`)) {
+            fileNames.forEach(fileName => {
+                if (fs.existsSync(`./${fileSet}/${guildID}/${fileName}`)) {
+                    fs.unlinkSync(`./${fileSet}/${guildID}/${fileName}`, (error) => {
+                        if (error) {
+                            console.log(error);
+                        }
+                    })
+                }
+            })
+            fs.rmdirSync(`./${fileSet}/${guildID}`, (error) => {
                 if (error) {
                     console.log(error);
                 }
             })
         }
-        if (fs.existsSync(`./data/${guildID}/permissionsRole.txt`)) {
-            fs.unlinkSync(`./data/${guildID}/permissionsRole.txt`, (error) => {
-                if (error) {
-                    console.log(error);
-                }
-            })
-        }
-        if (fs.existsSync(`./data/${guildID}/userDictionary.txt`)) {
-            fs.unlinkSync(`./data/${guildID}/userDictionary.txt`, (error) => {
-                if (error) {
-                    console.log(error);
-                }
-            })
-        }
-        if (fs.existsSync(`./data/${guildID}/platformsList.txt`)) {
-            fs.unlinkSync(`./data/${guildID}/platformsList.txt`, (error) => {
-                if (error) {
-                    console.log(error);
-                }
-            })
-        }
-        fs.rmdirSync(`./data/${guildID}`);
-    }
-    if (fs.existsSync(`./backups/${guildID}`)) {
-        if (fs.existsSync(`./backups/${guildID}/managerRole.txt`)) {
-            fs.unlinkSync(`./backups/${guildID}/managerRole.txt`, (error) => {
-                if (error) {
-                    console.log(error);
-                }
-            })
-        }
-        if (fs.existsSync(`./backups/${guildID}/permissionsRole.txt`)) {
-            fs.unlinkSync(`./backups/${guildID}/permissionsRole.txt`, (error) => {
-                if (error) {
-                    console.log(error);
-                }
-            })
-        }
-        if (fs.existsSync(`./backups/${guildID}/userDictionary.txt`)) {
-            fs.unlinkSync(`./backups/${guildID}/userDictionary.txt`, (error) => {
-                if (error) {
-                    console.log(error);
-                }
-            })
-        }
-        if (fs.existsSync(`./backups/${guildID}/platformsList.txt`)) {
-            fs.unlinkSync(`./backups/${guildID}/platformsList.txt`, (error) => {
-                if (error) {
-                    console.log(error);
-                }
-            })
-        }
-        fs.rmdirSync(`./backups/${guildID}`, (error) => {
-            if (error) {
-                console.log(error);
-            }
-        })
-    }
+    })
 
     participatingGuildsIDs.splice(participatingGuildsIDs.indexOf(guildID), 1);
     saveParticipatingGuildsIDs();

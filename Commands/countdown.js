@@ -3,17 +3,17 @@ const { DateTime, IANAZone, LocalZone } = require("luxon");
 var chrono = require('chrono-node');
 const { millisecondsToHours } = require('./../helpers.js');
 
-var command = new Command();
-command.names = ["countdown"];
-command.summary = `How long until the given time`;
-command.managerCommand = false;
+var countdown = new Command();
+countdown.names = ["countdown"];
+countdown.summary = `How long until the given time`;
+countdown.managerCommand = false;
 
-command.help = (clientUser, state) => {
-    return `The *${state.messageArray[0]}* command states the time until the given time. ${clientUser} uses IANA specified timezones. If no timezone is given ${client.user} will try with the user's timezone default, then the server's local timezone failing that.\n\
+countdown.help = (clientUser, state) => {
+    return `The *${state.messageArray[0]}* command states the time until the given time. ${clientUser} uses IANA specified timezones. If no timezone is given ${client.user} will try with the user's timezone default, then the server's local timezone failing that.
 Syntax: ${clientUser} \`${state.messageArray[0]} (time) in (timezone)\``;
 }
 
-command.execute = (receivedMessage, state, metrics) => {
+countdown.execute = (receivedMessage, state, metrics) => {
     // Calculates the amount of time until the given date
     var startTimezone = LocalZone.instance.name;
     var timeText = "";
@@ -35,7 +35,8 @@ command.execute = (receivedMessage, state, metrics) => {
             }
         } else {
             // Error Message
-            receivedMessage.author.send(`Please specify a time zone for the time to count down to.`);
+            receivedMessage.author.send(`Please specify a time zone for the time to count down to.`)
+                .catch(console.error);
             return;
         }
         if (IANAZone.isValidZone(startTimezone)) {
@@ -46,15 +47,18 @@ command.execute = (receivedMessage, state, metrics) => {
                 duration = duration.plus(86400000); // 86400000 is a day in milliseconds
                 duration.normalize();
             }
-            receivedMessage.author.send(`*${state.messageArray[0]} in ${startTimezone}* is about **${millisecondsToHours(duration.milliseconds, true)}** from now.`);
+            receivedMessage.author.send(`*${state.messageArray[0]} in ${startTimezone}* is about **${millisecondsToHours(duration.milliseconds, true)}** from now.`)
+                .catch(console.error);
         } else {
             // Error message
-            receivedMessage.author.send(`The time zone you entered could not be parsed.`).catch(console.error);
+            receivedMessage.author.send(`The time zone you entered could not be parsed.`).catch(console.error)
+                .catch(console.error);
         }
     } else {
         // Error Message
-        receivedMessage.author.send(`The time you provided could not be parsed (Remember to specify AM or PM).`);
+        receivedMessage.author.send(`The time you provided could not be parsed (Remember to specify AM or PM).`)
+            .catch(console.error);
     }
 }
 
-module.exports = command;
+module.exports = countdown;

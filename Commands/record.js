@@ -1,17 +1,17 @@
 const Command = require('./../Classes/Command.js');
 const { syncUserRolePlatform, saveUserDictionary } = require('./../helpers.js');
 
-var command = new Command();
-command.names = ["record", "log"];
-command.summary = `Record your information for a platform`;
-command.managerCommand = false;
+var record = new Command();
+record.names = ["record", "log"];
+record.summary = `Record your information for a platform`;
+record.managerCommand = false;
 
-command.help = (clientUser, state) => { // function for constructing examples with used overloads
-    return `The *${state.messageArray[0]}* command adds your information for given platform so people can ask the bot for it. The message containing the command will be deleted for security purposes.\n\
+record.help = (clientUser, state) => { // function for constructing examples with used overloads
+    return `The *${state.messageArray[0]}* command adds your information for given platform so people can ask the bot for it. The message containing the command will be deleted for security purposes.
 Syntax: ${clientUser} \`${state.messageArray[0]} (platform) (code)\``;
 }
 
-command.execute = (receivedMessage, state, metrics) => {
+record.execute = (receivedMessage, state, metrics) => {
     // Records a user's information for a given platform
     if (state.messageArray.length > 0) {
         if (state.messageArray.length > 1) {
@@ -24,20 +24,24 @@ command.execute = (receivedMessage, state, metrics) => {
                     state.cachedGuild.userDictionary[receivedMessage.author.id][platform].value = friendcode;
                     syncUserRolePlatform(receivedMessage.member, platform, state.cachedGuild);
                     saveUserDictionary(receivedMessage.guild.id, state.cachedGuild.userDictionary);
-                    receivedMessage.channel.send(`${receivedMessage.author} has recorded a ${platform} ${state.cachedGuild.platformsList[platform].term}. Check it with "${receivedMessage.client.user} lookup ${receivedMessage.author} ${platform}".`);
+                    receivedMessage.channel.send(`${receivedMessage.author} has recorded a ${platform} ${state.cachedGuild.platformsList[platform].term}. Check it with "${receivedMessage.client.user} lookup ${receivedMessage.author} ${platform}".`)
+                        .catch(console.error);
                 }
             } else {
                 // Error Message
                 receivedMessage.author.send(`${platform} is not currently being tracked in ${receivedMessage.guild}.`)
+                    .catch(console.error);
             }
         } else {
             // Error Message
-            receivedMessage.author.send(`Please provide the information you would like to record.`);
+            receivedMessage.author.send(`Please provide the information you would like to record.`)
+                .catch(console.error);
         }
     } else {
         // Error Message
-        receivedMessage.author.send(`Please provide a platform for which to record your information for.`);
+        receivedMessage.author.send(`Please provide a platform for which to record your information for.`)
+            .catch(console.error);
     }
 }
 
-module.exports = command;
+module.exports = record;

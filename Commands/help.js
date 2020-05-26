@@ -7,9 +7,10 @@ help.summary = `You can type \`@DirectoryBot help\` followed by one of those for
 help.managerCommand = false;
 
 help.help = (clientUser, state) => {
-    return `The **${state.messageArray[0]}** command lists all of ${clientUser}'s commands.\n\
-Syntax: ${clientUser}\` ${state.messageArray[0]}\`\n\n\
-Putting a command as an input will give details on that command and usage examples.\n\
+    return `The **${state.messageArray[0]}** command lists all of ${clientUser}'s commands.
+Syntax: ${clientUser}\` ${state.messageArray[0]}\`
+
+Putting a command as an input will give details on that command and usage examples.
 Syntax: ${clientUser}\` ${state.messageArray[0]} (command)\``;
 }
 
@@ -23,12 +24,15 @@ help.execute = (receivedMessage, state, metrics) => {
         var lookedUpCommand = commandDictionary[commandName];
         if (lookedUpCommand) {
             if (state.botManager || !lookedUpCommand.managerCommand) {
-                receivedMessage.author.send(lookedUpCommand.help(receivedMessage.client.user, state));
+                receivedMessage.author.send(lookedUpCommand.help(receivedMessage.client.user, state))
+                    .catch(console.error);
             } else {
-                receivedMessage.author.send(`You need a role with the administrator flag${state.cachedGuild.managerRoleID != "" ? ` or the @${receivedMessage.guild.roles.resolve(state.cachedGuild.managerRoleID).name} role` : ``} to view manager commands.`);
+                receivedMessage.author.send(`You need a role with the administrator flag${state.cachedGuild.managerRoleID != "" ? ` or the @${receivedMessage.guild.roles.resolve(state.cachedGuild.managerRoleID).name} role` : ``} to view manager commands.`)
+                    .catch(console.error);
             }
         } else {
-            receivedMessage.author.send(`**${commandName}** does not appear to be a ${receivedMessage.client.user} command. Please check for typos!`);
+            receivedMessage.author.send(`**${commandName}** does not appear to be a ${receivedMessage.client.user} command. Please check for typos!`)
+                .catch(console.error);
         }
     } else {
         Object.keys(commandList).forEach(commandSet => {
@@ -44,7 +48,8 @@ help.execute = (receivedMessage, state, metrics) => {
                     embed.addField(command.names, command.summary);
                 })
 
-                receivedMessage.author.send(embed);
+                receivedMessage.author.send(embed)
+                    .catch(console.error);
             }
         })
     }

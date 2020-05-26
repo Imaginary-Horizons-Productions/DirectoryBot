@@ -2,19 +2,20 @@ const Command = require('./../Classes/Command.js');
 const { MessageMentions } = require('discord.js');
 const { platformsBuilder, millisecondsToHours } = require('./../helpers.js');
 
-var command = new Command();
-command.names = ["lookup"];
-command.summary = `Look up someone else's information if they've recorded it`;
-command.managerCommand = false;
+var lookup = new Command();
+lookup.names = ["lookup"];
+lookup.summary = `Look up someone else's information if they've recorded it`;
+lookup.managerCommand = false;
 
-command.help = (clientUser, state) => {
-    return `The *${state.messageArray[0]}* command tells you everyone's information associted with the given platform.\n\
-Syntax: ${clientUser} \`${state.messageArray[0]} (platform)\`\n\n\
-You can limit your results to a set of users by mentioning them at the end of the command.\n\
+lookup.help = (clientUser, state) => {
+    return `The *${state.messageArray[0]}* command tells you everyone's information associted with the given platform.
+Syntax: ${clientUser} \`${state.messageArray[0]} (platform)\`
+
+You can limit your results to a set of users by mentioning them at the end of the command.
 Syntax: ${clientUser} \`${state.messageArray[0]} (platform) (user set)\n\n` + platformsBuilder(state.cachedGuild.platformsList);
 }
 
-command.execute = (receivedMessage, state, metrics) => {
+lookup.execute = (receivedMessage, state, metrics) => {
     // Looks up platform data for the server or a set of users and sends it to the command user
     if (state.messageArray.length > 0) {
         var platform = state.messageArray.filter(word => !word.match(MessageMentions.USERS_PATTERN))[0].toLowerCase();
@@ -46,16 +47,19 @@ command.execute = (receivedMessage, state, metrics) => {
                 }).catch(console.error);
             } else {
                 // Error Message
-                receivedMessage.author.send(`Your lookup of ${receivedMessage.guild.name}'s ${platform} ${state.cachedGuild.platformsList[platform].term} is too long for a single message, please limit your search (2,000 characters max).`);
+                receivedMessage.author.send(`Your lookup of ${receivedMessage.guild.name}'s ${platform} ${state.cachedGuild.platformsList[platform].term} is too long for a single message, please limit your search (2,000 characters max).`)
+                    .catch(console.error);
             }
         } else {
             // Error Message
             receivedMessage.author.send(`${platform} is not currently being tracked in ${receivedMessage.guild}.`)
+                .catch(console.error);
         }
     } else {
         // Error Message
         receivedMessage.author.send(`Please provide a platform in which to look up information.`)
+            .catch(console.error);
     }
 }
 
-module.exports = command;
+module.exports = lookup;

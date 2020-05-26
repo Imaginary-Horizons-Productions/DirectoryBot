@@ -72,7 +72,7 @@ exports.syncUserRolePlatform = function (member, platformName, guildSpecifics) {
     }
 }
 
-exports.platformsBuilder = function (platformsList, guild) {
+exports.platformsBuilder = function (platformsList) {
     let processedText = Object.keys(platformsList).toString().replace(/,/g, ', ');
 
     return `This server's tracked platforms are: ${processedText}`;

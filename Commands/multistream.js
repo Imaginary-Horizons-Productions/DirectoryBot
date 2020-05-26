@@ -1,16 +1,16 @@
 const Command = require('./../Classes/Command.js');
 
-var command = new Command();
-command.names = ["multistream", "multitwitch"];
-command.summary = `Generate a multistream link for the given users`;
-command.managerCommand = false;
+var multistream = new Command();
+multistream.names = ["multistream", "multitwitch"];
+multistream.summary = `Generate a multistream link for the given users`;
+multistream.managerCommand = false;
 
-command.help = (clientUser, state) => { // function for constructing examples with used overloads
-    return `The *${state.messageArray[0]}* command generates a link to watch multiple streams simultaneously. Optionally, you can enter the layout number last if you want to specify that.\n\
+multistream.help = (clientUser, state) => { // function for constructing examples with used overloads
+    return `The *${state.messageArray[0]}* command generates a link to watch multiple streams simultaneously. Optionally, you can enter the layout number last if you want to specify that.
 Syntax: ${clientUser} \`${state.messageArray[0]} (user1) (user2)... (layout)\``;
 }
 
-command.execute = (receivedMessage, state, metrics) => {
+multistream.execute = (receivedMessage, state, metrics) => {
     // Generates a url for viewing multiple streams simultaneously (Supported: Twitch)
     if (Object.keys(state.cachedGuild.platformsList).includes("stream")) {
         var url = "https://multistre.am/";
@@ -27,7 +27,8 @@ command.execute = (receivedMessage, state, metrics) => {
                 }
             } else {
                 // Error Message
-                receivedMessage.author.send(`One of those people is not a member of ${receivedMessage.guild}.`);
+                receivedMessage.author.send(`One of those people is not a member of ${receivedMessage.guild}.`)
+                    .catch(console.error);
                 return;
             }
         }
@@ -41,6 +42,7 @@ command.execute = (receivedMessage, state, metrics) => {
             missingUsersText = missingUsersText.slice(0, -2);
             // Error Message
             receivedMessage.channel.send(`The following users don't have stream info logged with DirectoryBot: ${missingUsersText}.`)
+                .catch(console.error);
             return;
         }
 
@@ -49,15 +51,18 @@ command.execute = (receivedMessage, state, metrics) => {
                 url += "layout" + layout;
             } else {
                 // Error Message (non-halting)
-                receivedMessage.author.send(`The multistream layout argument you sent (${layout}) was not a number.`);
+                receivedMessage.author.send(`The multistream layout argument you sent (${layout}) was not a number.`)
+                    .catch(console.error);
             }
         }
 
-        receivedMessage.author.send(`Here's the multistream link: ${url}`);
+        receivedMessage.author.send(`Here's the multistream link: ${url}`)
+            .catch(console.error);
     } else {
         // Error Message
-        receivedMessage.author.send(`Your multistream command could not be completed. ${receivedMessage.guild} does not seem to be tracking stream information.`);
+        receivedMessage.author.send(`Your multistream command could not be completed. ${receivedMessage.guild} does not seem to be tracking stream information.`)
+            .catch(console.error);
     }
 }
 
-module.exports = command;
+module.exports = multistream;

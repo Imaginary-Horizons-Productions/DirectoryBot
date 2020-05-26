@@ -1,17 +1,17 @@
 const Command = require('./../Classes/Command.js');
 const { savePlatformsList } = require('./../helpers.js');
 
-var command = new Command();
-command.names = ["removeplatform"];
-command.summary = `Stop recording and distributing user information for a game/service`;
-command.managerCommand = true;
+var removeplatform = new Command();
+removeplatform.names = ["removeplatform"];
+removeplatform.summary = `Stop recording and distributing user information for a game/service`;
+removeplatform.managerCommand = true;
 
-command.help = (clientUser, state) => {
-    return `The *${state.messageArray[0]}* command specifies a platform for ${clientUser} to stop recording and distributing information for. Note: this command does not remove roles associated with platforms in case someone has that role but wasn't given it by ${client.user}.\n\
+removeplatform.help = (clientUser, state) => {
+    return `The *${state.messageArray[0]}* command specifies a platform for ${clientUser} to stop recording and distributing information for. Note: this command does not remove roles associated with platforms in case someone has that role but wasn't given it by ${client.user}.
 Syntax: ${clientUser} \`${state.messageArray[0]} (platform to remove)\``;
 }
 
-command.execute = (receivedMessage, state, metrics) => {
+removeplatform.execute = (receivedMessage, state, metrics) => {
     // Removes the given platform
     if (state.messageArray.length > 0) {
         let platform = state.messageArray[0].toLowerCase();
@@ -21,16 +21,19 @@ command.execute = (receivedMessage, state, metrics) => {
             Object.keys(state.cachedGuild.userDictionary).forEach(userID => {
                 delete state.cachedGuild.userDictionary[userID][platform];
             })
-            receivedMessage.channel.send(`${platform} information will no longer be recorded.`);
+            receivedMessage.channel.send(`${platform} information will no longer be recorded.`)
+                .catch(console.error);
             savePlatformsList(receivedMessage.guild.id);
         } else {
             // Error Message
-            receivedMessage.author.send(`${platform} is not currently being recorded in ${receivedMessage.guild}.`);
+            receivedMessage.author.send(`${platform} is not currently being recorded in ${receivedMessage.guild}.`)
+                .catch(console.error);
         }
     } else {
         // Error Message
-        receivedMessage.author.send(`Please provide a platform to remove.`).cath(console.error);
+        receivedMessage.author.send(`Please provide a platform to remove.`)
+            .catch(console.error);
     }
 }
 
-module.exports = command;
+module.exports = removeplatform;

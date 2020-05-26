@@ -2,7 +2,7 @@ const Command = require('./../Classes/Command.js');
 const { savePermissionsRole } = require('./../helpers.js');
 
 var command = new Command();
-command.names = ['permissionsrole'];
+command.names = ['permissionsrole', 'setpermissionsrole'];
 command.summary = `Sets the bot permissions role; not mentioning a role clears the setting`;
 command.managerCommand = true;
 

@@ -2,7 +2,7 @@ const Command = require('./../Classes/Command.js');
 const { saveManagerRole } = require('./../helpers.js');
 
 var command = new Command();
-command.names = ["managerrole", "setoprole"];
+command.names = ["managerrole", "setmanagerrole"];
 command.summary = `Sets the bot manager role; not mentioning a role clears the setting`;
 command.managerCommand = true;
 

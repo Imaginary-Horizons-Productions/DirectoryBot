@@ -29,6 +29,11 @@ Syntax: `@DirectoryBot record (platform) (information)`
 \
 Stores your (platform) (information). For example `@DirectoryBot timezone America/Los_Angeles` would have DirectoryBot record "America/Los_Angeles" as your entry for "timezone". The message with this command will be deleted for security purposes.
 
+#### send (AKA: tell)
+Syntax: `@DirectoryBot send (user) (platform)`
+\
+Private messages the (user) with your information for the (platform).
+
 #### lookup
 Syntax: `@DirectoryBot lookup (platform)`
 \
@@ -38,10 +43,15 @@ Syntax: `@DirectoryBot (platform) (user set)`
 \
 You can limit your results to a set of users by mentioning them at the end of the command.
 
-#### send (AKA: tell)
-Syntax: `@DirectoryBot send (user) (platform)`
+#### myentries (AKA: mydata)
+Syntax: `@DirectoryBot myentries`
 \
-Private messages the (user) with your information for the (platform).
+Private messages the user with the information they've input into DirectoryBot.
+
+#### whois
+Syntax: `@DirectoryBot whois (username)`
+\
+Checks if anyone uses the given username and private messages you the result.
 
 #### delete (AKA: remove, clear)
 Syntax: `@DirectoryBot delete (platform)`
@@ -52,6 +62,11 @@ Deletes the information for the sender in (platform).
 Syntax: `@DirectoryBot platforms`
 \
 States a list of platforms currently tracked by DirectoryBot.
+
+#### support
+Syntax: `@DirectoryBot support`
+\
+Lists ways to support DirectoryBot development.
 
 #### creditz (AKA: credits, about)
 Syntax: `@DirectoryBot credits`
@@ -88,13 +103,13 @@ Posts a link to the user's stream!
 
 ### Bot Manager Commands
 The following commands can only be used by server members who have Discord administrator privledges or the role determined by **setmanagerrole**.
-#### setpermissionsrole
-Syntax: `@DirectoryBot setpermissionsrole (role)`
+#### permissionsrole (AKA: setpermissionsrole)
+Syntax: `@DirectoryBot permissionsrole (role)`
 \
 Stores DirectoryBot's permissions role, allowing DirectoryBot to interpret accidental mentions of the role as command messages. If no role is given, the setting will be cleared.
 
-#### setmanagerrole
-Syntax: `@DirectoryBot setmanagerrole (role)`
+#### managerrole (AKA: setmanagerrole)
+Syntax: `@DirectoryBot managerrole (role)`
 \
 Sets the manager role for DirectoryBot. Users with that role can use the manager-only commands without Discord administrator privileges. If no role is given, the setting will be cleared.
 
@@ -103,20 +118,20 @@ Syntax `@DirectoryBot newplatform (platform)`
 \
 Adds (platform) to the list of tracked platforms, allowing users to add their information for that platform.
 
-#### changeplatformterm (AKA: setplatformterm)
-Syntax: `@DirectoryBot changeplatformterm (platform) (term)`
+#### setplatformterm (AKA: changeplatformterm)
+Syntax: `@DirectoryBot setplatformterm (platform) (term)`
 \
 Changes what DirectoryBot calls information from the given platform (default is "username").
-
-#### removeplatform
-Syntax: `@DirectoryBot removeplatform (platform)`
-\
-Removes (platform) from the list of tracked platforms.
 
 #### setplatformrole
 Syntax: `@DirectoryBot setplatformrole (platform) (role)`
 \
 Associates (role) with (platform) so that whenever a user adds information for (platform), they'll be given (role) automatically.
+
+#### removeplatform
+Syntax: `@DirectoryBot removeplatform (platform)`
+\
+Removes (platform) from the list of tracked platforms.
 
 #### delete (for other users)
 Syntax: `@DirectoryBot delete (platform) (user)`

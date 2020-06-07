@@ -7,7 +7,7 @@ record.summary = `Record your information for a platform`;
 record.managerCommand = false;
 
 record.help = (clientUser, state) => { // function for constructing examples with used overloads
-    return `The *${state.messageArray[0]}* command adds your information for given platform so people can ask the bot for it. The message containing the command will be deleted for security purposes.
+    return `The *${state.messageArray[0]}* command adds your information for given platform so people can ask the bot for it. The message containing the command will be deleted for security purposes. Discord's spoilers markdown (|| on both sides) is removed from code entry to allow hiding entry from mobile via spoilers markdown.
 Syntax: ${clientUser} \`${state.messageArray[0]} (platform) (code)\``;
 }
 
@@ -17,7 +17,8 @@ record.execute = (receivedMessage, state, metrics) => {
         if (state.messageArray.length > 1) {
             var platform = state.messageArray[0].toLowerCase();
             var codeArray = state.messageArray.slice(1);
-            var friendcode = codeArray.join(" ");
+            let spoilerMarkdown = /\|\|/g;
+            let friendcode = codeArray.join(" ").replace(spoilerMarkdown, '');
 
             if (Object.keys(state.cachedGuild.platformsList).includes(platform)) { // Early out if platform is not being tracked
                 if (state.cachedGuild.userDictionary[receivedMessage.author.id][platform]) {

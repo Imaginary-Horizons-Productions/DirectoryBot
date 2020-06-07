@@ -45,7 +45,7 @@ help.execute = (receivedMessage, state, metrics) => {
                     .setTimestamp();
                 commandList[commandSet].forEach(filename => {
                     const command = require(`./${filename}`)
-                    embed.addField('**' + command.names.reduce((accumulator, current) => accumulator + ', ' + current) + '**', command.summary)
+                    embed.addField('**' + command.names.join(', ') + '**', command.summary)
                 })
 
                 receivedMessage.author.send(embed)

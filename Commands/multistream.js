@@ -14,8 +14,14 @@ multistream.execute = (receivedMessage, state, metrics) => {
     // Generates a url for viewing multiple streams simultaneously (Supported: Twitch)
     if (Object.keys(state.cachedGuild.platformsList).includes("stream")) {
         var url = "https://multistre.am/";
-        var layout = state.messageArray[0];
-        let mentionedGuildMembers = receivedMessage.mentions.members.array();
+        let layout;
+        for (var i = 0; i < state.messageArray.length; i++) {
+            if (!isNaN(parseInt(state.messageArray[i]))) {
+                layout = parseInt(state.messageArray[i]);
+                break;
+            }
+        }
+        let mentionedGuildMembers = receivedMessage.mentions.members.array().filter(member => member.id != receivedMessage.client.user.id);
 
         var missingUsers = [];
         for (var i = 0; i < mentionedGuildMembers.length; i++) {

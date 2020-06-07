@@ -33,10 +33,12 @@ lookup.execute = (receivedMessage, state, metrics) => {
                 userList = Object.keys(state.cachedGuild.userDictionary);
             }
 
-            userList.forEach(user => {
-                if (state.cachedGuild.userDictionary[user] && state.cachedGuild.userDictionary[user][platform]) {
-                    if (state.cachedGuild.userDictionary[user][platform].value) {
-                        text += `${receivedMessage.guild.members.resolve(user).displayName}: ${state.cachedGuild.userDictionary[user][platform].value}`;
+            userList.forEach(userID => {
+                if (!(state.cachedGuild.blockDictionary[userID] && state.cachedGuild.blockDictionary[userID].includes(receivedMessage.author.id))) {
+                    if (state.cachedGuild.userDictionary[userID] && state.cachedGuild.userDictionary[userID][platform]) {
+                        if (state.cachedGuild.userDictionary[userID][platform].value) {
+                            text += `${receivedMessage.guild.members.resolve(userID).displayName}: ${state.cachedGuild.userDictionary[userID][platform].value}`;
+                        }
                     }
                 }
             })

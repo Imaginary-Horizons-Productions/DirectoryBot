@@ -58,6 +58,11 @@ Syntax: `@DirectoryBot delete (platform)`
 \
 Deletes the information for the sender in (platform).
 
+#### block
+Syntax: `@DirectoryBot block (user)`
+\
+Prevents the mentioned user from looking up your data.
+
 #### platforms
 Syntax: `@DirectoryBot platforms`
 \

@@ -235,3 +235,35 @@ exports.savePlatformsList = function (guildID, platformsList, backup = false) {
         }
     })
 }
+
+exports.saveBlockDictionary = function (guildID, blockDictionary, backup = false) {
+    fs.readFile("encryptionKey.txt", 'utf8', (error, keyInput) => {
+        if (error) {
+            console.log(error);
+        } else {
+            var filePath = `./`;
+            if (backup) {
+                filePath += 'backups/' + guildID + '/blockDictionary.txt';
+                if (!fs.existsSync('./backups')) {
+                    fs.mkdirSync('./backups');
+                }
+                if (!fs.existsSync('./backups/' + guildID)) {
+                    fs.mkdirSync('./backups/' + guildID);
+                }
+            } else {
+                filePath += 'data/' + guildID + '/blockDictionary.txt';
+                if (!fs.existsSync('./data')) {
+                    fs.mkdirSync('./data');
+                }
+                if (!fs.existsSync('./data/' + guildID)) {
+                    fs.mkdirSync('./data/' + guildID);
+                }
+            }
+            fs.writeFile(filePath, encrypter.AES.encrypt(JSON.stringify(blockDictionary), keyInput).toString(), 'utf8', (error) => {
+                if (error) {
+                    console.log(error);
+                }
+            })
+        }
+    })
+}

@@ -16,18 +16,17 @@ Syntax: ${clientUser} \`${state.messageArray[0]} (platform name) (information te
 newplatform.execute = (receivedMessage, state, metrics) => {
     // Adds a new platform to track
     if (state.messageArray.length > 0) {
-        let platform = state.messageArray[0].toLowerCase();
-        let term = state.messageArray[1];
+        let messageArray = state.messageArray;
+        let platform = messageArray.shift().toLowerCase();
+        let term = messageArray.shift();
+        let description = messageArray.join(' ');
 
         if (!state.cachedGuild.platformsList[platform]) {
-            state.cachedGuild.platformsList[platform] = new PlatformData();
-            if (term) {
-                state.cachedGuild.platformsList[platform].term = term;
-            }
+            state.cachedGuild.platformsList[platform] = new PlatformData(term, description);
             Object.keys(state.cachedGuild.userDictionary).forEach(userID => {
                 state.cachedGuild.userDictionary[userID][platform] = new FriendCode();
             })
-            receivedMessage.channel.send(`${state.messageArray[0]} ${state.cachedGuild.platformsList[platform].term}s can now be recorded and retrieved.`)
+            receivedMessage.channel.send(`${platform} ${state.cachedGuild.platformsList[platform].term}s can now be recorded and retrieved.`)
                 .catch(console.error);
             savePlatformsList(receivedMessage.guild.id, state.cachedGuild.platformsList);
         } else {

@@ -21,7 +21,9 @@ lookup.execute = (receivedMessage, state, metrics) => {
         var platform = state.messageArray.filter(word => !word.match(MessageMentions.USERS_PATTERN))[0].toLowerCase();
 
         if (Object.keys(state.cachedGuild.platformsList).includes(platform)) {
-            var text = `Here are all the ${platform} ${state.cachedGuild.platformsList[platform].term}s in ${receivedMessage.guild}'s ${receivedMessage.client.user}:\n`;
+            var text = `${state.cachedGuild.platformsList[platform].description}
+
+Here are all the ${platform} ${state.cachedGuild.platformsList[platform].term}s in ${receivedMessage.guild}'s ${receivedMessage.client.user}:\n`;
             let userList = [];
 
             receivedMessage.mentions.members.array().forEach(member => {

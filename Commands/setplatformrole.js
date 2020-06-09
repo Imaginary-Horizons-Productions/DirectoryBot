@@ -1,5 +1,5 @@
 const Command = require('./../Classes/Command.js');
-const { savePlatformsList, syncUserRolePlatform } = require('./../helpers.js');
+const { savePlatformsList } = require('./../helpers.js');
 
 var setplatformrole = new Command();
 setplatformrole.names = ["setplatformrole"];
@@ -20,16 +20,16 @@ setplatformrole.execute = (receivedMessage, state, metrics) => {
 
             if (state.cachedGuild.platformsList[platform]) {
                 if (role) {
-                    state.cachedGuild.platformsList[platform].role = role;
+                    state.cachedGuild.platformsList[platform].roleID = role.id;
                     receivedMessage.channel.send(`Server members who set a ${platform} ${state.cachedGuild.platformsList[platform].term} will now automatically be given the role @${role.name}.`)
                         .catch(console.error);
                 } else {
-                    state.cachedGuild.platformsList[platform].role = "";
+                    state.cachedGuild.platformsList[platform].roleID = "";
                     receivedMessage.channel.send(`The ${platform} ${state.cachedGuild.platformsList[platform].term} in ${receivedMessage.guild} has been cleared.`)
                         .catch(console.error);
                 }
                 Object.keys(state.cachedGuild.userDictionary).forEach(userID => {
-                    syncUserRolePlatform(receivedMessage.guild.members.resolve(userID), platform, state.cachedGuild);
+                    receivedMessage.guild.members.resolve(userID).addPlatformRoles(state.cachedGuild);
                 })
                 savePlatformsList(receivedMessage.guild.id, state.cachedGuild.platformsList);
             } else {

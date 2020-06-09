@@ -1,6 +1,7 @@
 const Command = require('./../Classes/Command.js');
 const FriendCode = require('./../Classes/FriendCode.js');
-const { syncUserRolePlatform, saveUserDictionary } = require('./../helpers.js');
+const { saveUserDictionary } = require('./../helpers.js');
+const { MessageMentions } = require('discord.js');
 
 var remove = new Command();
 remove.names = ["delete", "remove", "clear"];
@@ -32,7 +33,7 @@ remove.execute = (receivedMessage, state, metrics) => {
                             state.cachedGuild.userDictionary[target.id][platform] = new FriendCode();
                             target.send(`Your ${platform} ${state.cachedGuild.platformsList[platform].term} has been removed from ${receivedMessage.guild}${reason ? ` because ${reason}` : ""}.`)
                                 .catch(console.error);
-                            syncUserRolePlatform(target, platform, state.cachedGuild);
+                            target.roles.remove(state.cachedGuild.platformsList[platform].roleID);
                             saveUserDictionary(receivedMessage.guild.id, state.cachedGuild.userDictionary);
                             receivedMessage.author.send(`You have removed ${target}'s ${platform} ${state.cachedGuild.platformsList[platform].term} from ${receivedMessage.guild}.`)
                                 .catch(console.error);
@@ -52,11 +53,11 @@ remove.execute = (receivedMessage, state, metrics) => {
                         .catch(console.error);
                 }
             } else {
-                if (state.cachedGuild.userDictionary[receivedMessage.author.id] && state.cachedGuild.userDictionary[receivedMessage.author.id][platform].value) {
+                if (state.cachedGuild.userDictionary[receivedMessage.author.id][platform] && state.cachedGuild.userDictionary[receivedMessage.author.id][platform].value) {
                     state.cachedGuild.userDictionary[receivedMessage.author.id][platform] = new FriendCode();
                     receivedMessage.author.send(`You have removed your ${platform} ${state.cachedGuild.platformsList[platform].term} from ${receivedMessage.guild}.`)
                         .catch(console.error);
-                    syncUserRolePlatform(receivedMessage.member, platform, state.cachedGuild);
+                    receivedMessage.member.roles.remove(state.cachedGuild.platformsList[platform].roleID);
                     saveUserDictionary(receivedMessage.guild.id);
                 } else {
                     // Error Message

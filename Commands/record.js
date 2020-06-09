@@ -1,5 +1,6 @@
 const Command = require('./../Classes/Command.js');
-const { syncUserRolePlatform, saveUserDictionary } = require('./../helpers.js');
+const FriendCode = require('./../Classes/FriendCode.js');
+const { saveUserDictionary } = require('./../helpers.js');
 
 var record = new Command();
 record.names = ["record", "log"];
@@ -21,13 +22,15 @@ record.execute = (receivedMessage, state, metrics) => {
             let friendcode = codeArray.join(" ").replace(spoilerMarkdown, '');
 
             if (Object.keys(state.cachedGuild.platformsList).includes(platform)) { // Early out if platform is not being tracked
-                if (state.cachedGuild.userDictionary[receivedMessage.author.id][platform]) {
-                    state.cachedGuild.userDictionary[receivedMessage.author.id][platform].value = friendcode;
-                    syncUserRolePlatform(receivedMessage.member, platform, state.cachedGuild);
-                    saveUserDictionary(receivedMessage.guild.id, state.cachedGuild.userDictionary);
-                    receivedMessage.channel.send(`${receivedMessage.author} has recorded a ${platform} ${state.cachedGuild.platformsList[platform].term}. Check it with "${receivedMessage.client.user} lookup ${receivedMessage.author} ${platform}".`)
-                        .catch(console.error);
+                if (!state.cachedGuild.userDictionary[receivedMessage.author.id][platform]) {
+                    state.cachedGuild.userDictionary[receivedMessage.author.id][platform] = new FriendCode();
                 }
+
+                state.cachedGuild.userDictionary[receivedMessage.author.id][platform].value = friendcode;
+                receivedMessage.member.addPlatformRoles(state.cachedGuild);
+                saveUserDictionary(receivedMessage.guild.id, state.cachedGuild.userDictionary);
+                receivedMessage.channel.send(`${receivedMessage.author} has recorded a ${platform} ${state.cachedGuild.platformsList[platform].term}. Check it with "${receivedMessage.client.user} lookup ${receivedMessage.author} ${platform}".`)
+                    .catch(console.error);
             } else {
                 // Error Message
                 receivedMessage.author.send(`${platform} is not currently being tracked in ${receivedMessage.guild}.`)

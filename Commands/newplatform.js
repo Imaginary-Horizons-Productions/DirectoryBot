@@ -9,7 +9,7 @@ newplatform.summary = `Setup a new game/service for users to record or retrieve 
 newplatform.managerCommand = true;
 
 newplatform.help = (clientUser, state) => {
-    return `The *${state.messageArray[0]}* command sets up a new game/service for users to record and retrieve information. Optionally, you can set a term to call the information that is being stored (default is "username").
+    return `The *${state.messageArray[0]}* command sets up a new game/service for users to record and retrieve information. Optionally, you can set a term to call the information that is being stored (default is "username"). Additionally, you can set an optional description to be displayed when the lookup command is used on the platform.
 Syntax: ${clientUser} \`${state.messageArray[0]} (platform name) (information term)\``;
 }
 

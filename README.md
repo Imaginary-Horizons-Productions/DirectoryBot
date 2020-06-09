@@ -121,7 +121,7 @@ Sets the manager role for DirectoryBot. Users with that role can use the manager
 #### newplatform (AKA: addplatform)
 Syntax `@DirectoryBot newplatform (platform)`
 \
-Adds (platform) to the list of tracked platforms, allowing users to add their information for that platform.
+Adds (platform) to the list of tracked platforms, allowing users to add their information for that platform. Optionally, you can set a term to call the information that is being stored (default is "username"). Additionally, you can set an optional description to be displayed when the lookup command is used on the platform.
 
 #### setplatformterm (AKA: changeplatformterm)
 Syntax: `@DirectoryBot setplatformterm (platform) (term)`

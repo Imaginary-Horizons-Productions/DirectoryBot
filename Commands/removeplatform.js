@@ -17,10 +17,11 @@ removeplatform.execute = (receivedMessage, state, metrics) => {
         let platform = state.messageArray[0].toLowerCase();
 
         if (state.cachedGuild.platformsList[platform]) {
-            delete state.cachedGuild.platformsList[platform];
             Object.keys(state.cachedGuild.userDictionary).forEach(userID => {
+                receivedMessage.guild.members.resolve(userID).roles.remove(state.cachedGuild.platformsList[platform].roleID);
                 delete state.cachedGuild.userDictionary[userID][platform];
             })
+            delete state.cachedGuild.platformsList[platform];
             receivedMessage.channel.send(`${platform} information will no longer be recorded.`)
                 .catch(console.error);
             savePlatformsList(receivedMessage.guild.id);

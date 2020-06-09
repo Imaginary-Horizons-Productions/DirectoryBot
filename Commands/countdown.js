@@ -51,7 +51,7 @@ countdown.execute = (receivedMessage, state, metrics) => {
                 .catch(console.error);
         } else {
             // Error message
-            receivedMessage.author.send(`The time zone you entered could not be parsed.`).catch(console.error)
+            receivedMessage.author.send(`The time zone you entered could not be parsed.`)
                 .catch(console.error);
         }
     } else {

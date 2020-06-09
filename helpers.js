@@ -1,4 +1,4 @@
-const { MessageEmbed, Message } = require('discord.js');
+const { MessageEmbed, Message, GuildMember } = require('discord.js');
 const fs = require('fs');
 var encrypter = require('crypto-js');
 
@@ -37,6 +37,19 @@ Message.prototype.setToExpire = function (guildSpecifics, guildID, expirationTex
     }, guildSpecifics.infoLifetime);
 }
 
+GuildMember.prototype.addPlatformRoles = function (guildSpecifics) {
+    if (guildSpecifics.userDictionary[this.id]) {
+        Object.keys(guildSpecifics.platformsList).forEach(platformName => {
+            if (guildSpecifics.platformsList[platformName].roleID) {
+                if (guildSpecifics.userDictionary[this.id][platformName] && guildSpecifics.userDictionary[this.id][platformName].value) {
+                    console.log(guildSpecifics.platformsList[platformName].roleID);
+                    this.roles.add(guildSpecifics.platformsList[platformName].roleID);
+                }
+            }
+        })
+    }
+}
+
 exports.millisecondsToHours = function (milliseconds, showMinutes = false, showSeconds = false) {
     var text = "less than an hour";
     if (milliseconds >= 3600000) {
@@ -60,16 +73,6 @@ exports.millisecondsToHours = function (milliseconds, showMinutes = false, showS
     }
 
     return text;
-}
-
-exports.syncUserRolePlatform = function (member, platformName, guildSpecifics) {
-    if (guildSpecifics.userDictionary[member.id]) {
-        if (guildSpecifics.platformsList[platformName].role) {
-            if (guildSpecifics.userDictionary[member.id][platformName].value) {
-                member.roles.add(guildSpecifics.platformsList[platformName].role);
-            }
-        }
-    }
 }
 
 exports.platformsBuilder = function (platformsList) {

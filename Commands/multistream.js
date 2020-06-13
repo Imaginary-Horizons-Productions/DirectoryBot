@@ -14,56 +14,41 @@ multistream.execute = (receivedMessage, state, metrics) => {
     // Generates a url for viewing multiple streams simultaneously (Supported: Twitch)
     if (Object.keys(state.cachedGuild.platformsList).includes("stream")) {
         var url = "https://multistre.am/";
-        let layout;
-        for (var i = 0; i < state.messageArray.length; i++) {
-            if (!isNaN(parseInt(state.messageArray[i]))) {
-                layout = parseInt(state.messageArray[i]);
-                break;
-            }
-        }
         let mentionedGuildMembers = receivedMessage.mentions.members.array().filter(member => member.id != receivedMessage.client.user.id);
 
-        var missingUsers = [];
-        for (var i = 0; i < mentionedGuildMembers.length; i++) {
-            if (mentionedGuildMembers[i]) {
-                if (!state.cachedGuild.userDictionary[mentionedGuildMembers[i].id] || !state.cachedGuild.userDictionary[mentionedGuildMembers[i].id].stream.value) {
-                    missingUsers.push(mentionedGuildMembers[i].user);
-                } else {
+        if (mentionedGuildMembers.length > 1) {
+            let returnText = "";
+            var missingUsers = [];
+            for (var i = 0; i < mentionedGuildMembers.length; i++) {
+                if (mentionedGuildMembers[i] && state.cachedGuild.userDictionary[mentionedGuildMembers[i].id] && state.cachedGuild.userDictionary[mentionedGuildMembers[i].id].stream.value) {
                     url += state.cachedGuild.userDictionary[mentionedGuildMembers[i].id].stream.value + "/";
+                } else {
+                    missingUsers.push(mentionedGuildMembers[i].user);
                 }
-            } else {
-                // Error Message
-                receivedMessage.author.send(`One of those people is not a member of ${receivedMessage.guild}.`)
-                    .catch(console.error);
-                return;
-            }
-        }
-
-        if (missingUsers.length > 0) {
-            let missingUsersText = "";
-            for (var i = 0; i < missingUsers.length; i++) {
-                missingUsersText += missingUsers[i] + ", ";
             }
 
-            missingUsersText = missingUsersText.slice(0, -2);
-            // Error Message
-            receivedMessage.channel.send(`The following users don't have stream info logged with DirectoryBot: ${missingUsersText}.`)
+            for (var i = 0; i < state.messageArray.length; i++) {
+                if (!isNaN(parseInt(state.messageArray[i]))) {
+                    url += "layout" + state.messageArray[i];
+                    break;
+                }
+            }
+
+            if (missingUsers.length < mentionedGuildMembers.length) {
+                returnText += `Here's the multistream link: ${url}`;
+            }
+
+            if (missingUsers.length > 0) {
+                returnText += `\n\nThe following users don't have stream info logged with DirectoryBot: ${missingUsers.join(", ")}.`;
+            }
+
+            receivedMessage.author.send(returnText)
                 .catch(console.error);
-            return;
+        } else {
+            // Error Message
+            receivedMessage.author.send(`Please mention at least two users to generate a multistream link for.`)
+                .catch(console.error);
         }
-
-        if (layout) {
-            if (/^[0-9]+$/.test(layout)) {
-                url += "layout" + layout;
-            } else {
-                // Error Message (non-halting)
-                receivedMessage.author.send(`The multistream layout argument you sent (${layout}) was not a number.`)
-                    .catch(console.error);
-            }
-        }
-
-        receivedMessage.author.send(`Here's the multistream link: ${url}`)
-            .catch(console.error);
     } else {
         // Error Message
         receivedMessage.author.send(`Your multistream command could not be completed. ${receivedMessage.guild} does not seem to be tracking stream information.`)

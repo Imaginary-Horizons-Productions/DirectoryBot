@@ -82,6 +82,7 @@ client.on('ready', () => {
                                         fs.readFile(`./data/${guildID}/blockDictionary.txt`, 'utf8', (error, blockDictionaryInput) => {
                                             if (error) {
                                                 console.log(error);
+                                                helpers.saveBlockDictionary(guildID, guildDictionary[guildID].blockDictionary);
                                             } else {
                                                 Object.assign(guildDictionary[guildID].blockDictionary, JSON.parse(encrypter.AES.decrypt(blockDictionaryInput, keyInput).toString(encrypter.enc.Utf8)));
                                             }

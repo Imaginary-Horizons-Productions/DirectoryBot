@@ -2,6 +2,8 @@ const { MessageEmbed, Message, GuildMember } = require('discord.js');
 const fs = require('fs');
 var encrypter = require('crypto-js');
 
+exports.guildDictionary = {};
+
 MessageEmbed.prototype.addBlankField = function (inline = false) {
     return this.addField('\u200B', '\u200B', inline);
 }

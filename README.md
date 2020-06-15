@@ -29,6 +29,14 @@ Syntax: `@DirectoryBot record (platform) (information)`
 \
 Stores your (platform) (information). For example `@DirectoryBot timezone America/Los_Angeles` would have DirectoryBot record "America/Los_Angeles" as your entry for "timezone". The message with this command will be deleted for security purposes. Discord's spoilers markdown (|| on both sides) is removed from code entry to allow hiding entry from mobile via spoilers markdown.
 
+#### import
+Syntax: `@DirectoryBot import (channel mention or server snowflake)`
+The import command copies your information for matching platforms from a given server. There are two ways to indicate which server to import from: by mentioning a channel from that server, or by mentioning the server's snowflake.
+\
+To get a channel mention, start a message in the server you want to import from. Start with #, then autocomplete. You can then copy-paste the blue link into your command in the destination server.
+\
+To get a server's snowflake, first activate Developer Mode in your User Settings. Then you can right-click on the source server and select "Copy ID" from the drop-down menu.
+
 #### send (AKA: tell)
 Syntax: `@DirectoryBot send (user) (platform)`
 \

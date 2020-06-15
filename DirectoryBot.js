@@ -156,9 +156,11 @@ client.on('message', (receivedMessage) => {
             guildCreate(receivedMessage.guild.id);
         }
 
-        var splitMessage = receivedMessage.content.split(" ");
-        let firstWord = splitMessage.shift().replace(/\D/g, "");
-        if (firstWord == client.user.id || firstWord == helpers.guildDictionary[receivedMessage.guild.id].permissionsRoleID) {
+        var messageArray = receivedMessage.content.split(" ").filter(element => {
+            return element != "";
+        });
+        let firstWord = messageArray.shift().replace(/\D/g, "");
+        if (messageArray.length > 0 && firstWord == client.user.id || firstWord == helpers.guildDictionary[receivedMessage.guild.id].permissionsRoleID) {
             var recentInteractions = 0;
 
             antiSpam.forEach(user => {
@@ -168,45 +170,39 @@ client.on('message', (receivedMessage) => {
             })
 
             if (recentInteractions < commandLimit) {
-                var messageArray = splitMessage.filter(function (element) {
-                    return element != "";
-                });
+                var command = messageArray.shift();
+                var state = {
+                    cachedGuild: helpers.guildDictionary[receivedMessage.guild.id], // GuildSpecifics for the current guild
+                    command: command, // The primary command
+                    messageArray: messageArray,
+                    botManager: receivedMessage.member.hasPermission(Discord.Permissions.FLAGS.ADMINISTRATOR) || receivedMessage.member.roles.cache.has(helpers.guildDictionary[receivedMessage.guild.id].managerRoleID)
+                };
 
-                if (messageArray.length > 0) {
-                    var command = messageArray.shift();
-                    var state = {
-                        cachedGuild: helpers.guildDictionary[receivedMessage.guild.id], // GuildSpecifics for the current guild
-                        command: command, // The primary command
-                        messageArray: messageArray,
-                        botManager: receivedMessage.member.hasPermission(Discord.Permissions.FLAGS.ADMINISTRATOR) || receivedMessage.member.roles.cache.has(helpers.guildDictionary[receivedMessage.guild.id].managerRoleID)
-                    };
+                if (!state.cachedGuild.userDictionary[receivedMessage.author.id]) {
+                    state.cachedGuild.userDictionary[receivedMessage.author.id] = {};
+                    Object.keys(state.cachedGuild.platformsList).forEach((platformInList) => {
+                        state.cachedGuild.userDictionary[receivedMessage.author.id][platformInList] = new FriendCode();
+                    });
+                }
 
-                    if (!state.cachedGuild.userDictionary[receivedMessage.author.id]) {
-                        state.cachedGuild.userDictionary[receivedMessage.author.id] = {};
-                        Object.keys(state.cachedGuild.platformsList).forEach((platformInList) => {
-                            state.cachedGuild.userDictionary[receivedMessage.author.id][platformInList] = new FriendCode();
-                        });
-                    }
-
-                    if (commandDictionary[command]) {
-                        if (state.botManager || !commandDictionary[command].managerCommand) {
-                            commandDictionary[command].execute(receivedMessage, state);
-                        } else {
-                            receivedMessage.author.send(`You need a role with the administrator flag${state.cachedGuild.managerRoleID != "" ? ` or the @${receivedMessage.guild.roles.resolve(cachedGuild.managerRoleID).name} role` : ``} to use the **${command}** command.`);
-                        }
-
-                        antiSpam.push(receivedMessage.author.id);
-                        setTimeout(function () {
-                            antiSpam.shift();
-                        }, antiSpamInterval);
+                if (commandDictionary[command]) {
+                    if (state.botManager || !commandDictionary[command].managerCommand) {
+                        commandDictionary[command].execute(receivedMessage, state);
                     } else {
-                        receivedMessage.author.send(`${command} isn't a ${client.user} command. Please check for typos or use ${client.user}\`help.\``)
-                            .catch(console.error);
+                        receivedMessage.author.send(`You need a role with the administrator flag${state.cachedGuild.managerRoleID != "" ? ` or the @${receivedMessage.guild.roles.resolve(cachedGuild.managerRoleID).name} role` : ``} to use the **${command}** command.`);
                     }
+
+                    antiSpam.push(receivedMessage.author.id);
+                    setTimeout(function () {
+                        antiSpam.shift();
+                    }, antiSpamInterval);
                 } else {
-                    receivedMessage.author.send(`To prevent excessive messaging, users are unable to enter more than ${commandLimit} commands in ${helpers.millisecondsToHours(antiSpamInterval, true, true)}. You can use ${client.user} \`lookup (platform)\` to look up everyone's information for the given platform at once.`)
+                    receivedMessage.author.send(`${command} isn't a ${client.user} command. Please check for typos or use ${client.user}\`help.\``)
                         .catch(console.error);
                 }
+            } else {
+                receivedMessage.author.send(`To prevent excessive messaging, users are unable to enter more than ${commandLimit} commands in ${helpers.millisecondsToHours(antiSpamInterval, true, true)}. You can use ${client.user} \`lookup (platform)\` to look up everyone's information for the given platform at once.`)
+                    .catch(console.error);
             }
         }
     }
@@ -293,7 +289,7 @@ function guildCreate(guildID) {
     helpers.guildDictionary[guildID] = new GuildSpecifics();
 
     helpers.saveManagerRole(guildID, helpers.guildDictionary[guildID].managerRoleID);
-    helpers.savePermissionsRole(guildID, helpers.guildDictionary[guildID].permissionsRoleID)
+    helpers.savePermissionsRole(guildID, helpers.guildDictionary[guildID].permissionsRoleID);
     helpers.savePlatformsList(guildID, helpers.guildDictionary[guildID].platformsList);
     helpers.saveUserDictionary(guildID, helpers.guildDictionary[guildID].userDictionary);
     helpers.saveBlockDictionary(guildID, helpers.guildDictionary[guildID].blockDictionary);

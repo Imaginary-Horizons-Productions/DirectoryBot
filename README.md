@@ -6,9 +6,10 @@ DirectoryBot is a Discord bot that stores friend codes, converts timezones, and 
 2. Move the DirectoryBot role above any roles you'd like it to be able to automatically add (new roles get added at the bottom)
 
 ### Optional
-* Use "@DirectoryBot setoprole (role)" to set up an operator role. Operators are allowed to use the operator commands without Discord administrator permissions.
+* Use "@DirectoryBot setpermissionsrole (role)" to store the permissions role. This allows the bot to interpret accidental mentions of the role as command messages.
+* Use "@DirectoryBot setmanagerrole (role)" to set up a manager role. Bot managers are allowed to use manager-only commands without Discord administrator permissions.
 * Record your information for DirectoryBot's default platforms: time zone, possessive pronoun, and stream.
-* Check out BountyBot, another Imaginary Horizons Productions discord bot: (link coming soon)
+* Check out the Imaginary Horizons Productions Patreon: https://www.patreon.com/imaginaryhorizonsproductions
 
 ### Notes
 If you leave a server, DirectoryBot will delete all of your data. If you kick DirectoryBot, it will delete everyoe's data.
@@ -26,35 +27,59 @@ Explains the (command) and provides a syntax example.
 #### record (AKA: log)
 Syntax: `@DirectoryBot record (platform) (information)`
 \
-Stores your (platform) (information). For example `@DirectoryBot timezone America/Los_Angeles` would have DirectoryBot record "America/Los_Angeles" as your entry for "timezone".
+Stores your (platform) (information). For example `@DirectoryBot timezone America/Los_Angeles` would have DirectoryBot record "America/Los_Angeles" as your entry for "timezone". The message with this command will be deleted for security purposes. Discord's spoilers markdown (|| on both sides) is removed from code entry to allow hiding entry from mobile via spoilers markdown.
 
-#### lookup
-Syntax: `@DirectoryBot lookup (platform) (user)`
+#### import
+Syntax: `@DirectoryBot import (channel mention or server snowflake)`
+The import command copies your information for matching platforms from a given server. There are two ways to indicate which server to import from: by mentioning a channel from that server, or by mentioning the server's snowflake.
 \
-Private messages sender with (user)'s stored information for the (platform).
-
-Syntax: `@DirectoryBot (platform) (user)`
+To get a channel mention, start a message in the server you want to import from. Start with #, then autocomplete. You can then copy-paste the blue link into your command in the destination server.
 \
-A shorter version of the previous syntax.
-
-Syntax: `@DirectoryBot lookup (platform)`
-\
-Private messages sender with everyone's stored information for the (platform).
+To get a server's snowflake, first activate Developer Mode in your User Settings. Then you can right-click on the source server and select "Copy ID" from the drop-down menu.
 
 #### send (AKA: tell)
 Syntax: `@DirectoryBot send (user) (platform)`
 \
 Private messages the (user) with your information for the (platform).
 
+#### lookup
+Syntax: `@DirectoryBot lookup (platform)`
+\
+Tells you everyone's information associted with the given platform.
+
+Syntax: `@DirectoryBot (platform) (user set)`
+\
+You can limit your results to a set of users by mentioning them at the end of the command.
+
+#### myentries (AKA: mydata)
+Syntax: `@DirectoryBot myentries`
+\
+Private messages the user with the information they've input into DirectoryBot.
+
+#### whois
+Syntax: `@DirectoryBot whois (username)`
+\
+Checks if anyone uses the given username and private messages you the result.
+
 #### delete (AKA: remove, clear)
 Syntax: `@DirectoryBot delete (platform)`
 \
 Deletes the information for the sender in (platform).
 
+#### block
+Syntax: `@DirectoryBot block (user)`
+\
+Prevents the mentioned user from looking up your data.
+
 #### platforms
 Syntax: `@DirectoryBot platforms`
 \
 States a list of platforms currently tracked by DirectoryBot.
+
+#### support
+Syntax: `@DirectoryBot support`
+\
+Lists ways to support DirectoryBot development.
 
 #### creditz (AKA: credits, about)
 Syntax: `@DirectoryBot credits`
@@ -67,10 +92,6 @@ The time module contains commands for converting time zones, which users can sto
 Syntax: `@DirectoryBot convert (time) in (timezone) for (user)`
 \
 States the (time) in (timezone1) as its equivalent for (user) based on (user)'s declared timezone. Assumes sender's timezone if (timezone) is omitted.
-
-Syntax: `@DirectoryBot (time) in (timezone) for (user)`
-\
-A shorter version of the previous syntax.
 
 Syntax: `@DirectoryBot convert (time) in (timezone1) to (timezone2)`
 \
@@ -93,32 +114,37 @@ Syntax: `@DirectoryBot shoutout (user)`
 \
 Posts a link to the user's stream!
 
-### Operator Commands
-The following commands can only be used by server members who have Discord administrator privledges or the role determined by **setoprole**.
-#### setoprole
-Syntax: `@DirectoryBot setoprole (role)`
+### Bot Manager Commands
+The following commands can only be used by server members who have Discord administrator privledges or the role determined by **setmanagerrole**.
+#### permissionsrole (AKA: setpermissionsrole)
+Syntax: `@DirectoryBot permissionsrole (role)`
 \
-Sets the operator role for DirectoryBot. Users with that role can use the operator commands without Discord administrator privileges. If no role is given, the op role will be cleared.
+Stores DirectoryBot's permissions role, allowing DirectoryBot to interpret accidental mentions of the role as command messages. If no role is given, the setting will be cleared.
+
+#### managerrole (AKA: setmanagerrole)
+Syntax: `@DirectoryBot managerrole (role)`
+\
+Sets the manager role for DirectoryBot. Users with that role can use the manager-only commands without Discord administrator privileges. If no role is given, the setting will be cleared.
 
 #### newplatform (AKA: addplatform)
 Syntax `@DirectoryBot newplatform (platform)`
 \
-Adds (platform) to the list of tracked platforms, allowing users to add their information for that platform.
+Adds (platform) to the list of tracked platforms, allowing users to add their information for that platform. Optionally, you can set a term to call the information that is being stored (default is "username"). Additionally, you can set an optional description to be displayed when the lookup command is used on the platform.
 
-#### changeplatformterm (AKA: setplatformterm)
-Syntax: `@DirectoryBot changeplatformterm (platform) (term)`
+#### setplatformterm (AKA: changeplatformterm)
+Syntax: `@DirectoryBot setplatformterm (platform) (term)`
 \
 Changes what DirectoryBot calls information from the given platform (default is "username").
-
-#### removeplatform
-Syntax: `@DirectoryBot removeplatform (platform)`
-\
-Removes (platform) from the list of tracked platforms.
 
 #### setplatformrole
 Syntax: `@DirectoryBot setplatformrole (platform) (role)`
 \
 Associates (role) with (platform) so that whenever a user adds information for (platform), they'll be given (role) automatically.
+
+#### removeplatform
+Syntax: `@DirectoryBot removeplatform (platform)`
+\
+Removes (platform) from the list of tracked platforms.
 
 #### delete (for other users)
 Syntax: `@DirectoryBot delete (platform) (user)`

@@ -86,16 +86,26 @@ client.on('ready', () => {
                                                 Object.assign(helpers.guildDictionary[guildID].blockDictionary, JSON.parse(encrypter.AES.decrypt(blockDictionaryInput, keyInput).toString(encrypter.enc.Utf8)));
                                             }
 
-                                            setInterval(() => {
-                                                saveParticipatingGuildsIDs(true);
-                                                Object.keys(helpers.guildDictionary).forEach((guildID) => {
-                                                    helpers.saveManagerRole(guildID, helpers.guildDictionary[guildID].managerRoleID, true);
-                                                    helpers.savePermissionsRole(guildID, helpers.guildDictionary[guildID].permissionsRoleID, true);
-                                                    helpers.savePlatformsList(guildID, helpers.guildDictionary[guildID].platformsList, true);
-                                                    helpers.saveUserDictionary(guildID, helpers.guildDictionary[guildID].userDictionary, true);
-                                                    helpers.saveBlockDictionary(guildID, helpers.guildDictionary[guildID].blockDictionary, true);
-                                                })
-                                            }, 3600000)
+                                            fs.readFile(`./data/${guildID}/welcomeMessage.txt`, 'utf8', (error, welcomeMessageInput) => {
+                                                if (error) {
+                                                    console.log(error);
+                                                    helpers.saveWelcomeMessage(guildID, "");
+                                                } else {
+                                                    helpers.guildDictionary[guildID].welcomeMessage = encrypter.AES.decrypt(welcomeMessageInput, keyInput).toString(encrypter.enc.Utf8);
+                                                }
+
+                                                setInterval(() => {
+                                                    saveParticipatingGuildsIDs(true);
+                                                    Object.keys(helpers.guildDictionary).forEach((guildID) => {
+                                                        helpers.saveManagerRole(guildID, helpers.guildDictionary[guildID].managerRoleID, true);
+                                                        helpers.savePermissionsRole(guildID, helpers.guildDictionary[guildID].permissionsRoleID, true);
+                                                        helpers.savePlatformsList(guildID, helpers.guildDictionary[guildID].platformsList, true);
+                                                        helpers.saveUserDictionary(guildID, helpers.guildDictionary[guildID].userDictionary, true);
+                                                        helpers.saveBlockDictionary(guildID, helpers.guildDictionary[guildID].blockDictionary, true);
+                                                        helpers.saveWelcomeMessage(guildID, helpers.guildDictionary[guildID].welcomeMessage, true);
+                                                    })
+                                                }, 3600000)
+                                            })
                                         })
                                     })
                                 });
@@ -220,6 +230,13 @@ client.on('guildDelete', (guild) => {
 })
 
 
+client.on('guildMemberAdd', (member) => {
+    if (helpers.guildDictionary[member.guild.id].welcomeMessage && !member.user.bot) {
+        member.send(helpers.guildDictionary[member.guild.id].welcomeMessage);
+    }
+})
+
+
 client.on('guildMemberRemove', (member) => {
     var guildID = member.guild.id;
     var cachedGuild = helpers.guildDictionary[guildID];
@@ -293,28 +310,21 @@ function guildCreate(guildID) {
     helpers.savePlatformsList(guildID, helpers.guildDictionary[guildID].platformsList);
     helpers.saveUserDictionary(guildID, helpers.guildDictionary[guildID].userDictionary);
     helpers.saveBlockDictionary(guildID, helpers.guildDictionary[guildID].blockDictionary);
+    helpers.saveWelcomeMessage(guildID, helpers.guildDictionary[guildID].welcomeMessage);
     saveParticipatingGuildsIDs();
 }
 
 function guildDelete(guildID) {
-    let fileSets = ['data', 'backups'];
-    let fileNames = ['expiringMessages.txt', 'managerRole.txt', 'permissionsRole.txt', 'platformsList.txt', 'userDictionary.txt', 'blockDictionary.txt'];
-    fileSets.forEach(fileSet => {
+    ['data', 'backups'].forEach(fileSet => {
         if (fs.existsSync(`./${fileSet}/${guildID}`)) {
-            fileNames.forEach(fileName => {
-                if (fs.existsSync(`./${fileSet}/${guildID}/${fileName}`)) {
-                    fs.unlinkSync(`./${fileSet}/${guildID}/${fileName}`, (error) => {
-                        if (error) {
-                            console.log(error);
-                        }
-                    })
-                }
-            })
-            fs.rmdirSync(`./${fileSet}/${guildID}`, (error) => {
-                if (error) {
-                    console.log(error);
-                }
-            })
+            for (file of fs.readdirSync(`./${fileSet}/${guildID}`)) {
+                fs.unlink(`./${fileSet}/${guildID}/${file}`, (error) => {
+                    if (error) {
+                        console.log(error);
+                    }
+                });
+            }
+            fs.rmdirSync(`./${fileSet}/${guildID}`);
         }
     })
 

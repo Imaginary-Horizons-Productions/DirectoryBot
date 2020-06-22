@@ -105,7 +105,7 @@ exports.supportBuilder = function (footerURL) {
         .setDescription(`Thank you for using DirectoryBot! Here are some ways to support development:`)
         .addField(`Vote for us on top.gg`, `top.gg is a Discord bot listing and distrabution service. Voting for DirectoryBot causes it to appear earlier in searches. (Link coming soon)`)
         .addField(`Contribute code`, `Check out our [GitHub](https://github.com/ntseng/DirectoryBot) and tackle some issues!`)
-        .addField(`Create some social media buzz`, `Use the hashtags #DirectoryBotDiscord or #ImaginaryHorizonsProductions !`)
+        .addField(`Create some social media buzz`, `Use the #ImaginaryHorizonsProductions hashtag!`)
         .addField(`Become a Patron`, `Chip in for server costs at the [Imaginary Horizons Productions Patreon](https://www.patreon.com/imaginaryhorizonsproductions)!`)
         .setFooter(`Thanks in advanced!`, footerURL)
         .setTimestamp();
@@ -265,6 +265,38 @@ exports.saveBlockDictionary = function (guildID, blockDictionary, backup = false
                 }
             }
             fs.writeFile(filePath, encrypter.AES.encrypt(JSON.stringify(blockDictionary), keyInput).toString(), 'utf8', (error) => {
+                if (error) {
+                    console.log(error);
+                }
+            })
+        }
+    })
+}
+
+exports.saveWelcomeMessage = function (guildID, welcomeMessage, backup = false) {
+    fs.readFile("encryptionKey.txt", 'utf8', (error, keyInput) => {
+        if (error) {
+            console.log(error);
+        } else {
+            var filePath = `./`;
+            if (backup) {
+                filePath += 'backups/' + guildID + '/welcomeMessage.txt';
+                if (!fs.existsSync('./backups')) {
+                    fs.mkdirSync('./backups');
+                }
+                if (!fs.existsSync('./backups/' + guildID)) {
+                    fs.mkdirSync('./backups/' + guildID);
+                }
+            } else {
+                filePath += 'data/' + guildID + '/welcomeMessage.txt';
+                if (!fs.existsSync('./data')) {
+                    fs.mkdirSync('./data');
+                }
+                if (!fs.existsSync('./data/' + guildID)) {
+                    fs.mkdirSync('./data/' + guildID);
+                }
+            }
+            fs.writeFile(filePath, encrypter.AES.encrypt(welcomeMessage, keyInput).toString(), 'utf8', (error) => {
                 if (error) {
                     console.log(error);
                 }

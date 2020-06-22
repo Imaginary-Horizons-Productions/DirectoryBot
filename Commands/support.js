@@ -1,5 +1,4 @@
 const Command = require('./../Classes/Command.js');
-const { MessageEmbed } = require('discord.js');
 const { supportBuilder } = require('./../helpers.js');
 
 var support = new Command();

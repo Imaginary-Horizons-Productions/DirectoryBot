@@ -13,5 +13,6 @@ module.exports = class GuildSpecifics {
         this.infoLifetime = infoLifetimeInput;
         this.expiringMessages = {};
         this.blockDictionary = {};
+        this.welcomeMessage = "";
     }
 }

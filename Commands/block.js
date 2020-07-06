@@ -25,7 +25,7 @@ block.execute = (receivedMessage, state, metrics) => {
             receivedMessage.author.send(`You have blocked ${mentionedGuildMember[0]} from ${receivedMessage.guild}. They won't be able to look up your information.`)
                 .catch(console.error);
         } else {
-            state.cachedGuild.blockDictionary[receivedMessage.author.id].splice(state.cachedGuild.blockDictionary.indexof(mentionedGuildMember[0].id), 1);
+            state.cachedGuild.blockDictionary[receivedMessage.author.id].splice(state.cachedGuild.blockDictionary[receivedMessage.author.id].indexOf(mentionedGuildMember[0].id), 1);
             receivedMessage.author.send(`You have unblocked ${mentionedGuildMember[0]} from ${receivedMessage.guild}.`)
                 .catch(console.error);
         }

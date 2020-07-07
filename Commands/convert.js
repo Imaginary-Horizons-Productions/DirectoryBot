@@ -1,5 +1,5 @@
 const Command = require('./../Classes/Command.js');
-const { DateTime, IANAZone } = require("luxon");
+const { DateTime, IANAZone, LocalZone } = require("luxon");
 var chrono = require('chrono-node');
 
 var convert = new Command();
@@ -76,10 +76,7 @@ convert.execute = (receivedMessage, state, metrics) => {
         if (state.cachedGuild.userDictionary[receivedMessage.author.id].timezone.value) {
             startTimezone = state.cachedGuild.userDictionary[receivedMessage.author.id].timezone.value;
         } else {
-            // Error Message
-            receivedMessage.author.send(`Please either specifiy a starting time zone or record your default with \`@DirectoryBot record timezone (timezone)\`.`)
-                .catch(console.error);
-            return;
+            startTimezone = LocalZone.instance.name;
         }
     }
 

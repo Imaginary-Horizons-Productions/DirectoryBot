@@ -86,7 +86,7 @@ exports.platformsBuilder = function (platformsList) {
 exports.creditsBuilder = function (footerURL) {
     return new MessageEmbed().setColor(`6b81eb`)
         .setAuthor(`Imaginary Horizons Productions`, `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `, `https://discord.gg/bcE3Syu `)
-        .setTitle(`DirectoryBot Credits (Version 1.0)`)
+        .setTitle(`DirectoryBot Credits (Version RC2)`)
         .setURL(`https://github.com/ntseng/DirectoryBot `)
         .addField(`Design & Engineering`, `Nathaniel Tseng ( <@106122478715150336> | [Twitter](https://twitter.com/Archainis) )`)
         .addField(`Engineering`, `Lucas Ensign ( <@112785244733628416> | [Twitter](https://twitter.com/SillySalamndr) )`)

@@ -71,19 +71,13 @@ convert.execute = (receivedMessage, state, metrics) => {
             }
         }
     }
+
     if (startTimezone == "") {
-        if (state.cachedGuild.userDictionary[receivedMessage.author.id].timezone) {
-            if (state.cachedGuild.userDictionary[receivedMessage.author.id] && state.cachedGuild.userDictionary[receivedMessage.author.id].timezone.value) {
-                startTimezone = state.cachedGuild.userDictionary[receivedMessage.author.id].timezone.value;
-            } else {
-                // Error Message
-                receivedMessage.author.send(`Please either specifiy a starting time zone or record your default with \`@DirectoryBot record timezone (timezone)\`.`)
-                    .catch(console.error);
-                return;
-            }
+        if (state.cachedGuild.userDictionary[receivedMessage.author.id].timezone.value) {
+            startTimezone = state.cachedGuild.userDictionary[receivedMessage.author.id].timezone.value;
         } else {
             // Error Message
-            receivedMessage.author.send(`Please specify a starting time zone.`)
+            receivedMessage.author.send(`Please either specifiy a starting time zone or record your default with \`@DirectoryBot record timezone (timezone)\`.`)
                 .catch(console.error);
             return;
         }

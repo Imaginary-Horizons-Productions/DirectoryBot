@@ -179,6 +179,13 @@ client.on('message', (receivedMessage) => {
                 }
             })
 
+            if (!helpers.guildDictionary[receivedMessage.guild.id].userDictionary[receivedMessage.author.id]) {
+                helpers.guildDictionary[receivedMessage.guild.id].userDictionary[receivedMessage.author.id] = {};
+                Object.keys(helpers.guildDictionary[receivedMessage.guild.id].platformsList).forEach((platformInList) => {
+                    helpers.guildDictionary[receivedMessage.guild.id].userDictionary[receivedMessage.author.id][platformInList] = new FriendCode();
+                });
+            }
+
             if (recentInteractions < commandLimit) {
                 var command = messageArray.shift();
                 var state = {
@@ -187,13 +194,6 @@ client.on('message', (receivedMessage) => {
                     messageArray: messageArray,
                     botManager: receivedMessage.member.hasPermission(Discord.Permissions.FLAGS.ADMINISTRATOR) || receivedMessage.member.roles.cache.has(helpers.guildDictionary[receivedMessage.guild.id].managerRoleID)
                 };
-
-                if (!state.cachedGuild.userDictionary[receivedMessage.author.id]) {
-                    state.cachedGuild.userDictionary[receivedMessage.author.id] = {};
-                    Object.keys(state.cachedGuild.platformsList).forEach((platformInList) => {
-                        state.cachedGuild.userDictionary[receivedMessage.author.id][platformInList] = new FriendCode();
-                    });
-                }
 
                 if (commandDictionary[command]) {
                     if (state.botManager || !commandDictionary[command].managerCommand) {

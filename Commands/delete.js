@@ -17,9 +17,10 @@ Syntax: ${clientUser} \`${state.messageArray[0]} (user) (platform)\`` : ``}`;
 
 remove.execute = (receivedMessage, state, metrics) => {
     // Removes the user's entry for the given platform, bot managers can remove for other users
-    if (state.messageArray.length > 0) {
+    var platform = state.messageArray.filter(word => !word.match(MessageMentions.USERS_PATTERN))[0];
+    if (platform) {
+        platform = platform.toLowerCase();
         let mentionedGuildMembers = receivedMessage.mentions.members.array().filter(member => member.id != receivedMessage.client.user.id);
-        var platform = state.messageArray.filter(word => !word.match(MessageMentions.USERS_PATTERN))[0].toLowerCase();
         var msgList = state.messageArray.slice(1);
         var reason = msgList.join(" ");
 

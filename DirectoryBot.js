@@ -64,6 +64,18 @@ client.on('ready', () => {
                                     fs.readFile(`./data/${guildID}/expiringMessages.txt`, 'utf8', (error, expiringMessagesInput) => {
                                         if (error) {
                                             console.log(error);
+                                            if (!fs.existsSync('./data')) {
+                                                fs.mkdirSync('./data');
+                                            }
+                                            if (!fs.existsSync('./data/' + guildID)) {
+                                                fs.mkdirSync('./data/' + guildID);
+                                            }
+                                            var filePath = `./data/${guildID}/expiringMessages.txt`;
+                                            fs.writeFile(filePath, encrypter.AES.encrypt(JSON.stringify({}), keyInput).toString(), 'utf8', (error) => {
+                                                if (error) {
+                                                    console.log(error);
+                                                }
+                                            })
                                         } else {
                                             let expiringMessages = JSON.parse(encrypter.AES.decrypt(expiringMessagesInput, keyInput).toString(encrypter.enc.Utf8));
                                             Object.keys(expiringMessages).forEach(channelID => {

@@ -82,21 +82,6 @@ exports.platformsBuilder = function (platformsList) {
     return `This server's tracked platforms are: ${processedText}`;
 }
 
-exports.creditsBuilder = function (footerURL) {
-    return new MessageEmbed().setColor(`6b81eb`)
-        .setAuthor(`Imaginary Horizons Productions`, `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `, `https://discord.gg/bcE3Syu `)
-        .setTitle(`DirectoryBot Credits (Version RC2)`)
-        .setURL(`https://github.com/ntseng/DirectoryBot `)
-        .addField(`Design & Engineering`, `Nathaniel Tseng ( <@106122478715150336> | [Twitter](https://twitter.com/Archainis) )`)
-        .addField(`Engineering`, `Lucas Ensign ( <@112785244733628416> | [Twitter](https://twitter.com/SillySalamndr) )`)
-        .addField(`Art`, `Angela Lee ( [Website](https://www.angelasylee.com/) )`)
-        .addField(`\u200B`, `**__Patrons__**\nImaginary Horizons Productions is supported on [Patreon](https://www.patreon.com/imaginaryhorizonsproductions) by generous users like you, credited below.`)
-        .addField(`Cartographer Tier`, `Ralph Beish`, false)
-        .addField(`Explorer Tier`, `Eric Hu`, false)
-        .setFooter(`Support development with "@DirectoryBot support"`, footerURL)
-        .setTimestamp();
-}
-
 exports.saveManagerRole = function (guildID, managerRoleID, backup = false) {
     fs.readFile(`encryptionKey.txt`, 'utf8', (error, keyInput) => {
         if (error) {

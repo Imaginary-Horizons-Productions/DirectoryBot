@@ -44,7 +44,6 @@ GuildMember.prototype.addPlatformRoles = function (guildSpecifics) {
         Object.keys(guildSpecifics.platformsList).forEach(platformName => {
             if (guildSpecifics.platformsList[platformName].roleID) {
                 if (guildSpecifics.userDictionary[this.id][platformName] && guildSpecifics.userDictionary[this.id][platformName].value) {
-                    console.log(guildSpecifics.platformsList[platformName].roleID);
                     this.roles.add(guildSpecifics.platformsList[platformName].roleID);
                 }
             }

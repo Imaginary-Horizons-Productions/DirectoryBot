@@ -19,7 +19,7 @@ setplatformterm.execute = (receivedMessage, state, metrics) => {
             let term = state.messageArray[1];
 
             if (state.cachedGuild.platformsList[platform]) {
-                state.cachedGuild.platformsList[platform.toLowerCase()].term = term;
+                state.cachedGuild.platformsList[platform].term = term;
                 receivedMessage.author.send(`Information for *${platform}* will now be referred to as **${term}** in ${receivedMessage.guild}.`)
                     .catch(console.error);
                 savePlatformsList(receivedMessage.guild.id, state.cachedGuild.platformsList);

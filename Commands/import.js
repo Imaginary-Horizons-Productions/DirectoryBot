@@ -43,6 +43,7 @@ command.execute = (receivedMessage, state, metrics) => {
                             feedbackText += `\n${platform}: ${sourceDictionary[platform].value}`
                         }
                     })
+                    receivedMessage.member.addPlatformRoles(state.cachedGuild);
 
                     saveUserDictionary(receivedMessage.guild.id, state.cachedGuild.userDictionary);
                     receivedMessage.author.send(feedbackText)

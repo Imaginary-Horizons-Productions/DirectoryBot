@@ -211,7 +211,7 @@ client.on('message', (receivedMessage) => {
                     if (state.botManager || !commandDictionary[command].managerCommand) {
                         commandDictionary[command].execute(receivedMessage, state);
                     } else {
-                        receivedMessage.author.send(`You need a role with the administrator flag${state.cachedGuild.managerRoleID != "" ? ` or the @${receivedMessage.guild.roles.resolve(cachedGuild.managerRoleID).name} role` : ``} to use the **${command}** command.`);
+                        receivedMessage.author.send(`You need a role with the administrator flag${state.cachedGuild.managerRoleID ? ` or the @${receivedMessage.guild.roles.resolve(cachedGuild.managerRoleID).name} role` : ``} to use the **${command}** command.`);
                     }
 
                     antiSpam.push(receivedMessage.author.id);

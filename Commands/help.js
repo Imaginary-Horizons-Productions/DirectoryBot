@@ -27,7 +27,7 @@ help.execute = (receivedMessage, state, metrics) => {
                 receivedMessage.author.send(lookedUpCommand.help(receivedMessage.client.user, state))
                     .catch(console.error);
             } else {
-                receivedMessage.author.send(`You need a role with the administrator flag${state.cachedGuild.managerRoleID != "" ? ` or the @${receivedMessage.guild.roles.resolve(state.cachedGuild.managerRoleID).name} role` : ``} to view manager commands.`)
+                receivedMessage.author.send(`You need a role with the administrator flag${state.cachedGuild.managerRoleID ? ` or the @${receivedMessage.guild.roles.resolve(state.cachedGuild.managerRoleID).name} role` : ``} to view manager commands.`)
                     .catch(console.error);
             }
         } else {

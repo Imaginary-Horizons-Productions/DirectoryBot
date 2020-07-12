@@ -31,7 +31,7 @@ newplatform.execute = (receivedMessage, state, metrics) => {
             savePlatformsList(receivedMessage.guild.id, state.cachedGuild.platformsList);
         } else {
             // Error Message
-            receivedMessage.author.send(`${state.messageArray[0]} ${state.cachedGuild.platformsList[platform].term}s can already be recorded and retrieved.`)
+            receivedMessage.author.send(`${receivedMessage.guild} already has a platform named *${platform}*.`)
                 .catch(console.error);
         }
     } else {

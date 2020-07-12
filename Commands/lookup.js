@@ -17,13 +17,13 @@ Syntax: ${clientUser} \`${state.messageArray[0]} (platform) (user set)\n\n` + pl
 
 lookup.execute = (receivedMessage, state, metrics) => {
     // Looks up platform data for the server or a set of users and sends it to the command user
-    if (state.messageArray.length > 0) {
-        var platform = state.messageArray.filter(word => !word.match(MessageMentions.USERS_PATTERN))[0].toLowerCase();
-
+    var platform = state.messageArray[0];
+    if (platform) {
+        platform = platform.toLowerCase();
         if (Object.keys(state.cachedGuild.platformsList).includes(platform)) {
             var text = `${state.cachedGuild.platformsList[platform].description}
 
-Here are all the ${platform} ${state.cachedGuild.platformsList[platform].term}s in ${receivedMessage.guild}'s ${receivedMessage.client.user}:\n`;
+Here are the ${platform} ${state.cachedGuild.platformsList[platform].term}s you looked up in ${receivedMessage.guild}'s ${receivedMessage.client.user}:\n`;
             let userList = [];
 
             receivedMessage.mentions.members.array().forEach(member => {

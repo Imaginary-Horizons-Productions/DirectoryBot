@@ -15,7 +15,7 @@ Syntax: ${clientUser} \`${state.messageArray[0]} (time) in (timezone)\``;
 
 countdown.execute = (receivedMessage, state, metrics) => {
     // Calculates the amount of time until the given date
-    var startTimezone = LocalZone.instance.name;
+    var startTimezone = "";
     var timeText = "";
     for (var i = 0; i < state.messageArray.length; i++) {
         if (state.messageArray[i] == "in") {
@@ -26,19 +26,16 @@ countdown.execute = (receivedMessage, state, metrics) => {
         }
     }
 
-
     var inputTime = new chrono.parse(timeText);
     if (inputTime.length > 0) {
-        if (state.cachedGuild.userDictionary[receivedMessage.author.id].timezone) {
-            if (!IANAZone.isValidZone(startTimezone) && state.cachedGuild.userDictionary[receivedMessage.author.id] && state.cachedGuild.userDictionary[receivedMessage.author.id].timezone.value) {
+        if (startTimezone == "") {
+            if (state.cachedGuild.userDictionary[receivedMessage.author.id].timezone.value) {
                 startTimezone = state.cachedGuild.userDictionary[receivedMessage.author.id].timezone.value;
+            } else {
+                startTimezone = LocalZone.instance.name;
             }
-        } else {
-            // Error Message
-            receivedMessage.author.send(`Please specify a time zone for the time to count down to.`)
-                .catch(console.error);
-            return;
         }
+
         if (IANAZone.isValidZone(startTimezone)) {
             inputTime[0].start.assign("timezoneOffset", IANAZone.create(startTimezone).offset(Date.now()));
             var dateTimeObject = DateTime.fromJSDate(inputTime[0].start.date());

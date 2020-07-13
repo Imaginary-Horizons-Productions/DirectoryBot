@@ -64,6 +64,18 @@ client.on('ready', () => {
                                     fs.readFile(`./data/${guildID}/expiringMessages.txt`, 'utf8', (error, expiringMessagesInput) => {
                                         if (error) {
                                             console.log(error);
+                                            if (!fs.existsSync('./data')) {
+                                                fs.mkdirSync('./data');
+                                            }
+                                            if (!fs.existsSync('./data/' + guildID)) {
+                                                fs.mkdirSync('./data/' + guildID);
+                                            }
+                                            var filePath = `./data/${guildID}/expiringMessages.txt`;
+                                            fs.writeFile(filePath, encrypter.AES.encrypt(JSON.stringify({}), keyInput).toString(), 'utf8', (error) => {
+                                                if (error) {
+                                                    console.log(error);
+                                                }
+                                            })
                                         } else {
                                             let expiringMessages = JSON.parse(encrypter.AES.decrypt(expiringMessagesInput, keyInput).toString(encrypter.enc.Utf8));
                                             Object.keys(expiringMessages).forEach(channelID => {
@@ -94,17 +106,27 @@ client.on('ready', () => {
                                                     helpers.guildDictionary[guildID].welcomeMessage = encrypter.AES.decrypt(welcomeMessageInput, keyInput).toString(encrypter.enc.Utf8);
                                                 }
 
-                                                setInterval(() => {
-                                                    saveParticipatingGuildsIDs(true);
-                                                    Object.keys(helpers.guildDictionary).forEach((guildID) => {
-                                                        helpers.saveManagerRole(guildID, helpers.guildDictionary[guildID].managerRoleID, true);
-                                                        helpers.savePermissionsRole(guildID, helpers.guildDictionary[guildID].permissionsRoleID, true);
-                                                        helpers.savePlatformsList(guildID, helpers.guildDictionary[guildID].platformsList, true);
-                                                        helpers.saveUserDictionary(guildID, helpers.guildDictionary[guildID].userDictionary, true);
-                                                        helpers.saveBlockDictionary(guildID, helpers.guildDictionary[guildID].blockDictionary, true);
-                                                        helpers.saveWelcomeMessage(guildID, helpers.guildDictionary[guildID].welcomeMessage, true);
-                                                    })
-                                                }, 3600000)
+                                                fs.readFile(`./data/${guildID}/infoLifetime.txt`, 'utf8', (error, infoLifetimeInput) => {
+                                                    if (error) {
+                                                        console.log(error);
+                                                        helpers.saveInfoLifetime(guildID, 3600000);
+                                                    } else {
+                                                        helpers.guildDictionary[guildID].infoLifetime = encrypter.AES.decrypt(welcomeMessageInput, keyInput).toString(encrypter.enc.Utf8);
+                                                    }
+
+                                                    setInterval(() => {
+                                                        saveParticipatingGuildsIDs(true);
+                                                        Object.keys(helpers.guildDictionary).forEach((guildID) => {
+                                                            helpers.saveManagerRole(guildID, helpers.guildDictionary[guildID].managerRoleID, true);
+                                                            helpers.savePermissionsRole(guildID, helpers.guildDictionary[guildID].permissionsRoleID, true);
+                                                            helpers.savePlatformsList(guildID, helpers.guildDictionary[guildID].platformsList, true);
+                                                            helpers.saveUserDictionary(guildID, helpers.guildDictionary[guildID].userDictionary, true);
+                                                            helpers.saveBlockDictionary(guildID, helpers.guildDictionary[guildID].blockDictionary, true);
+                                                            helpers.saveWelcomeMessage(guildID, helpers.guildDictionary[guildID].welcomeMessage, true);
+                                                            helpers.saveInfoLifetime(guildID, helpers.guildDictionary[guildID].infoLifetime, true);
+                                                        })
+                                                    }, 3600000)
+                                                })
                                             })
                                         })
                                     })
@@ -179,6 +201,13 @@ client.on('message', (receivedMessage) => {
                 }
             })
 
+            if (!helpers.guildDictionary[receivedMessage.guild.id].userDictionary[receivedMessage.author.id]) {
+                helpers.guildDictionary[receivedMessage.guild.id].userDictionary[receivedMessage.author.id] = {};
+                Object.keys(helpers.guildDictionary[receivedMessage.guild.id].platformsList).forEach((platformInList) => {
+                    helpers.guildDictionary[receivedMessage.guild.id].userDictionary[receivedMessage.author.id][platformInList] = new FriendCode();
+                });
+            }
+
             if (recentInteractions < commandLimit) {
                 var command = messageArray.shift();
                 var state = {
@@ -188,18 +217,11 @@ client.on('message', (receivedMessage) => {
                     botManager: receivedMessage.member.hasPermission(Discord.Permissions.FLAGS.ADMINISTRATOR) || receivedMessage.member.roles.cache.has(helpers.guildDictionary[receivedMessage.guild.id].managerRoleID)
                 };
 
-                if (!state.cachedGuild.userDictionary[receivedMessage.author.id]) {
-                    state.cachedGuild.userDictionary[receivedMessage.author.id] = {};
-                    Object.keys(state.cachedGuild.platformsList).forEach((platformInList) => {
-                        state.cachedGuild.userDictionary[receivedMessage.author.id][platformInList] = new FriendCode();
-                    });
-                }
-
                 if (commandDictionary[command]) {
                     if (state.botManager || !commandDictionary[command].managerCommand) {
                         commandDictionary[command].execute(receivedMessage, state);
                     } else {
-                        receivedMessage.author.send(`You need a role with the administrator flag${state.cachedGuild.managerRoleID != "" ? ` or the @${receivedMessage.guild.roles.resolve(cachedGuild.managerRoleID).name} role` : ``} to use the **${command}** command.`);
+                        receivedMessage.author.send(`You need a role with the administrator flag${state.cachedGuild.managerRoleID ? ` or the @${receivedMessage.guild.roles.resolve(cachedGuild.managerRoleID).name} role` : ``} to use the **${command}** command.`);
                     }
 
                     antiSpam.push(receivedMessage.author.id);
@@ -245,7 +267,7 @@ client.on('guildMemberRemove', (member) => {
     if (cachedGuild) {
         if (cachedGuild.userDictionary[memberID]) {
             delete cachedGuild.userDictionary[memberID];
-            saveUserDictionary(guildID);
+            helpers.saveUserDictionary(guildID, cachedGuild.userDictionary);
         }
     } else {
         guildCreate(guildID);
@@ -311,6 +333,7 @@ function guildCreate(guildID) {
     helpers.saveUserDictionary(guildID, helpers.guildDictionary[guildID].userDictionary);
     helpers.saveBlockDictionary(guildID, helpers.guildDictionary[guildID].blockDictionary);
     helpers.saveWelcomeMessage(guildID, helpers.guildDictionary[guildID].welcomeMessage);
+    helpers.saveInfoLifetime(guildID, helpers.guildDictionary[guildID].infoLifetime);
     saveParticipatingGuildsIDs();
 }
 

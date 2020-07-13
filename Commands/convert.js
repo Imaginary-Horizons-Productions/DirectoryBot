@@ -1,5 +1,5 @@
 const Command = require('./../Classes/Command.js');
-const { DateTime, IANAZone } = require("luxon");
+const { DateTime, IANAZone, LocalZone } = require("luxon");
 var chrono = require('chrono-node');
 
 var convert = new Command();
@@ -26,29 +26,36 @@ convert.execute = (receivedMessage, state, metrics) => {
 
     if (mentionedGuildMembers.length == 1) {
         let targetGuildMember = mentionedGuildMembers[0];
-        if (targetGuildMember) {
-            if (state.cachedGuild.userDictionary[targetGuildMember.id].timezone) {
-                for (var i = 0; i < state.messageArray.length; i++) {
-                    if (state.messageArray[i] == "in") {
-                        startTimezone = state.messageArray[i + 1]
-                        i++;
-                    } else if (state.messageArray[i] == "for") {
-                        break;
-                    } else {
-                        timeText += state.messageArray[i] + " ";
+        if (Object.keys(state.cachedGuild.platformsList).includes("timezone")) {
+            if (targetGuildMember) {
+                if (state.cachedGuild.userDictionary[targetGuildMember.id] && state.cachedGuild.userDictionary[targetGuildMember.id].timezone) {
+                    for (var i = 0; i < state.messageArray.length; i++) {
+                        if (state.messageArray[i] == "in") {
+                            startTimezone = state.messageArray[i + 1]
+                            i++;
+                        } else if (state.messageArray[i] == "for") {
+                            break;
+                        } else {
+                            timeText += state.messageArray[i] + " ";
+                        }
                     }
+                    resultTimezone = state.cachedGuild.userDictionary[targetGuildMember.id].timezone.value;
+                } else {
+                    // Error Message
+                    receivedMessage.author.send(`Your time could not be converted to ${targetGuildMember}'s time zone. ${targetGuildMember} does not have a time zone recorded.`)
+                        .catch(console.error);
+                    return;
                 }
-                resultTimezone = state.cachedGuild.userDictionary[targetGuildMember.id].timezone.value;
             } else {
                 // Error Message
-                receivedMessage.author.send(`Your time could not be converted to ${targetGuildMember}'s time zone. ${receivedMessage.guild} does not seem to be tracking time zones.`)
-                    .catch(console.error);
+                receivedMessage.author.send(`Your time could not be converted to ${targetGuildMember}'s time zone. ${targetGuildMember} isn't a member of ${receivedMessage.guild}.`)
+                    .catch(console.eror);
                 return;
             }
         } else {
             // Error Message
-            receivedMessage.author.send(`That person isn't a member of ${receivedMessage.guild}.`)
-                .catch(console.eror);
+            receivedMessage.author.send(`Your time could not be converted. ${receivedMessage.guild} does not seem to be tracking time zones.`)
+                .catch(console.error);
             return;
         }
     } else {
@@ -64,21 +71,12 @@ convert.execute = (receivedMessage, state, metrics) => {
             }
         }
     }
+
     if (startTimezone == "") {
-        if (state.cachedGuild.userDictionary[receivedMessage.author.id].timezone) {
-            if (state.cachedGuild.userDictionary[receivedMessage.author.id] && state.cachedGuild.userDictionary[receivedMessage.author.id].timezone.value) {
-                startTimezone = state.cachedGuild.userDictionary[receivedMessage.author.id].timezone.value;
-            } else {
-                // Error Message
-                receivedMessage.author.send(`Please either specifiy a starting time zone or record your default with \`@DirectoryBot record timezone (timezone)\`.`)
-                    .catch(console.error);
-                return;
-            }
+        if (state.cachedGuild.userDictionary[receivedMessage.author.id].timezone.value) {
+            startTimezone = state.cachedGuild.userDictionary[receivedMessage.author.id].timezone.value;
         } else {
-            // Error Message
-            receivedMessage.author.send(`Please specify a starting time zone.`)
-                .catch(console.error);
-            return;
+            startTimezone = LocalZone.instance.name;
         }
     }
 

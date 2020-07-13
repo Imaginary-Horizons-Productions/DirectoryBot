@@ -17,9 +17,10 @@ Syntax: ${clientUser} \`${state.messageArray[0]} (user) (platform)\`` : ``}`;
 
 remove.execute = (receivedMessage, state, metrics) => {
     // Removes the user's entry for the given platform, bot managers can remove for other users
-    if (state.messageArray.length > 0) {
+    var platform = state.messageArray.filter(word => !word.match(MessageMentions.USERS_PATTERN))[0];
+    if (platform) {
+        platform = platform.toLowerCase();
         let mentionedGuildMembers = receivedMessage.mentions.members.array().filter(member => member.id != receivedMessage.client.user.id);
-        var platform = state.messageArray.filter(word => !word.match(MessageMentions.USERS_PATTERN))[0].toLowerCase();
         var msgList = state.messageArray.slice(1);
         var reason = msgList.join(" ");
 
@@ -31,9 +32,11 @@ remove.execute = (receivedMessage, state, metrics) => {
 
                         if (state.cachedGuild.userDictionary[target.id] && state.cachedGuild.userDictionary[target.id][platform].value) {
                             state.cachedGuild.userDictionary[target.id][platform] = new FriendCode();
+                            if (state.cachedGuild.platformsList[platform].roleID) {
+                                target.roles.remove(state.cachedGuild.platformsList[platform].roleID);
+                            }
                             target.send(`Your ${platform} ${state.cachedGuild.platformsList[platform].term} has been removed from ${receivedMessage.guild}${reason ? ` because ${reason}` : ""}.`)
                                 .catch(console.error);
-                            target.roles.remove(state.cachedGuild.platformsList[platform].roleID);
                             saveUserDictionary(receivedMessage.guild.id, state.cachedGuild.userDictionary);
                             receivedMessage.author.send(`You have removed ${target}'s ${platform} ${state.cachedGuild.platformsList[platform].term} from ${receivedMessage.guild}.`)
                                 .catch(console.error);
@@ -55,10 +58,12 @@ remove.execute = (receivedMessage, state, metrics) => {
             } else {
                 if (state.cachedGuild.userDictionary[receivedMessage.author.id][platform] && state.cachedGuild.userDictionary[receivedMessage.author.id][platform].value) {
                     state.cachedGuild.userDictionary[receivedMessage.author.id][platform] = new FriendCode();
+                    if (state.cachedGuild.platformsList[platform].roleID) {
+                        receivedMessage.member.roles.remove(state.cachedGuild.platformsList[platform].roleID);
+                    }
                     receivedMessage.author.send(`You have removed your ${platform} ${state.cachedGuild.platformsList[platform].term} from ${receivedMessage.guild}.`)
                         .catch(console.error);
-                    receivedMessage.member.roles.remove(state.cachedGuild.platformsList[platform].roleID);
-                    saveUserDictionary(receivedMessage.guild.id);
+                    saveUserDictionary(receivedMessage.guild.id, state.cachedGuild.userDictionary);
                 } else {
                     // Error Message
                     receivedMessage.author.send(`You do not currently have a ${platform} ${state.cachedGuild.platformsList[platform].term} recorded in ${receivedMessage.guild}.`)

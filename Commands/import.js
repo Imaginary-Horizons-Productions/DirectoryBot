@@ -14,7 +14,6 @@ Syntax: ${clientUser} \`${state.messageArray[0]} (channel mention or server snow
 To get a channel mention, start a message in the server you want to import from. Start with #, then autocomplete. You can then copy-paste the blue link into your command in the destination server.
 
 To get a server's snowflake, first activate Developer Mode in your User Settings. Then you can right-click on the source server and select "Copy ID" from the drop-down menu.`;
-    // REMINDER! update readme
 }
 
 command.execute = (receivedMessage, state, metrics) => {
@@ -44,6 +43,7 @@ command.execute = (receivedMessage, state, metrics) => {
                             feedbackText += `\n${platform}: ${sourceDictionary[platform].value}`
                         }
                     })
+                    receivedMessage.member.addPlatformRoles(state.cachedGuild);
 
                     saveUserDictionary(receivedMessage.guild.id, state.cachedGuild.userDictionary);
                     receivedMessage.author.send(feedbackText)

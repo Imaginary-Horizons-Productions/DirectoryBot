@@ -14,9 +14,10 @@ Syntax: ${clientUser} \`${state.messageArray[0]} (platform) (code)\``;
 
 record.execute = (receivedMessage, state, metrics) => {
     // Records a user's information for a given platform
-    if (state.messageArray.length > 0) {
+    var platform = state.messageArray[0];
+    if (platform) {
+        platform = platform.toLowerCase();
         if (state.messageArray.length > 1) {
-            var platform = state.messageArray[0].toLowerCase();
             var codeArray = state.messageArray.slice(1);
             let spoilerMarkdown = /\|\|/g;
             let friendcode = codeArray.join(" ").replace(spoilerMarkdown, '');
@@ -28,9 +29,9 @@ record.execute = (receivedMessage, state, metrics) => {
 
                 state.cachedGuild.userDictionary[receivedMessage.author.id][platform].value = friendcode;
                 receivedMessage.member.addPlatformRoles(state.cachedGuild);
+                receivedMessage.delete().then(message => message.channel.send(`${message.author} has recorded a ${platform} ${state.cachedGuild.platformsList[platform].term}. Check it with "${message.client.user} lookup ${message.author} ${platform}".`)
+                    .catch(console.error));
                 saveUserDictionary(receivedMessage.guild.id, state.cachedGuild.userDictionary);
-                receivedMessage.channel.send(`${receivedMessage.author} has recorded a ${platform} ${state.cachedGuild.platformsList[platform].term}. Check it with "${receivedMessage.client.user} lookup ${receivedMessage.author} ${platform}".`)
-                    .catch(console.error);
             } else {
                 // Error Message
                 receivedMessage.author.send(`${platform} is not currently being tracked in ${receivedMessage.guild}.`)

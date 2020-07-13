@@ -92,16 +92,16 @@ The time module contains commands for converting time zones, which users can sto
 #### convert
 Syntax: `@DirectoryBot convert (time) in (timezone) for (user)`
 \
-States the (time) in (timezone1) as its equivalent for (user) based on (user)'s declared timezone. Assumes sender's timezone if (timezone) is omitted.
+States the (time) in (timezone1) as its equivalent for (user) based on (user)'s declared timezone. (timezone) defaults to the sender's time zone, then DirectoryBot's time zone after that.
 
 Syntax: `@DirectoryBot convert (time) in (timezone1) to (timezone2)`
 \
-States the (time) in (timezone1) as its equivalent in (timezone2). Assumes sender's timezone if (timezone1) is omitted.
+States the (time) in (timezone1) as its equivalent in (timezone2). (timezone) defaults to the sender's time zone, then DirectoryBot's time zone after that.
 
 #### countdown
 Syntax: `@DirectoryBot countdown (time) in (timezone)`
 \
-States how long until (time) in (timezone1) for the sender.
+States how long until (time) in (timezone). (timezone) defaults to the sender's time zone, then DirectoryBot's time zone after that.
 
 ### Streaming Module
 The streaming module contains commands for supporting live-streamers.
@@ -131,6 +131,11 @@ Sets the manager role for DirectoryBot. Users with that role can use the manager
 Syntax: `@DirectoryBot welcomemessage (welcome message)`
 \
 Sets a message to send to new members of the server.
+
+#### infolifetime
+Syntax: `@DirectoryBot infolifetime (number of hours)`
+\
+Sets the amount of time in hours before responses from the `lookup` and `send` commands expire (decimals allowed).
 
 #### newplatform (AKA: addplatform)
 Syntax `@DirectoryBot newplatform (platform)`

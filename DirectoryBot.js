@@ -123,7 +123,7 @@ client.on('ready', () => {
                                                             helpers.saveUserDictionary(guildID, helpers.guildDictionary[guildID].userDictionary, true);
                                                             helpers.saveBlockDictionary(guildID, helpers.guildDictionary[guildID].blockDictionary, true);
                                                             helpers.saveWelcomeMessage(guildID, helpers.guildDictionary[guildID].welcomeMessage, true);
-                                                            helpers.saveInfoLifetime(guildID, helpers.guildDictionary[guildID].saveInfoLifetime, true);
+                                                            helpers.saveInfoLifetime(guildID, helpers.guildDictionary[guildID].infoLifetime, true);
                                                         })
                                                     }, 3600000)
                                                 })

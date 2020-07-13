@@ -267,7 +267,7 @@ client.on('guildMemberRemove', (member) => {
     if (cachedGuild) {
         if (cachedGuild.userDictionary[memberID]) {
             delete cachedGuild.userDictionary[memberID];
-            saveUserDictionary(guildID);
+            helpers.saveUserDictionary(guildID, cachedGuild.userDictionary);
         }
     } else {
         guildCreate(guildID);

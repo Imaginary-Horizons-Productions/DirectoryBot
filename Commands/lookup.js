@@ -17,29 +17,24 @@ Syntax: ${clientUser} \`${state.messageArray[0]} (platform) (user set)\n\n` + pl
 
 lookup.execute = (receivedMessage, state, metrics) => {
     // Looks up platform data for the server or a set of users and sends it to the command user
-    var platform = state.messageArray[0];
+    var platform = state.messageArray.filter(word => !word.match(MessageMentions.USERS_PATTERN))[0];
     if (platform) {
         platform = platform.toLowerCase();
         if (Object.keys(state.cachedGuild.platformsList).includes(platform)) {
             var text = `${state.cachedGuild.platformsList[platform].description}
 
 Here are the ${platform} ${state.cachedGuild.platformsList[platform].term}s you looked up in ${receivedMessage.guild}'s ${receivedMessage.client.user}:\n`;
-            let userList = [];
+            let userIDs = receivedMessage.mentions.members.keyArray().filter(id => id != receivedMessage.client.user.id);
 
-            receivedMessage.mentions.members.array().forEach(member => {
-                if (member.id != receivedMessage.client.user.id) {
-                    userList.push(member.id);
-                }
-            });
-            if (userList.length == 0) {
-                userList = Object.keys(state.cachedGuild.userDictionary);
+            if (userIDs.length == 0) {
+                userIDs = Object.keys(state.cachedGuild.userDictionary);
             }
 
-            userList.forEach(userID => {
-                if (!(state.cachedGuild.blockDictionary[userID] && state.cachedGuild.blockDictionary[userID].includes(receivedMessage.author.id))) {
-                    if (state.cachedGuild.userDictionary[userID] && state.cachedGuild.userDictionary[userID][platform]) {
-                        if (state.cachedGuild.userDictionary[userID][platform].value) {
-                            text += `${receivedMessage.guild.members.resolve(userID).displayName}: ${state.cachedGuild.userDictionary[userID][platform].value}`;
+            userIDs.forEach(id => {
+                if (!(state.cachedGuild.blockDictionary[id] && state.cachedGuild.blockDictionary[id].includes(receivedMessage.author.id))) {
+                    if (state.cachedGuild.userDictionary[id] && state.cachedGuild.userDictionary[id][platform]) {
+                        if (state.cachedGuild.userDictionary[id][platform].value) {
+                            text += `${receivedMessage.guild.members.resolve(id).displayName}: ${state.cachedGuild.userDictionary[id][platform].value}`;
                         }
                     }
                 }
@@ -47,7 +42,7 @@ Here are the ${platform} ${state.cachedGuild.platformsList[platform].term}s you 
             text += `\n\nThis message will expire in about ${millisecondsToHours(state.cachedGuild.infoLifetime)}.`;
             if (text.length < 2001) {
                 receivedMessage.author.send(text).then(sentMessage => {
-                    sentMessage.setToExpire(state.cachedGuild, receivedMessage.guild.id, `Your lookup of ${receivedMessage.guild.name}'s ${platform} ${state.cachedGuild.platformsList[platform].term} has expired.`);
+                    sentMessage.setToExpire(state.cachedGuild, receivedMessage.guild.id, `Your lookup of ${receivedMessage.guild.name}'s ${platform} ${state.cachedGuild.platformsList[platform].term}s has expired.`);
                 }).catch(console.error);
             } else {
                 // Error Message

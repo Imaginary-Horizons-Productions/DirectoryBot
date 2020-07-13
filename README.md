@@ -132,6 +132,11 @@ Syntax: `@DirectoryBot welcomemessage (welcome message)`
 \
 Sets a message to send to new members of the server.
 
+#### infolifetime
+Syntax: `@DirectoryBot infolifetime (number of hours)`
+\
+Sets the amount of time in hours before responses from the `lookup` and `send` commands expire (decimals allowed).
+
 #### newplatform (AKA: addplatform)
 Syntax `@DirectoryBot newplatform (platform)`
 \

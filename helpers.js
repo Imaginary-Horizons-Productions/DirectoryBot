@@ -33,10 +33,10 @@ Message.prototype.setToExpire = function (guildSpecifics, guildID, expirationTex
         }
     })
 
-    setTimeout(function () {
-        this.edit(expirationText);
-        guildSpecifics.expiringMessages[this.channel.id].shift();
-    }, guildSpecifics.infoLifetime);
+    setTimeout(function (message) {
+        message.edit(expirationText);
+        guildSpecifics.expiringMessages[message.channel.id].shift();
+    }, guildSpecifics.infoLifetime, this);
 }
 
 GuildMember.prototype.addPlatformRoles = function (guildSpecifics) {
@@ -204,6 +204,38 @@ exports.savePlatformsList = function (guildID, platformsList, backup = false) {
                 }
             }
             fs.writeFile(filePath, encrypter.AES.encrypt(JSON.stringify(platformsList), keyInput).toString(), 'utf8', (error) => {
+                if (error) {
+                    console.log(error);
+                }
+            })
+        }
+    })
+}
+
+exports.saveInfoLifetime = function (guildID, infoLifetime, backup = false) {
+    fs.readFile("encryptionKey.txt", 'utf8', (error, keyInput) => {
+        if (error) {
+            console.log(error);
+        } else {
+            var filePath = `./`;
+            if (backup) {
+                filePath += 'backups/' + guildID + '/infoLifetime.txt';
+                if (!fs.existsSync('./backups')) {
+                    fs.mkdirSync('./backups');
+                }
+                if (!fs.existsSync('./backups/' + guildID)) {
+                    fs.mkdirSync('./backups/' + guildID);
+                }
+            } else {
+                filePath += 'data/' + guildID + '/infoLifetime.txt';
+                if (!fs.existsSync('./data')) {
+                    fs.mkdirSync('./data');
+                }
+                if (!fs.existsSync('./data/' + guildID)) {
+                    fs.mkdirSync('./data/' + guildID);
+                }
+            }
+            fs.writeFile(filePath, encrypter.AES.encrypt(infoLifetime.toString(), keyInput).toString(), 'utf8', (error) => {
                 if (error) {
                     console.log(error);
                 }

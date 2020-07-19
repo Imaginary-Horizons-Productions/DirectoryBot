@@ -35,6 +35,7 @@ Message.prototype.setToExpire = function (guildSpecifics, guildID, expirationTex
 
     setTimeout(function (message) {
         message.edit(expirationText);
+        message.suppressEmbeds(true);
         guildSpecifics.expiringMessages[message.channel.id].shift();
     }, guildSpecifics.infoLifetime, this);
 }

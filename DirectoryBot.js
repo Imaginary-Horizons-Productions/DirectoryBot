@@ -83,6 +83,7 @@ client.on('ready', () => {
                                                     expiringMessages[channelID].forEach(messageID => {
                                                         DMChannel.messages.fetch(messageID).then(message => {
                                                             message.edit(`This message has expired.`);
+                                                            message.suppressEmbeds(true);
                                                         })
                                                     })
                                                 });
@@ -111,7 +112,7 @@ client.on('ready', () => {
                                                         console.log(error);
                                                         helpers.saveInfoLifetime(guildID, 3600000);
                                                     } else {
-                                                        helpers.guildDictionary[guildID].infoLifetime = encrypter.AES.decrypt(welcomeMessageInput, keyInput).toString(encrypter.enc.Utf8);
+                                                        helpers.guildDictionary[guildID].infoLifetime = encrypter.AES.decrypt(infoLifetimeInput, keyInput).toString(encrypter.enc.Utf8);
                                                     }
 
                                                     setInterval(() => {

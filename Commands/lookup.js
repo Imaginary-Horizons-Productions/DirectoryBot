@@ -1,5 +1,5 @@
 const Command = require('./../Classes/Command.js');
-const { MessageMentions } = require('discord.js');
+const { MessageEmbed, MessageMentions } = require('discord.js');
 const { platformsBuilder, millisecondsToHours } = require('./../helpers.js');
 
 var lookup = new Command();
@@ -21,9 +21,7 @@ lookup.execute = (receivedMessage, state, metrics) => {
     if (platform) {
         platform = platform.toLowerCase();
         if (Object.keys(state.cachedGuild.platformsList).includes(platform)) {
-            var text = `${state.cachedGuild.platformsList[platform].description}
-
-Here are the ${platform} ${state.cachedGuild.platformsList[platform].term}s you looked up in ${receivedMessage.guild}'s ${receivedMessage.client.user}:\n`;
+            var text = `${state.cachedGuild.platformsList[platform].description}\n\n`;
             let userIDs = receivedMessage.mentions.members.keyArray().filter(id => id != receivedMessage.client.user.id);
 
             if (userIDs.length == 0) {
@@ -34,19 +32,25 @@ Here are the ${platform} ${state.cachedGuild.platformsList[platform].term}s you 
                 if (!(state.cachedGuild.blockDictionary[id] && state.cachedGuild.blockDictionary[id].includes(receivedMessage.author.id))) {
                     if (state.cachedGuild.userDictionary[id] && state.cachedGuild.userDictionary[id][platform]) {
                         if (state.cachedGuild.userDictionary[id][platform].value) {
-                            text += `${receivedMessage.guild.members.resolve(id).displayName}: ${state.cachedGuild.userDictionary[id][platform].value}`;
+                            text += `${receivedMessage.guild.members.resolve(id).displayName}: ${state.cachedGuild.userDictionary[id][platform].value}\n`;
                         }
                     }
                 }
             })
-            text += `\n\nThis message will expire in about ${millisecondsToHours(state.cachedGuild.infoLifetime)}.`;
-            if (text.length < 2001) {
-                receivedMessage.author.send(text).then(sentMessage => {
+
+            if (text.length < 2049) {
+                let embed = new MessageEmbed().setColor(`6b81eb`)
+                    .setAuthor(receivedMessage.guild.name, receivedMessage.guild.iconURL())
+                    .setTitle(`${state.command}: ${platform}`)
+                    .setDescription(text)
+                    .setFooter(`This message will expire in about ${millisecondsToHours(state.cachedGuild.infoLifetime)}.`, receivedMessage.client.user.avatarURL())
+                    .setTimestamp();
+                receivedMessage.author.send(embed).then(sentMessage => {
                     sentMessage.setToExpire(state.cachedGuild, receivedMessage.guild.id, `Your lookup of ${receivedMessage.guild.name}'s ${platform} ${state.cachedGuild.platformsList[platform].term}s has expired.`);
                 }).catch(console.error);
             } else {
                 // Error Message
-                receivedMessage.author.send(`Your lookup of ${receivedMessage.guild.name}'s ${platform} ${state.cachedGuild.platformsList[platform].term} is too long for a single message, please limit your search (2,000 characters max).`)
+                receivedMessage.author.send(`Your lookup of ${receivedMessage.guild.name}'s ${platform} ${state.cachedGuild.platformsList[platform].term} is too long for a single message, please limit your search (2,048 characters max).`)
                     .catch(console.error);
             }
         } else {

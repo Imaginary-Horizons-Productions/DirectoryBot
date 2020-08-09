@@ -193,7 +193,7 @@ client.on('message', (receivedMessage) => {
             return element != "";
         });
         let firstWord = messageArray.shift().replace(/\D/g, "");
-        if (messageArray.length > 0 && firstWord == client.user.id || firstWord == helpers.guildDictionary[receivedMessage.guild.id].permissionsRoleID) {
+        if (messageArray.length > 0 && (firstWord == client.user.id || firstWord == helpers.guildDictionary[receivedMessage.guild.id].permissionsRoleID)) {
             var recentInteractions = 0;
 
             antiSpam.forEach(user => {
@@ -230,7 +230,7 @@ client.on('message', (receivedMessage) => {
                         antiSpam.shift();
                     }, antiSpamInterval);
                 } else {
-                    receivedMessage.author.send(`${command} isn't a ${client.user} command. Please check for typos or use ${client.user}\`help.\``)
+                    receivedMessage.author.send(`${command} isn't a ${client.user} command. Please check for typos or use ${client.user}\`help\`.`)
                         .catch(console.error);
                 }
             } else {

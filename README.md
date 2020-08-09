@@ -1,5 +1,5 @@
 # DirectoryBot
-DirectoryBot is a Discord bot that stores friend codes, converts timezones, and announces streams.
+DirectoryBot is a Discord bot that stores friend codes and converts timezones.
 
 ## Set-Up
 1. Add DirectoryBot to your server from this link: https://discord.com/api/oauth2/authorize?client_id=585336216262803456&permissions=27648&scope=bot
@@ -13,7 +13,7 @@ DirectoryBot is a Discord bot that stores friend codes, converts timezones, and 
 * Check out the Imaginary Horizons Productions Patreon: https://www.patreon.com/imaginaryhorizonsproductions
 
 ### Notes
-If you leave a server, DirectoryBot will delete all of your data. If you kick DirectoryBot, it will delete everyoe's data.
+If you leave a server, DirectoryBot will delete all of your data. If you kick DirectoryBot, it will delete everyone's data.
 
 ## Commands
 #### help (AKA: commands)
@@ -32,10 +32,11 @@ Stores your (platform) (information). For example `@DirectoryBot timezone Americ
 
 #### import
 Syntax: `@DirectoryBot import (channel mention or server snowflake)`
+\
 The import command copies your information for matching platforms from a given server. There are two ways to indicate which server to import from: by mentioning a channel from that server, or by mentioning the server's snowflake.
-\
+
 To get a channel mention, start a message in the server you want to import from. Start with #, then autocomplete. You can then copy-paste the blue link into your command in the destination server.
-\
+
 To get a server's snowflake, first activate Developer Mode in your User Settings. Then you can right-click on the source server and select "Copy ID" from the drop-down menu.
 
 #### send (AKA: tell)

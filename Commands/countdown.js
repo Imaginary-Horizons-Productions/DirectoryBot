@@ -53,7 +53,7 @@ countdown.execute = (receivedMessage, state, metrics) => {
         }
     } else {
         // Error Message
-        receivedMessage.author.send(`The time you provided could not be parsed (Remember to specify AM or PM).`)
+        receivedMessage.author.send(`The time you provided could not be parsed (remember to specify AM or PM).`)
             .catch(console.error);
     }
 }

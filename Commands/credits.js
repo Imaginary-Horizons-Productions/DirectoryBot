@@ -3,7 +3,7 @@ const { MessageEmbed } = require('discord.js');
 
 var credits = new Command();
 credits.names = ["credits", "creditz", "about"];
-credits.summary = `Version info and contributors (using help on this command uses the command)`;
+credits.summary = `Version info and contributors (using \`help\` on this command uses the command)`;
 credits.managerCommand = false;
 
 credits.help = (clientUser, state) => {

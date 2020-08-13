@@ -4,8 +4,9 @@
 
 /.vs
 /node_modules
+/package-lock.json
+/data
+/backups
 /authentication.json
 /guildsList.txt
 /encryptionKey.txt
-/data
-/backups

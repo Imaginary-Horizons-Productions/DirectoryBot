@@ -9,7 +9,7 @@ command.managerCommand = false;
 
 command.help = (clientUser, state) => {
     return `The *${state.messageArray[0]}* command copies your information for matching platforms from a given server. There are two ways to indicate which server to import from: by mentioning a channel from that server, or by mentioning the server's snowflake.
-Syntax: ${clientUser} \`${state.messageArray[0]} (channel mention or server snowflake)\`
+Syntax: ${clientUser}\` ${state.messageArray[0]} (channel mention or server snowflake)\`
 
 To get a channel mention, start a message in the server you want to import from. Start with #, then autocomplete. You can then copy-paste the blue link into your command in the destination server.
 

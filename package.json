@@ -4,11 +4,12 @@
   "description": "A Discord bot for securely tracking usernames and converting time zones.",
   "main": "DirectoryBot.js",
   "dependencies": {
-    "chrono-node": "^1.4.4",
+    "chrono-node": "^1.4.8",
     "crypto-js": "^4.0.0",
     "discord.js": "^12.1.1",
+    "luxon": "^1.22.0",
     "node-fetch": "^2.6.0",
-    "luxon": "^1.22.0"
+    "package.json": "^2.0.1"
   },
   "devDependencies": {},
   "scripts": {

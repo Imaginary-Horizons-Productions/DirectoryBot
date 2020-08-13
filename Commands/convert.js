@@ -4,7 +4,7 @@ var chrono = require('chrono-node');
 
 var convert = new Command();
 convert.names = ["convert"];
-convert.summary = `Convert a time to someone else's timezone or a given timezone`;
+convert.summary = `Convert a time to someone else's time zone or a given time zone`;
 convert.managerCommand = false;
 
 convert.help = (clientUser, state) => {
@@ -98,7 +98,7 @@ convert.execute = (receivedMessage, state, metrics) => {
                     }
                 } else {
                     // Error Message
-                    receivedMessage.author.send(`The time you provided could not be parsed (Remember to specify AM or PM).`)
+                    receivedMessage.author.send(`The time you provided could not be parsed (remember to specify AM or PM).`)
                         .catch(console.error);
                 }
             } else {

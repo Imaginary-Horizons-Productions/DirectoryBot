@@ -18,7 +18,7 @@ whois.execute = (receivedMessage, state, metrics) => {
         Object.keys(state.cachedGuild.userDictionary).forEach(userID => {
             for (var platform in state.cachedGuild.userDictionary[userID]) {
                 if (state.cachedGuild.userDictionary[userID][platform].value == searchTerm) {
-                    reply += `\n${receivedMessage.guild.members.resolve(userID).displayName} for ${platform}`;
+                    reply += `\n**${receivedMessage.guild.members.resolve(userID).displayName}** for *${platform}*`;
                 }
             }
         })

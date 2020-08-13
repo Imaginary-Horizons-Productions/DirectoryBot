@@ -3,11 +3,11 @@ const { MessageEmbed } = require('discord.js');
 
 var help = new Command();
 help.names = ["help", "commands"];
-help.summary = `You can type \`@DirectoryBot help\` followed by one of those for specific instructions.`;
+help.summary = `You can type \`@DirectoryBot help\` followed by one of those for specific instructions`;
 help.managerCommand = false;
 
 help.help = (clientUser, state) => {
-    return `The **${state.messageArray[0]}** command lists all of ${clientUser}'s commands.
+    return `The *${state.messageArray[0]}* command lists all of ${clientUser}'s commands.
 Syntax: ${clientUser}\` ${state.messageArray[0]}\`
 
 Putting a command as an input will give details on that command and usage examples.
@@ -27,10 +27,12 @@ help.execute = (receivedMessage, state, metrics) => {
                 receivedMessage.author.send(lookedUpCommand.help(receivedMessage.client.user, state))
                     .catch(console.error);
             } else {
+                // Error Message
                 receivedMessage.author.send(`You need a role with the administrator flag${state.cachedGuild.managerRoleID ? ` or the @${receivedMessage.guild.roles.resolve(state.cachedGuild.managerRoleID).name} role` : ``} to view manager commands.`)
                     .catch(console.error);
             }
         } else {
+            // Error Message
             receivedMessage.author.send(`**${commandName}** does not appear to be a ${receivedMessage.client.user} command. Please check for typos!`)
                 .catch(console.error);
         }

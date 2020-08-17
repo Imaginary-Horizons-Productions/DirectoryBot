@@ -9,8 +9,8 @@ countdown.summary = `How long until the given time`;
 countdown.managerCommand = false;
 
 countdown.help = (clientUser, state) => {
-    return `The *${state.messageArray[0]}* command states the time until the given time. ${clientUser} uses IANA specified timezones. If no timezone is given ${client.user} will try with the user's timezone default, then the server's local timezone failing that.
-Syntax: ${clientUser} \`${state.messageArray[0]} (time) in (timezone)\``;
+    return `The *${state.messageArray[0]}* command states the time until the given time. ${clientUser} uses tz database format for time zones (https://en.wikipedia.org/wiki/List_of_tz_database_time_zones). If no timezone is given ${client.user} will try with the user's timezone default, then the server's local timezone failing that.
+Syntax: ${clientUser}\` ${state.messageArray[0]} (time) in (timezone)\``;
 }
 
 countdown.execute = (receivedMessage, state, metrics) => {
@@ -48,7 +48,7 @@ countdown.execute = (receivedMessage, state, metrics) => {
                 .catch(console.error);
         } else {
             // Error message
-            receivedMessage.author.send(`The time zone you entered could not be parsed.`)
+            receivedMessage.author.send(`The time zone you entered could not be parsed. Remember to use the tz database format for time zones: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones`)
                 .catch(console.error);
         }
     } else {

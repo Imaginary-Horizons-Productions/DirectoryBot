@@ -8,7 +8,7 @@ command.managerCommand = true;
 
 command.help = (clientUser, state) => {
 	return `The *${state.messageArray[0]}* command sets the amount of time in hours before responses from the \`lookup\` and \`send\` commands expire (decimals allowed).
-Syntax: ${clientUser} \`${state.messageArray[0]} (number of hours)\``;
+Syntax: ${clientUser}\` ${state.messageArray[0]} (number of hours)\``;
 }
 
 command.execute = (receivedMessage, state, metrics) => {
@@ -27,6 +27,7 @@ command.execute = (receivedMessage, state, metrics) => {
 			.catch(console.error);
 		saveInfoLifetime(receivedMessage.guild.id, state.cachedGuild.infoLifetime);
 	} else {
+		// Error Message
 		receivedMessage.author.send(`The number for your \`infolifetime\` command could not be parsed.`)
 			.catch(console.error);
     }

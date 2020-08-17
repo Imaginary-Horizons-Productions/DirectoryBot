@@ -4,15 +4,15 @@ const { platformsBuilder, millisecondsToHours } = require('./../helpers.js');
 
 var lookup = new Command();
 lookup.names = ["lookup"];
-lookup.summary = `Look up someone else's information if they've recorded it`;
+lookup.summary = `Look up someone else's information`;
 lookup.managerCommand = false;
 
 lookup.help = (clientUser, state) => {
     return `The *${state.messageArray[0]}* command tells you everyone's information associted with the given platform.
-Syntax: ${clientUser} \`${state.messageArray[0]} (platform)\`
+Syntax: ${clientUser}\` ${state.messageArray[0]} (platform)\`
 
 You can limit your results to a set of users by mentioning them at the end of the command.
-Syntax: ${clientUser} \`${state.messageArray[0]} (platform) (user set)\n\n` + platformsBuilder(state.cachedGuild.platformsList);
+Syntax: ${clientUser}\` ${state.messageArray[0]} (platform) (user set)\n\n` + platformsBuilder(state.cachedGuild.platformsList);
 }
 
 lookup.execute = (receivedMessage, state, metrics) => {

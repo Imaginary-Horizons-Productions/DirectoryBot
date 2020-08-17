@@ -3,12 +3,12 @@ const { saveManagerRole } = require('./../helpers.js');
 
 var managerrole = new Command();
 managerrole.names = ["managerrole", "setmanagerrole"];
-managerrole.summary = `Sets the bot manager role; not mentioning a role clears the setting`;
+managerrole.summary = `Sets the bot manager role which allows the use of manager commands`;
 managerrole.managerCommand = true;
 
 managerrole.help = (clientUser, state) => {
-    return `The *${state.messageArray[0]}* command updates the operator role for ${clientUser}. Users with this role use operator features of this bot without serverwide administrator privileges.
-Syntax: ${clientUser} \`${state.messageArray[0]} (role)\``;
+    return `The *${state.messageArray[0]}* command sets the manager role. Users with that role can use the manager-only commands without server administrator privilege. If no role is given, the set role will be cleared.
+Syntax: ${clientUser}\` ${state.messageArray[0]} (role)\``;
 }
 
 managerrole.execute = (receivedMessage, state, metrics) => {

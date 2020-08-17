@@ -7,7 +7,7 @@ multistream.managerCommand = false;
 
 multistream.help = (clientUser, state) => { // function for constructing examples with used overloads
     return `The *${state.messageArray[0]}* command generates a link to watch multiple streams simultaneously. Optionally, you can enter the layout number last if you want to specify that.
-Syntax: ${clientUser} \`${state.messageArray[0]} (user1) (user2)... (layout)\``;
+Syntax: ${clientUser}\` ${state.messageArray[0]} (user1) (user2)... (layout)\``;
 }
 
 multistream.execute = (receivedMessage, state, metrics) => {
@@ -39,7 +39,7 @@ multistream.execute = (receivedMessage, state, metrics) => {
             }
 
             if (missingUsers.length > 0) {
-                returnText += `\n\nThe following users don't have stream info logged with DirectoryBot: ${missingUsers.join(", ")}.`;
+                returnText += `\n\nThe following users don't have stream info recorded: ${missingUsers.join(", ")}.`;
             }
 
             receivedMessage.author.send(returnText)

@@ -8,11 +8,11 @@ convert.summary = `Convert a time to someone else's time zone or a given time zo
 convert.managerCommand = false;
 
 convert.help = (clientUser, state) => {
-    return `The *${state.messageArray[0]}* command calculates a time for a given user. ${clientUser} uses IANA specified timezones.
-Syntax: ${clientUser} \`${state.messageArray[0]} (time) in (starting timezone) for (user)\`
+    return `The *${state.messageArray[0]}* command calculates a time for a given user. ${clientUser} uses tz database format for time zones (https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
+Syntax: ${clientUser}\` ${state.messageArray[0]} (time) in (starting timezone) for (user)\`
 
 The command can also be used to switch a time to a given timezone.
-Syntax: ${clientUser} \`${state.messageArray[0]} (time) in (starting timezone) to (resulting timezone)\`
+Syntax: ${clientUser}\` ${state.messageArray[0]} (time) in (starting timezone) to (resulting timezone)\`
 
 If you omit the starting timezone, the bot will assume you mean the timezone you've recorded for the \"timezone\" platform.`;
 }
@@ -103,7 +103,7 @@ convert.execute = (receivedMessage, state, metrics) => {
                 }
             } else {
                 // Error Message
-                receivedMessage.author.send(`Please use the IANA timezone format for the **result timezone**. You can look up timezones here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones `)
+                receivedMessage.author.send(`Please use the tz database format for the **result timezone**. You can look up timezones here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones `)
                     .catch(console.error);
             }
         } else {
@@ -113,7 +113,7 @@ convert.execute = (receivedMessage, state, metrics) => {
         }
     } else {
         // Error Message
-        receivedMessage.author.send(`Please use the IANA timezone format for the **starting timezone**. You can look up timezones here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones `)
+        receivedMessage.author.send(`Please use the tz database format for the **starting timezone**. You can look up timezones here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones `)
             .catch(console.error);
     }
 }

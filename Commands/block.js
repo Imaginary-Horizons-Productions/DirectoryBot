@@ -8,7 +8,7 @@ block.managerCommand = false;
 
 block.help = (clientUser, state) => {
     return `The *${state.messageArray[0]}* command prevents the mentioned user from looking up your data.
-Syntax: ${clientUser} \`${state.messageArray[0]} (user)\``; 
+Syntax: ${clientUser}\` ${state.messageArray[0]} (user)\``; 
 }
 
 block.execute = (receivedMessage, state, metrics) => {

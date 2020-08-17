@@ -10,9 +10,9 @@ remove.managerCommand = false;
 
 remove.help = (clientUser, state) => {
     return `The *${state.messageArray[0]}* command removes your information for the given platform.
-Syntax: ${clientUser} \`${state.messageArray[0]} (platform)\`\
+Syntax: ${clientUser}\` ${state.messageArray[0]} (platform)\`\
 ${state.botManager ? `\n\nBot Managers can use the *${state.messageArray[0]}* command to remove information for other users.
-Syntax: ${clientUser} \`${state.messageArray[0]} (user) (platform)\`` : ``}`;
+Syntax: ${clientUser}\` ${state.messageArray[0]} (user) (platform)\`` : ``}`;
 }
 
 remove.execute = (receivedMessage, state, metrics) => {

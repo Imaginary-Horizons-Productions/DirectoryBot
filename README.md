@@ -93,7 +93,7 @@ The time module contains commands for converting time zones, which users can sto
 #### convert
 Syntax: `@DirectoryBot convert (time) in (timezone) for (user)`
 \
-States the (time) in (timezone1) as its equivalent for (user) based on (user)'s declared timezone. (timezone) defaults to the sender's time zone, then DirectoryBot's time zone after that.
+States the (time) in (timezone1) as its equivalent for (user) based on (user)'s declared timezone. DirectoryBot uses [tz database format](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) for time zones. (timezone) defaults to the sender's time zone, then DirectoryBot's time zone after that.
 
 Syntax: `@DirectoryBot convert (time) in (timezone1) to (timezone2)`
 \
@@ -102,7 +102,7 @@ States the (time) in (timezone1) as its equivalent in (timezone2). (timezone) de
 #### countdown
 Syntax: `@DirectoryBot countdown (time) in (timezone)`
 \
-States how long until (time) in (timezone). (timezone) defaults to the sender's time zone, then DirectoryBot's time zone after that.
+States how long until (time) in (timezone). DirectoryBot uses [tz database format](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) for time zones. (timezone) defaults to the sender's time zone, then DirectoryBot's time zone after that.
 
 ### Streaming Module
 The streaming module contains commands for supporting live-streamers.
@@ -126,7 +126,7 @@ Stores DirectoryBot's permissions role, allowing DirectoryBot to interpret accid
 #### managerrole (AKA: setmanagerrole)
 Syntax: `@DirectoryBot managerrole (role)`
 \
-Sets the manager role for DirectoryBot. Users with that role can use the manager-only commands without Discord administrator privileges. If no role is given, the setting will be cleared.
+Sets the manager role. Users with that role can use the manager-only commands without server administrator privilege. If no role is given, the set role will be cleared.
 
 #### welcomemessage
 Syntax: `@DirectoryBot welcomemessage (welcome message)`

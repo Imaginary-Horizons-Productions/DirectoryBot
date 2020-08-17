@@ -6,8 +6,8 @@ myentries.summary = `Lists all your platform entries`;
 myentries.managerCommand = false;
 
 myentries.help = (clientUser, state) => {
-    return `The **${state.messageArray[0]}** command private messages you with the information you've input into DirectoryBot.
-Syntax: ${clientUser} \`${state.messageArray[0]}\``;
+    return `The *${state.messageArray[0]}* command sends you a private message with all the information you've recorded.
+Syntax: ${clientUser}\` ${state.messageArray[0]}\``;
 }
 
 myentries.execute = (receivedMessage, state, metrics) => {

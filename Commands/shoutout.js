@@ -1,16 +1,10 @@
 const Command = require('./../Classes/Command.js');
 
-var shoutout = new Command();
-shoutout.names = ["shoutout", "streamshoutout"];
-shoutout.summary = `Have DirectoryBot post someone's stream information`;
-shoutout.managerCommand = false;
+var command = new Command(["shoutout", "streamshoutout"], `Have DirectoryBot post someone's stream information`, false, false, false)
+    .addDescription(`This command posts the given user's stream information.`)
+    .addSection(`Give a stream shoutout`, `\`@DirectoryBot shoutout (user)\``);
 
-shoutout.help = (clientUser, state) => {
-    return `The *${state.messageArray[0]}* command posts the given user's stream information.
-Syntax: ${clientUser} \`${state.messageArray[0]} (user)\``;
-}
-
-shoutout.execute = (receivedMessage, state, metrics) => {
+command.execute = (receivedMessage, state, metrics) => {
 	// Posts the link to a user's recorded stream, currently supported: twitch
     if (Object.keys(state.cachedGuild.platformsList).includes("stream")) {
         let mentionedGuildMembers = receivedMessage.mentions.members.array().filter(member => member.id != receivedMessage.client.user.id);
@@ -39,4 +33,4 @@ shoutout.execute = (receivedMessage, state, metrics) => {
     }
 }
 
-module.exports = shoutout;
+module.exports = command;

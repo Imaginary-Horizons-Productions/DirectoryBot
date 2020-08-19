@@ -2,17 +2,11 @@ const Command = require('./../Classes/Command.js');
 const { MessageMentions } = require('discord.js');
 const { millisecondsToHours } = require('./../helpers.js');
 
-var send = new Command();
-send.names = ["send", "tell"];
-send.summary = `Have DirectoryBot send someone your information`;
-send.managerCommand = false;
+var command = new Command(["tell", "send"], `Have DirectoryBot send someone your information`, false, false, false)
+    .addDescription(`This command sends your information on the given platform to the given user.`)
+    .addSection(`Tell someone your data`, `\`@DirectoryBot tell (platform) (user)\``);
 
-send.help = (clientUser, state) => {
-    return `The *${state.messageArray[0]}* command sends your information on the given platform to the given user.
-Syntax: ${clientUser} \`${state.messageArray[0]} (platform) (user)\``;
-}
-
-send.execute = (receivedMessage, state, metrics) => {
+command.execute = (receivedMessage, state, metrics) => {
     // Sends the user's given information to another user, which later expires
     let mentionedGuildMembers = receivedMessage.mentions.members.array().filter(member => member.id != receivedMessage.client.user.id);
 
@@ -57,4 +51,4 @@ This message will expire in about ${millisecondsToHours(state.cachedGuild.infoLi
     }
 }
 
-module.exports = send;
+module.exports = command;

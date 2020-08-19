@@ -1,16 +1,10 @@
 const Command = require('./../Classes/Command.js');
 
-var myentries = new Command();
-myentries.names = ['myentries', 'mydata'];
-myentries.summary = `Lists all your platform entries`;
-myentries.managerCommand = false;
+var command = new Command(['mydata', 'myentries'], `Lists all your platform entries`, false, false, false)
+    .addDescription(`This command sends you a private message with all the information you've recorded.`)
+    .addSection(`Usage`, `\`@DirectoryBot mydata\``);
 
-myentries.help = (clientUser, state) => {
-    return `The *${state.messageArray[0]}* command sends you a private message with all the information you've recorded.
-Syntax: ${clientUser}\` ${state.messageArray[0]}\``;
-}
-
-myentries.execute = (receivedMessage, state, metrics) => {
+command.execute = (receivedMessage, state, metrics) => {
     // Sends the user all the information they've input into the bot
     let text = `Your entries in ${receivedMessage.guild} are:`;
     let dictionary = state.cachedGuild.userDictionary[receivedMessage.author.id];
@@ -30,4 +24,4 @@ myentries.execute = (receivedMessage, state, metrics) => {
     }
 }
 
-module.exports = myentries;
+module.exports = command;

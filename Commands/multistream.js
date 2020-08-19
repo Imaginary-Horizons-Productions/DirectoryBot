@@ -1,16 +1,10 @@
 const Command = require('./../Classes/Command.js');
 
-var multistream = new Command();
-multistream.names = ["multistream", "multitwitch"];
-multistream.summary = `Generate a multistream link for the given users`;
-multistream.managerCommand = false;
+var command = new Command(["multistream", "multitwitch"], `Generate a multistream link for the given users`, false, false, false)
+    .addDescription(`This command generates a link to watch multiple streams simultaneously. Optionally, you can enter the layout number last if you want to specify that.`)
+    .addSection(`Generate multistream link`, `\`@DirectoryBot multistream (users) (layout)\``);
 
-multistream.help = (clientUser, state) => { // function for constructing examples with used overloads
-    return `The *${state.messageArray[0]}* command generates a link to watch multiple streams simultaneously. Optionally, you can enter the layout number last if you want to specify that.
-Syntax: ${clientUser}\` ${state.messageArray[0]} (user1) (user2)... (layout)\``;
-}
-
-multistream.execute = (receivedMessage, state, metrics) => {
+command.execute = (receivedMessage, state, metrics) => {
     // Generates a url for viewing multiple streams simultaneously (Supported: Twitch)
     if (Object.keys(state.cachedGuild.platformsList).includes("stream")) {
         var url = "https://multistre.am/";
@@ -56,4 +50,4 @@ multistream.execute = (receivedMessage, state, metrics) => {
     }
 }
 
-module.exports = multistream;
+module.exports = command;

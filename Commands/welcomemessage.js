@@ -1,15 +1,9 @@
 const Command = require('./../Classes/Command.js');
 const { saveWelcomeMessage } = require('./../helpers.js');
 
-var command = new Command();
-command.names = ['welcomemessage'];
-command.summary = `Sets a message to send to new members of the server`;
-command.managerCommand = true;
-
-command.help = (clientUser, state) => {
-	return `The *${state.messageArray[0]}* command sets a message to send to new members of the server.
-Syntax: ${clientUser} \`${state.messageArray[0]} (welcome message)\``;
-}
+var command = new Command(['welcomemessage'], `Sets a message to send to new members of the server`, true, false, false)
+	.addDescription(`This command sets a message to send to new members of the server.`)
+	.addSection(`Set a message to send to new server members`, `\`@DirectoryBot welcomemessage (message)\``);
 
 command.execute = (receivedMessage, state, metrics) => {
 	// Sets a message to send to new members of the guild

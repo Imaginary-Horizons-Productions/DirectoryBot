@@ -1,17 +1,11 @@
 const Command = require('./../Classes/Command.js');
 const { savePlatformsList } = require('./../helpers.js');
 
-var setplatformrole = new Command();
-setplatformrole.names = ["setplatformrole"];
-setplatformrole.summary = `Automatically give a role to users who record information for a platform`;
-setplatformrole.managerCommand = true;
+var command = new Command(["setplatformrole"], `Automatically give a role to users who record information for a platform`, true, false, false)
+    .addDescription(`This command associates the given role and platform. Anyone who records information for that platform will be automatically given the associated role.`)
+    .addSection(`Set a platform role`, `\`@DirectoryBot setplatformrole (platform) (role)\``);
 
-setplatformrole.help = (clientUser, state) => {
-    return `The *${state.messageArray[0]}* command associates the given role and platform. Anyone who records information for that platform will be automatically given the associated role.
-Syntax: ${clientUser} \`${state.messageArray[0]} (platform) (role)\``;
-}
-
-setplatformrole.execute = (receivedMessage, state, metrics) => {
+command.execute = (receivedMessage, state, metrics) => {
     // Sets a role to automatically give to users who set information for the given platform
     if (state.messageArray.length > 0) {
         var platform = state.messageArray[0];
@@ -50,4 +44,4 @@ setplatformrole.execute = (receivedMessage, state, metrics) => {
     }
 }
 
-module.exports = setplatformrole;
+module.exports = command;

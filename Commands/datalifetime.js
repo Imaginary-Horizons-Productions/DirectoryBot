@@ -1,15 +1,9 @@
 const Command = require('./../Classes/Command.js');
 const { saveInfoLifetime } = require('./../helpers.js');
 
-var command = new Command();
-command.names = ['infolifetime'];
-command.summary = `Sets the lifetime (in hours) for expiring messages`;
-command.managerCommand = true;
-
-command.help = (clientUser, state) => {
-	return `The *${state.messageArray[0]}* command sets the amount of time in hours before responses from the \`lookup\` and \`send\` commands expire (decimals allowed).
-Syntax: ${clientUser}\` ${state.messageArray[0]} (number of hours)\``;
-}
+var command = new Command(['infolifetime', 'datalifetime'], `Sets the lifetime (in hours) for expiring messages`, true, false, false)
+	.addDescription(`This command sets the number of hours before responses from the \`lookup\` and \`send\` commands expire (decimals allowed).`)
+	.addSection(`Set the data lifetime`, `\`@DirectoryBot datalifetime (number of hours)\``);
 
 command.execute = (receivedMessage, state, metrics) => {
 	// Calculates the number of miliseconds corresponding to the given float, then stores as info lifetime
@@ -18,7 +12,7 @@ command.execute = (receivedMessage, state, metrics) => {
 		if (!isNaN(parseFloat(word))) {
 			mentionedNumber = parseFloat(word);
 			break;
-        }
+		}
 	}
 
 	if (mentionedNumber) {
@@ -30,7 +24,7 @@ command.execute = (receivedMessage, state, metrics) => {
 		// Error Message
 		receivedMessage.author.send(`The number for your \`infolifetime\` command could not be parsed.`)
 			.catch(console.error);
-    }
+	}
 }
 
 module.exports = command;

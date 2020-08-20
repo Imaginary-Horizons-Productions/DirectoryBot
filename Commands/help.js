@@ -8,7 +8,7 @@ var command = new Command(["help", "commands"], `You can type \`@DirectoryBot he
 
 command.execute = (receivedMessage, state, metrics) => {
 	//TODO if placed with other dependencies, commandDictionary will be fetched before it's done being set
-	const { commandList, commandDictionary } = require(`./CommandsList.js`);
+	const { commandSets, commandDictionary } = require(`./CommandsList.js`);
 
 	// Provides a summary about bot commands, or details about a given command
 	if (state.messageArray.length > 0) {
@@ -29,15 +29,15 @@ command.execute = (receivedMessage, state, metrics) => {
 				.catch(console.error);
 		}
 	} else {
-		Object.keys(commandList).forEach(commandSet => {
-			if (state.botManager || commandSet == "General Commands" || commandSet == "Time Zone Commands" || commandSet == "Stream Commands") {
+		commandSets.forEach(commandSet => {
+			if (state.botManager || !commandSet.managerCommand) {
 				var embed = new MessageEmbed().setColor('6b81eb')
 					.setAuthor(`Imaginary Horizons Productions`, `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `, `https://discord.gg/bcE3Syu `)
-					.setTitle(commandSet)
-					.setDescription(`To interact with ${receivedMessage.client.user}, mention the bot then type one of these commands:`)
+					.setTitle(commandSet.name)
+					.setDescription(commandSet.description)
 					.setFooter(`Support development with "@DirectoryBot support"`, receivedMessage.client.user.displayAvatarURL())
 					.setTimestamp();
-				commandList[commandSet].forEach(filename => {
+				commandSet.fileNames.forEach(filename => {
 					const command = require(`./${filename}`)
 					embed.addField('**' + command.names.join(', ') + '**', command.summary)
 				})

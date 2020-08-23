@@ -276,35 +276,3 @@ exports.saveBlockDictionary = function (guildID, blockDictionary, backup = false
 		}
 	})
 }
-
-exports.saveWelcomeMessage = function (guildID, welcomeMessage, backup = false) {
-	fs.readFile("encryptionKey.txt", 'utf8', (error, keyInput) => {
-		if (error) {
-			console.log(error);
-		} else {
-			var filePath = `./`;
-			if (backup) {
-				filePath += 'backups/' + guildID + '/welcomeMessage.txt';
-				if (!fs.existsSync('./backups')) {
-					fs.mkdirSync('./backups');
-				}
-				if (!fs.existsSync('./backups/' + guildID)) {
-					fs.mkdirSync('./backups/' + guildID);
-				}
-			} else {
-				filePath += 'data/' + guildID + '/welcomeMessage.txt';
-				if (!fs.existsSync('./data')) {
-					fs.mkdirSync('./data');
-				}
-				if (!fs.existsSync('./data/' + guildID)) {
-					fs.mkdirSync('./data/' + guildID);
-				}
-			}
-			fs.writeFile(filePath, encrypter.AES.encrypt(welcomeMessage, keyInput).toString(), 'utf8', (error) => {
-				if (error) {
-					console.log(error);
-				}
-			})
-		}
-	})
-}

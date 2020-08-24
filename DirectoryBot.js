@@ -221,11 +221,11 @@ client.on('message', (receivedMessage) => {
 						antiSpam.shift();
 					}, antiSpamInterval);
 				} else {
-					receivedMessage.author.send(`${command} isn't a ${client.user} command. Please check for typos or use ${client.user}\`help\`.`)
+					receivedMessage.author.send(`${command} isn't a ${client.user} command. Please check for typos or use ${client.user}\` help\`.`)
 						.catch(console.error);
 				}
 			} else {
-				receivedMessage.author.send(`To prevent excessive messaging, users are unable to enter more than ${commandLimit} commands in ${helpers.millisecondsToHours(antiSpamInterval, true, true)}. You can use ${client.user} \`lookup (platform)\` to look up everyone's information for the given platform at once.`)
+				receivedMessage.author.send(`To prevent excessive messaging, users are unable to enter more than ${commandLimit} commands in ${helpers.millisecondsToHours(antiSpamInterval, true, true)}. You can use ${client.user}\` lookup (platform)\` to look up everyone's information for the given platform at once.`)
 					.catch(console.error);
 			}
 		}

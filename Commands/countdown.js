@@ -5,7 +5,7 @@ const { millisecondsToHours } = require('./../helpers.js');
 
 var command = new Command(["countdown"], `How long until the given time`, false, false, true)
 	.addDescription(`This command calculates the amount of time until a given time. DirectoryBot uses [tz database format](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) for time zones.`)
-	.addSection(`Count down to a time`, `\`@DirectoryBot countdown (time) in (time zone)\`\nIf the time zone is omitted, the countdown will be attempted with the time zone you've recorded for the \"timezone\" platform, then the server's local time zone failing that.`);
+	.addSection(`Count down to a time`, `\`@DirectoryBot countdown (time) in (time zone)\`\nIf the time zone is omitted, the countdown will be attempted with the time zone you've recorded for the "timezone" platform, then the server's local time zone failing that.`);
 
 command.execute = (receivedMessage, state, metrics) => {
 	// Calculates the amount of time until the given date

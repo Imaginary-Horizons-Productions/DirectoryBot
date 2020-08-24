@@ -26,7 +26,7 @@ function supportBuilder(footerURL) {
 		.setDescription(`Thank you for using DirectoryBot! Here are some ways to support development:`)
 		.addField(`Vote for us on top.gg`, `top.gg is a Discord bot listing and distrabution service. Voting for DirectoryBot causes it to appear earlier in searches. [DirectoryBot's Page](https://top.gg/bot/585336216262803456)`)
 		.addField(`Refer a friend`, `Got a friend interested in adding DirectoryBot to their server? Pass them [this link](https://discord.com/oauth2/authorize?client_id=585336216262803456&permissions=268446720&scope=bot)!`)
-		.addField(`Contribute code`, `Check out our [GitHub](https://github.com/ntseng/DirectoryBot) and tackle some issues!`)
+		.addField(`Contribute code or localization support`, `Check out our [GitHub](https://github.com/Imaginary-Horizons-Productions/DirectoryBot) and tackle some issues!`)
 		.addField(`Create some social media buzz`, `Use the #ImaginaryHorizonsProductions hashtag!`)
 		.addField(`Become a Patron`, `Chip in for server costs at the [Imaginary Horizons Productions Patreon](https://www.patreon.com/imaginaryhorizonsproductions)!`)
 		.setFooter(`Thanks in advanced!`, footerURL)

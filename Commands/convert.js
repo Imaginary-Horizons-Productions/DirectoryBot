@@ -6,7 +6,7 @@ var command = new Command(["convert"], `Convert a time to someone else's time zo
 	.addDescription(`This command calculates a time for a given user or time zone. DirectoryBot uses [tz database format](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) for time zones.`)
 	.addSection(`Convert a time to a user's time zone`, `\`@DirectoryBot convert (time) in (start time zone) for (user)\``)
 	.addSection(`Convert a time to a specified time zone`, `\`@DirectoryBot convert (time) in (start time zone) to (result time zone)\``)
-	.addSection(`\u200B`, `If the starting timezone is omitted, the conversion will be attempted with the time zone you've recorded for the \"timezone\" platform.`);
+	.addSection(`\u200B`, `If the starting timezone is omitted, the conversion will be attempted with the time zone you've recorded for the "timezone" platform.`);
 
 command.execute = (receivedMessage, state, metrics) => {
 	// Calculates the time for a user or time zone, given an inital time zone

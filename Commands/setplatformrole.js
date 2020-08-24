@@ -2,8 +2,9 @@ const Command = require('./../Classes/Command.js');
 const { savePlatformsList } = require('./../helpers.js');
 
 var command = new Command(["setplatformrole"], `Automatically give a role to users who record information for a platform`, true, false, false)
-    .addDescription(`This command associates the given role and platform. Anyone who records information for that platform will be automatically given the associated role.`)
-    .addSection(`Set a platform role`, `\`@DirectoryBot setplatformrole (platform) (role)\``);
+    .addDescription(`This command associates the given role and platform. Anyone who records information for that platform will be automatically given the associated role. Using the command without mentioning a role clears the set role for the platform.`)
+    .addSection(`Set a platform role`, `\`@DirectoryBot setplatformrole (platform) (role)\``)
+    .addSection(`Clear a platform role`, `\`@DirectoryBot setplatformrole (platform)\``);
 
 command.execute = (receivedMessage, state, metrics) => {
     // Sets a role to automatically give to users who set information for the given platform

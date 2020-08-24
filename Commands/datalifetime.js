@@ -1,7 +1,7 @@
 const Command = require('./../Classes/Command.js');
 const { saveInfoLifetime } = require('./../helpers.js');
 
-var command = new Command(['infolifetime', 'datalifetime'], `Sets the lifetime (in hours) for expiring messages`, true, false, false)
+var command = new Command(['datalifetime', 'infolifetime'], `Sets the lifetime (in hours) for expiring messages`, true, false, false)
 	.addDescription(`This command sets the number of hours before responses from the \`lookup\` and \`send\` commands expire (decimals allowed).`)
 	.addSection(`Set the data lifetime`, `\`@DirectoryBot datalifetime (number of hours)\``);
 
@@ -22,7 +22,7 @@ command.execute = (receivedMessage, state, metrics) => {
 		saveInfoLifetime(receivedMessage.guild.id, state.cachedGuild.infoLifetime);
 	} else {
 		// Error Message
-		receivedMessage.author.send(`The number for your \`infolifetime\` command could not be parsed.`)
+		receivedMessage.author.send(`The number for your \`${state.command}\` command could not be parsed.`)
 			.catch(console.error);
 	}
 }

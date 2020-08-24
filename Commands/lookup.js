@@ -5,7 +5,7 @@ const { millisecondsToHours } = require('./../helpers.js');
 var command = new Command(["lookup"], `Look up someone else's information`, false, false, false)
 	// Description set for README generation
 	.addDescription(`This command messages you the entries a given platform. You can limit your results to a set of users by mentioning them at the end of the command.`)
-	.addSection(`Look up for a platform`, `\`@DirectoryBot lookup (platform)\``)
+	.addSection(`Look up a platform`, `\`@DirectoryBot lookup (platform)\``)
 	.addSection(`Filter for users`, `\`@DirectoryBot lookup (platform) (users)\``);
 
 // Generate embed on call to add up-to-date list of platforms

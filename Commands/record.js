@@ -23,7 +23,7 @@ command.execute = (receivedMessage, state, metrics) => {
 
 				state.cachedGuild.userDictionary[receivedMessage.author.id][platform].value = friendcode;
 				receivedMessage.member.addPlatformRoles(state.cachedGuild);
-				receivedMessage.delete().then(message => message.channel.send(`${message.author} has recorded a ${platform} ${state.cachedGuild.platformsList[platform].term}. Check it with "${message.client.user} lookup ${message.author} ${platform}".`)
+				receivedMessage.delete().then(message => message.channel.send(`${message.author} has recorded a ${platform} ${state.cachedGuild.platformsList[platform].term}. Check it with:\n\t${message.client.user}\` lookup \`${message.author}\` ${platform}\`.`)
 					.catch(console.error));
 				saveUserDictionary(receivedMessage.guild.id, state.cachedGuild.userDictionary);
 			} else {

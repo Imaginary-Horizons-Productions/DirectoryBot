@@ -46,7 +46,7 @@ command.execute = (receivedMessage, state, metrics) => {
 			.catch(console.error);
 	} else {
 		// Error Message
-		receivedMessage.author.send(`Your \`myentries\` message is too long to fit in a single Discord message. Please try the \`lookup\` command instead.`)
+		receivedMessage.author.send(`Your \`${state.command}\` message is too long to fit in a single Discord message. Please try the \`lookup\` command instead.`)
 			.catch(console.error);
 	}
 }

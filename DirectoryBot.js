@@ -202,18 +202,25 @@ client.on('message', (receivedMessage) => {
 
 			if (recentInteractions < commandLimit) {
 				var command = messageArray.shift();
+				let guildSpecifics = helpers.guildDictionary[receivedMessage.guild.id];
 				var state = {
-					cachedGuild: helpers.guildDictionary[receivedMessage.guild.id], // GuildSpecifics for the current guild
 					command: command, // The primary command
 					messageArray: messageArray,
-					botManager: receivedMessage.member.hasPermission(Discord.Permissions.FLAGS.ADMINISTRATOR) || receivedMessage.member.roles.cache.has(helpers.guildDictionary[receivedMessage.guild.id].managerRoleID)
+					botManager: receivedMessage.member.hasPermission(Discord.Permissions.FLAGS.ADMINISTRATOR) || receivedMessage.member.roles.cache.has(helpers.guildDictionary[receivedMessage.guild.id].managerRoleID),
+					userDictionary: guildSpecifics.userDictionary, // GuildSpecifics for the current guild
+					platformsList: guildSpecifics.platformsList,
+					managerRoleID: guildSpecifics.managerRoleID,
+					permissionsRoleID: guildSpecifics.permissionsRoleID,
+					infoLifetime: guildSpecifics.infoLifetime,
+					expiringMessages: guildSpecifics.expiringMessages,
+					blockDictionary: guildSpecifics.blockDictionary
 				};
 
 				if (commandDictionary[command]) {
 					if (state.botManager || !commandDictionary[command].managerCommand) {
 						commandDictionary[command].execute(receivedMessage, state);
 					} else {
-						receivedMessage.author.send(`You need a role with the administrator flag${state.cachedGuild.managerRoleID ? ` or the @${receivedMessage.guild.roles.resolve(cachedGuild.managerRoleID).name} role` : ``} to use the **${command}** command.`);
+						receivedMessage.author.send(`You need a role with the administrator flag${state.managerRoleID ? ` or the @${receivedMessage.guild.roles.resolve(cachedGuild.managerRoleID).name} role` : ``} to use the **${command}** command.`);
 					}
 
 					antiSpam.push(receivedMessage.author.id);

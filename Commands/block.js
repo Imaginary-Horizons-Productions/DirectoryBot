@@ -10,20 +10,20 @@ command.execute = (receivedMessage, state, metrics) => {
 	let mentionedGuildMember = receivedMessage.mentions.users.array().filter(id => id != receivedMessage.client.user.id);
 
 	if (mentionedGuildMember.length > 0) {
-		if (!state.cachedGuild.blockDictionary[receivedMessage.author.id]) {
-			state.cachedGuild.blockDictionary[receivedMessage.author.id] = [];
+		if (!state.blockDictionary[receivedMessage.author.id]) {
+			state.blockDictionary[receivedMessage.author.id] = [];
 		}
 
-		if (!state.cachedGuild.blockDictionary[receivedMessage.author.id].includes(mentionedGuildMember[0].id)) {
-			state.cachedGuild.blockDictionary[receivedMessage.author.id].push(mentionedGuildMember[0].id);
+		if (!state.blockDictionary[receivedMessage.author.id].includes(mentionedGuildMember[0].id)) {
+			state.blockDictionary[receivedMessage.author.id].push(mentionedGuildMember[0].id);
 			receivedMessage.author.send(`You have blocked ${mentionedGuildMember[0]} from ${receivedMessage.guild}. They won't be able to look up your information.`)
 				.catch(console.error);
 		} else {
-			state.cachedGuild.blockDictionary[receivedMessage.author.id].splice(state.cachedGuild.blockDictionary[receivedMessage.author.id].indexOf(mentionedGuildMember[0].id), 1);
+			state.blockDictionary[receivedMessage.author.id].splice(state.blockDictionary[receivedMessage.author.id].indexOf(mentionedGuildMember[0].id), 1);
 			receivedMessage.author.send(`You have unblocked ${mentionedGuildMember[0]} from ${receivedMessage.guild}.`)
 				.catch(console.error);
 		}
-		saveBlockDictionary(receivedMessage.guild.id, state.cachedGuild.blockDictionary);
+		saveBlockDictionary(receivedMessage.guild.id, state.blockDictionary);
 	} else {
 		// Error Message
 		receivedMessage.author.send(`Please mention a user to block.`)

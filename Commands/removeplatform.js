@@ -10,17 +10,17 @@ command.execute = (receivedMessage, state, metrics) => {
 	if (state.messageArray.length > 0) {
 		let platform = state.messageArray[0].toLowerCase();
 
-		if (state.cachedGuild.platformsList[platform]) {
-			Object.keys(state.cachedGuild.userDictionary).forEach(userID => {
-				if (state.cachedGuild.platformsList[platform].roleID) {
-					receivedMessage.guild.members.resolve(userID).roles.remove(state.cachedGuild.platformsList[platform].roleID);
+		if (state.platformsList[platform]) {
+			Object.keys(state.userDictionary).forEach(userID => {
+				if (state.platformsList[platform].roleID) {
+					receivedMessage.guild.members.resolve(userID).roles.remove(state.platformsList[platform].roleID);
 				}
-				delete state.cachedGuild.userDictionary[userID][platform];
+				delete state.userDictionary[userID][platform];
 			})
-			delete state.cachedGuild.platformsList[platform];
+			delete state.platformsList[platform];
 			receivedMessage.channel.send(`${platform} information will no longer be recorded.`)
 				.catch(console.error);
-			savePlatformsList(receivedMessage.guild.id, state.cachedGuild.platformsList);
+			savePlatformsList(receivedMessage.guild.id, state.platformsList);
 		} else {
 			// Error Message
 			receivedMessage.author.send(`${platform} is not currently being recorded in ${receivedMessage.guild}.`)

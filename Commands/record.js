@@ -16,16 +16,16 @@ command.execute = (receivedMessage, state, metrics) => {
 			let spoilerMarkdown = /\|\|/g;
 			let friendcode = codeArray.join(" ").replace(spoilerMarkdown, '');
 
-			if (Object.keys(state.cachedGuild.platformsList).includes(platform)) { // Early out if platform is not being tracked
-				if (!state.cachedGuild.userDictionary[receivedMessage.author.id][platform]) {
-					state.cachedGuild.userDictionary[receivedMessage.author.id][platform] = new FriendCode();
+			if (Object.keys(state.platformsList).includes(platform)) { // Early out if platform is not being tracked
+				if (!state.userDictionary[receivedMessage.author.id][platform]) {
+					state.userDictionary[receivedMessage.author.id][platform] = new FriendCode();
 				}
 
-				state.cachedGuild.userDictionary[receivedMessage.author.id][platform].value = friendcode;
-				receivedMessage.member.addPlatformRoles(state.cachedGuild);
-				receivedMessage.delete().then(message => message.channel.send(`${message.author} has recorded a ${platform} ${state.cachedGuild.platformsList[platform].term}. Check it with:\n\t${message.client.user}\` lookup \`${message.author}\` ${platform}\`.`)
+				state.userDictionary[receivedMessage.author.id][platform].value = friendcode;
+				receivedMessage.member.addPlatformRoles(state);
+				receivedMessage.delete().then(message => message.channel.send(`${message.author} has recorded a ${platform} ${state.platformsList[platform].term}. Check it with:\n\t${message.client.user}\` lookup \`${message.author}\` ${platform}\`.`)
 					.catch(console.error));
-				saveUserDictionary(receivedMessage.guild.id, state.cachedGuild.userDictionary);
+				saveUserDictionary(receivedMessage.guild.id, state.userDictionary);
 			} else {
 				// Error Message
 				receivedMessage.author.send(`${platform} is not currently being tracked in ${receivedMessage.guild}.`)

@@ -9,9 +9,9 @@ command.execute = (receivedMessage, state, metrics) => {
 	if (state.messageArray.length > 0) {
 		var searchTerm = state.messageArray[0];
 		var reply = `The following people have recorded ${searchTerm} in ${receivedMessage.guild.name}:`;
-		Object.keys(state.cachedGuild.userDictionary).forEach(userID => {
-			for (var platform in state.cachedGuild.userDictionary[userID]) {
-				if (state.cachedGuild.userDictionary[userID][platform].value == searchTerm) {
+		Object.keys(state.userDictionary).forEach(userID => {
+			for (var platform in state.userDictionary[userID]) {
+				if (state.userDictionary[userID][platform].value == searchTerm) {
 					reply += `\n**${receivedMessage.guild.members.resolve(userID).displayName}** for *${platform}*`;
 				}
 			}

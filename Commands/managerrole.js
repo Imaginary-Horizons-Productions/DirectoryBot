@@ -10,15 +10,15 @@ command.execute = (receivedMessage, state, metrics) => {
 	// Stores or clears the manager role id
 	let roleMentions = receivedMessage.mentions.roles.array();
 	if (roleMentions.length > 0) {
-		state.cachedGuild.managerRoleID = roleMentions[0].id;
+		state.managerRoleID = roleMentions[0].id;
 		receivedMessage.channel.send(`The ${receivedMessage.client.user} manager role has been set to @${roleMentions[0].name}.`)
 			.catch(console.error);
-		saveManagerRole(receivedMessage.guild.id, state.cachedGuild.managerRoleID);
+		saveManagerRole(receivedMessage.guild.id, state.managerRoleID);
 	} else {
-		state.cachedGuild.managerRoleID = null;
+		state.managerRoleID = null;
 		receivedMessage.channel.send(`The ${receivedMessage.client.user} manager role has been cleared.`)
 			.catch(console.error);
-		saveManagerRole(receivedMessage.guild.id, state.cachedGuild.managerRoleID);
+		saveManagerRole(receivedMessage.guild.id, state.managerRoleID);
 	}
 }
 

@@ -8,12 +8,12 @@ var command = new Command(["platforms"], `List the games/services DirectoryBot c
 
 // Overwrite detailed help description with executing the command
 command.help = (clientUser, state) => {
-	return platformsBuilder(state.cachedGuild.platformsList);
+	return platformsBuilder(state.platformsList);
 }
 
 command.execute = (receivedMessage, state, metrics) => {
 	// List the platforms being tracked in the guild
-	receivedMessage.channel.send(platformsBuilder(state.cachedGuild.platformsList))
+	receivedMessage.channel.send(platformsBuilder(state.platformsList))
 		.catch(console.error);
 }
 

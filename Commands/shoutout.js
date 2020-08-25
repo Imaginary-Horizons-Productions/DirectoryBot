@@ -6,13 +6,13 @@ var command = new Command(["shoutout", "streamshoutout"], `Have DirectoryBot pos
 
 command.execute = (receivedMessage, state, metrics) => {
 	// Posts the link to a user's recorded stream, currently supported: twitch
-    if (Object.keys(state.cachedGuild.platformsList).includes("stream")) {
+    if (Object.keys(state.platformsList).includes("stream")) {
         let mentionedGuildMembers = receivedMessage.mentions.members.array().filter(member => member.id != receivedMessage.client.user.id);
         if (mentionedGuildMembers[0]) {
             var user = mentionedGuildMembers[0];
 
-            if (state.cachedGuild.userDictionary[user.id] && state.cachedGuild.userDictionary[user.id].stream.value) {
-                var url = "https://www.twitch.tv/" + state.cachedGuild.userDictionary[user.id].stream.value;
+            if (state.userDictionary[user.id] && state.userDictionary[user.id].stream.value) {
+                var url = "https://www.twitch.tv/" + state.userDictionary[user.id].stream.value;
 
                 receivedMessage.channel.send(`Check out ${user}'s stream at ${url} !`)
                     .catch(console.error);

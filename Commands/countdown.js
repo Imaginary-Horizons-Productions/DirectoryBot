@@ -23,8 +23,8 @@ command.execute = (receivedMessage, state, metrics) => {
 	var inputTime = new chrono.parse(timeText);
 	if (inputTime.length > 0) {
 		if (startTimezone == "") {
-			if (state.cachedGuild.userDictionary[receivedMessage.author.id].timezone.value) {
-				startTimezone = state.cachedGuild.userDictionary[receivedMessage.author.id].timezone.value;
+			if (state.userDictionary[receivedMessage.author.id].timezone.value) {
+				startTimezone = state.userDictionary[receivedMessage.author.id].timezone.value;
 			} else {
 				startTimezone = LocalZone.instance.name;
 			}

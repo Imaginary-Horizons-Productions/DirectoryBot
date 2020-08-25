@@ -10,15 +10,15 @@ command.execute = (receivedMessage, state, metrics) => {
 	// Stores are clears the permissions role ID for accidental role mention recovery
 	let roleMentions = receivedMessage.mentions.roles.array();
 	if (roleMentions.length > 0) {
-		state.cachedGuild.permissionsRoleID = roleMentions[0].id;
+		state.permissionsRoleID = roleMentions[0].id;
 		receivedMessage.channel.send(`The ${receivedMessage.client.user} permissions role has been stored as @${roleMentions[0].name}.`)
 			.catch(console.error);
-		savePermissionsRole(receivedMessage.guild.id, state.cachedGuild.permissionsRoleID);
+		savePermissionsRole(receivedMessage.guild.id, state.permissionsRoleID);
 	} else {
-		state.cachedGuild.permissionsRoleID = null;
+		state.permissionsRoleID = null;
 		receivedMessage.channel.send(`The ${receivedMessage.client.user} permissions role has been cleared.`)
 			.catch(console.error);
-		savePermissionsRole(receivedMessage.guild.id, state.cachedGuild.permissionsRoleID);
+		savePermissionsRole(receivedMessage.guild.id, state.permissionsRoleID);
 	}
 }
 

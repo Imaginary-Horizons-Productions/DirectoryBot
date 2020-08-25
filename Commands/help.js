@@ -20,7 +20,7 @@ command.execute = (receivedMessage, state, metrics) => {
 					.catch(console.error);
 			} else {
 				// Error Message
-				receivedMessage.author.send(`You need a role with the administrator flag${state.cachedGuild.managerRoleID ? ` or the @${receivedMessage.guild.roles.resolve(state.cachedGuild.managerRoleID).name} role` : ``} to view manager commands.`)
+				receivedMessage.author.send(`You need a role with the administrator flag${state.managerRoleID ? ` or the @${receivedMessage.guild.roles.resolve(state.managerRoleID).name} role` : ``} to view manager commands.`)
 					.catch(console.error);
 			}
 		} else {

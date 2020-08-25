@@ -17,14 +17,14 @@ command.execute = (receivedMessage, state, metrics) => {
 		let description = messageArray.join(' ');
 
 		if (!platform.match(MessageMentions.USERS_PATTERN)) {
-			if (!state.cachedGuild.platformsList[platform]) {
-				state.cachedGuild.platformsList[platform] = new PlatformData(term, description);
-				Object.keys(state.cachedGuild.userDictionary).forEach(userID => {
-					state.cachedGuild.userDictionary[userID][platform] = new FriendCode();
+			if (!state.platformsList[platform]) {
+				state.platformsList[platform] = new PlatformData(term, description);
+				Object.keys(state.userDictionary).forEach(userID => {
+					state.userDictionary[userID][platform] = new FriendCode();
 				})
-				receivedMessage.channel.send(`${platform} ${state.cachedGuild.platformsList[platform].term}s can now be recorded and retrieved.`)
+				receivedMessage.channel.send(`${platform} ${state.platformsList[platform].term}s can now be recorded and retrieved.`)
 					.catch(console.error);
-				savePlatformsList(receivedMessage.guild.id, state.cachedGuild.platformsList);
+				savePlatformsList(receivedMessage.guild.id, state.platformsList);
 			} else {
 				// Error Message
 				receivedMessage.author.send(`${receivedMessage.guild} already has a platform named *${platform}*.`)

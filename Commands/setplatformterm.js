@@ -12,11 +12,11 @@ command.execute = (receivedMessage, state, metrics) => {
 			let platform = state.messageArray[0].toLowerCase();
 			let term = state.messageArray[1];
 
-			if (state.cachedGuild.platformsList[platform]) {
-				state.cachedGuild.platformsList[platform].term = term;
+			if (state.platformsList[platform]) {
+				state.platformsList[platform].term = term;
 				receivedMessage.author.send(`Information for *${platform}* will now be referred to as **${term}** in ${receivedMessage.guild}.`)
 					.catch(console.error);
-				savePlatformsList(receivedMessage.guild.id, state.cachedGuild.platformsList);
+				savePlatformsList(receivedMessage.guild.id, state.platformsList);
 			} else {
 				// Error Message
 				receivedMessage.author.send(`${platform} is not currently being recorded in ${receivedMessage.guild}.`)

@@ -14,24 +14,24 @@ command.execute = (receivedMessage, state, metrics) => {
         let nonMentions = state.messageArray.filter(word => !word.match(MessageMentions.USERS_PATTERN));
         if (nonMentions.length > 0) {
             var platform = nonMentions[0].toLowerCase();
-            if (Object.keys(state.cachedGuild.platformsList).includes(platform)) {
-                if (state.cachedGuild.userDictionary[receivedMessage.author.id] && state.cachedGuild.userDictionary[receivedMessage.author.id][platform].value) {
-                    var senderInfo = `${receivedMessage.author.username} from ${receivedMessage.guild} has sent you ${state.cachedGuild.userDictionary[receivedMessage.author.id].possessivepronoun && state.cachedGuild.userDictionary[receivedMessage.author.id]["possessivepronoun"].value ? state.cachedGuild.userDictionary[receivedMessage.author.id].possessivepronoun.value : 'their'} ${platform} ${state.cachedGuild.platformsList[platform].term}`;
+            if (Object.keys(state.platformsList).includes(platform)) {
+                if (state.userDictionary[receivedMessage.author.id] && state.userDictionary[receivedMessage.author.id][platform].value) {
+                    var senderInfo = `${receivedMessage.author.username} from ${receivedMessage.guild} has sent you ${state.userDictionary[receivedMessage.author.id].possessivepronoun && state.userDictionary[receivedMessage.author.id]["possessivepronoun"].value ? state.userDictionary[receivedMessage.author.id].possessivepronoun.value : 'their'} ${platform} ${state.platformsList[platform].term}`;
 
                     mentionedGuildMembers.forEach(recipient => {
                         if (!recipient.bot) {
-                            recipient.send(senderInfo + `. It is:\n\t${state.cachedGuild.userDictionary[receivedMessage.author.id][platform].value}
+                            recipient.send(senderInfo + `. It is:\n\t${state.userDictionary[receivedMessage.author.id][platform].value}
 
-This message will expire in about ${millisecondsToHours(state.cachedGuild.infoLifetime)}.`).then(sentMessage => {
-                                sentMessage.setToExpire(state.cachedGuild, receivedMessage.guild.id, senderInfo + `, but it has expired. You can look it up again with ${receivedMessage.client.user}\` lookup \`${receivedMessage.author}\` ${platform}\`.`);
+This message will expire in about ${millisecondsToHours(state.infoLifetime)}.`).then(sentMessage => {
+                                sentMessage.setToExpire(state, receivedMessage.guild.id, senderInfo + `, but it has expired. You can look it up again with ${receivedMessage.client.user}\` lookup \`${receivedMessage.author}\` ${platform}\`.`);
                             }).catch(console.error);
                         }
                     })
-                    receivedMessage.author.send(`Your ${platform} ${state.cachedGuild.platformsList[platform].term} has been sent to ${mentionedGuildMembers.toString()}.`)
+                    receivedMessage.author.send(`Your ${platform} ${state.platformsList[platform].term} has been sent to ${mentionedGuildMembers.toString()}.`)
                         .catch(console.error);
                 } else {
                     // Error Message
-                    receivedMessage.author.send(`You have not recorded a ${platform} ${state.cachedGuild.platformsList[platform].term} in ${receivedMessage.guild}.`)
+                    receivedMessage.author.send(`You have not recorded a ${platform} ${state.platformsList[platform].term} in ${receivedMessage.guild}.`)
                         .catch(console.error);
                 }
             } else {

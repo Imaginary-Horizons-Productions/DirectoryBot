@@ -6,7 +6,7 @@ var command = new Command(["multistream", "multitwitch"], `Generate a multistrea
 
 command.execute = (receivedMessage, state, metrics) => {
     // Generates a url for viewing multiple streams simultaneously (Supported: Twitch)
-    if (Object.keys(state.cachedGuild.platformsList).includes("stream")) {
+    if (Object.keys(state.platformsList).includes("stream")) {
         var url = "https://multistre.am/";
         let mentionedGuildMembers = receivedMessage.mentions.members.array().filter(member => member.id != receivedMessage.client.user.id);
 
@@ -14,8 +14,8 @@ command.execute = (receivedMessage, state, metrics) => {
             let returnText = "";
             var missingUsers = [];
             for (var i = 0; i < mentionedGuildMembers.length; i++) {
-                if (mentionedGuildMembers[i] && state.cachedGuild.userDictionary[mentionedGuildMembers[i].id] && state.cachedGuild.userDictionary[mentionedGuildMembers[i].id].stream.value) {
-                    url += state.cachedGuild.userDictionary[mentionedGuildMembers[i].id].stream.value + "/";
+                if (mentionedGuildMembers[i] && state.userDictionary[mentionedGuildMembers[i].id] && state.userDictionary[mentionedGuildMembers[i].id].stream.value) {
+                    url += state.userDictionary[mentionedGuildMembers[i].id].stream.value + "/";
                 } else {
                     missingUsers.push(mentionedGuildMembers[i].user);
                 }

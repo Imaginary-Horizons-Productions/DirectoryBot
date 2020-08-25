@@ -16,10 +16,10 @@ command.execute = (receivedMessage, state, metrics) => {
 	}
 
 	if (mentionedNumber) {
-		state.cachedGuild.infoLifetime = mentionedNumber * 60 * 60 * 1000;
+		state.infoLifetime = mentionedNumber * 60 * 60 * 1000;
 		receivedMessage.channel.send(`The expiring message lifetime has been set to ${mentionedNumber} hour(s).`)
 			.catch(console.error);
-		saveInfoLifetime(receivedMessage.guild.id, state.cachedGuild.infoLifetime);
+		saveInfoLifetime(receivedMessage.guild.id, state.infoLifetime);
 	} else {
 		// Error Message
 		receivedMessage.author.send(`The number for your \`${state.command}\` command could not be parsed.`)

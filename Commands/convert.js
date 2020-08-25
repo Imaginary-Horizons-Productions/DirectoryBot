@@ -17,9 +17,9 @@ command.execute = (receivedMessage, state, metrics) => {
 
 	if (mentionedGuildMembers.length == 1) {
 		let targetGuildMember = mentionedGuildMembers[0];
-		if (Object.keys(state.cachedGuild.platformsList).includes("timezone")) {
+		if (Object.keys(state.platformsList).includes("timezone")) {
 			if (targetGuildMember) {
-				if (state.cachedGuild.userDictionary[targetGuildMember.id] && state.cachedGuild.userDictionary[targetGuildMember.id].timezone) {
+				if (state.userDictionary[targetGuildMember.id] && state.userDictionary[targetGuildMember.id].timezone) {
 					for (var i = 0; i < state.messageArray.length; i++) {
 						if (state.messageArray[i] == "in") {
 							startTimezone = state.messageArray[i + 1]
@@ -30,7 +30,7 @@ command.execute = (receivedMessage, state, metrics) => {
 							timeText += state.messageArray[i] + " ";
 						}
 					}
-					resultTimezone = state.cachedGuild.userDictionary[targetGuildMember.id].timezone.value;
+					resultTimezone = state.userDictionary[targetGuildMember.id].timezone.value;
 				} else {
 					// Error Message
 					receivedMessage.author.send(`Your time could not be converted to ${targetGuildMember}'s time zone. ${targetGuildMember} does not have a time zone recorded.`)
@@ -64,8 +64,8 @@ command.execute = (receivedMessage, state, metrics) => {
 	}
 
 	if (startTimezone == "") {
-		if (state.cachedGuild.userDictionary[receivedMessage.author.id].timezone.value) {
-			startTimezone = state.cachedGuild.userDictionary[receivedMessage.author.id].timezone.value;
+		if (state.userDictionary[receivedMessage.author.id].timezone.value) {
+			startTimezone = state.userDictionary[receivedMessage.author.id].timezone.value;
 		} else {
 			startTimezone = LocalZone.instance.name;
 		}

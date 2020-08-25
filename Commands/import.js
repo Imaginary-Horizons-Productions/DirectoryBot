@@ -33,14 +33,14 @@ command.execute = (receivedMessage, state, metrics) => {
 				if (sourceDictionary) {
 					let feedbackText = "Your import succeeded. Here are the platforms that have been updated:";
 					Object.keys(sourceDictionary).forEach(platform => {
-						if (Object.keys(state.cachedGuild.platformsList).includes(platform) && !state.cachedGuild.userDictionary[receivedMessage.author.id][platform].value && sourceDictionary[platform] && sourceDictionary[platform].value) {
-							state.cachedGuild.userDictionary[receivedMessage.author.id][platform].value = sourceDictionary[platform].value;
+						if (Object.keys(state.platformsList).includes(platform) && !state.userDictionary[receivedMessage.author.id][platform].value && sourceDictionary[platform] && sourceDictionary[platform].value) {
+							state.userDictionary[receivedMessage.author.id][platform].value = sourceDictionary[platform].value;
 							feedbackText += `\n${platform}: ${sourceDictionary[platform].value}`
 						}
 					})
-					receivedMessage.member.addPlatformRoles(state.cachedGuild);
+					receivedMessage.member.addPlatformRoles(state);
 
-					saveUserDictionary(receivedMessage.guild.id, state.cachedGuild.userDictionary);
+					saveUserDictionary(receivedMessage.guild.id, state.userDictionary);
 					receivedMessage.author.send(feedbackText)
 						.catch(console.error);
 				} else {

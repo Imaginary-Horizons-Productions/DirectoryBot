@@ -12,27 +12,27 @@ command.execute = (receivedMessage, state, metrics) => {
         var platform = state.messageArray[0];
         var role = receivedMessage.mentions.roles.array()[0];
 
-        if (state.cachedGuild.platformsList[platform]) {
+        if (state.platformsList[platform]) {
             if (role) {
-                state.cachedGuild.platformsList[platform].roleID = role.id;
-                Object.keys(state.cachedGuild.userDictionary).forEach(userID => {
-                    receivedMessage.guild.members.resolve(userID).addPlatformRoles(state.cachedGuild);
+                state.platformsList[platform].roleID = role.id;
+                Object.keys(state.userDictionary).forEach(userID => {
+                    receivedMessage.guild.members.resolve(userID).addPlatformRoles(state);
                 })
-                receivedMessage.channel.send(`Server members who set a ${platform} ${state.cachedGuild.platformsList[platform].term} will now automatically be given the role @${role.name}.`)
+                receivedMessage.channel.send(`Server members who set a ${platform} ${state.platformsList[platform].term} will now automatically be given the role @${role.name}.`)
                     .catch(console.error);
             } else {
-                if (state.cachedGuild.platformsList[platform].roleID) {
-                    Object.keys(state.cachedGuild.userDictionary).forEach(userID => {
-                        if (Object.keys(state.cachedGuild.userDictionary[userID]).includes(platform)) {
-                            receivedMessage.guild.members.resolve(userID).roles.remove(state.cachedGuild.platformsList[platform].roleID);
+                if (state.platformsList[platform].roleID) {
+                    Object.keys(state.userDictionary).forEach(userID => {
+                        if (Object.keys(state.userDictionary[userID]).includes(platform)) {
+                            receivedMessage.guild.members.resolve(userID).roles.remove(state.platformsList[platform].roleID);
                         }
                     })
-                    state.cachedGuild.platformsList[platform].roleID = "";
+                    state.platformsList[platform].roleID = "";
                 }
                 receivedMessage.channel.send(`The ${platform} role in ${receivedMessage.guild} has been cleared.`)
                     .catch(console.error);
             }
-            savePlatformsList(receivedMessage.guild.id, state.cachedGuild.platformsList);
+            savePlatformsList(receivedMessage.guild.id, state.platformsList);
         } else {
             // Error Message
             receivedMessage.author.send(`${receivedMessage.guild} doesn't have a platform named ${platform}.`)

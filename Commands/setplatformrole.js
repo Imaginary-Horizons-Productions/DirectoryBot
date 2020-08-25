@@ -1,5 +1,5 @@
 const Command = require('./../Classes/Command.js');
-const { savePlatformsList } = require('./../helpers.js');
+const { saveObject } = require('./../helpers.js');
 
 var command = new Command(["setplatformrole"], `Automatically give a role to users who record information for a platform`, true, false, false)
     .addDescription(`This command associates the given role and platform. Anyone who records information for that platform will be automatically given the associated role. Using the command without mentioning a role clears the set role for the platform.`)
@@ -18,7 +18,7 @@ command.execute = (receivedMessage, state, metrics) => {
                 Object.keys(state.userDictionary).forEach(userID => {
                     receivedMessage.guild.members.resolve(userID).addPlatformRoles(state);
                 })
-                receivedMessage.channel.send(`Server members who set a ${platform} ${state.platformsList[platform].term} will now automatically be given the role @${role.name}.`)
+                receivedMessage.channel.send(`Server members who set a ${platform} ${state.platformsList[platform].term} will now automatically be given the role ${role}.`)
                     .catch(console.error);
             } else {
                 if (state.platformsList[platform].roleID) {
@@ -32,7 +32,7 @@ command.execute = (receivedMessage, state, metrics) => {
                 receivedMessage.channel.send(`The ${platform} role in ${receivedMessage.guild} has been cleared.`)
                     .catch(console.error);
             }
-            savePlatformsList(receivedMessage.guild.id, state.platformsList);
+            saveObject(receivedMessage.guild.id, state.platformsList, 'platformsList.txt');
         } else {
             // Error Message
             receivedMessage.author.send(`${receivedMessage.guild} doesn't have a platform named ${platform}.`)

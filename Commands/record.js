@@ -1,6 +1,6 @@
 const Command = require('./../Classes/Command.js');
 const FriendCode = require('./../Classes/FriendCode.js');
-const { saveUserDictionary } = require('./../helpers.js');
+const { saveObject } = require('./../helpers.js');
 
 var command = new Command(["record", "log", "add"], `Record your information for a platform`, false, false, false)
 	.addDescription(`This command adds your information for given platform so people can ask the bot for it.`)
@@ -25,7 +25,7 @@ command.execute = (receivedMessage, state, metrics) => {
 				receivedMessage.member.addPlatformRoles(state);
 				receivedMessage.delete().then(message => message.channel.send(`${message.author} has recorded a ${platform} ${state.platformsList[platform].term}. Check it with:\n\t${message.client.user}\` lookup \`${message.author}\` ${platform}\`.`)
 					.catch(console.error));
-				saveUserDictionary(receivedMessage.guild.id, state.userDictionary);
+				saveObject(receivedMessage.guild.id, state.userDictionary, 'userDictionary.txt');
 			} else {
 				// Error Message
 				receivedMessage.author.send(`${platform} is not currently being tracked in ${receivedMessage.guild}.`)

@@ -1,5 +1,5 @@
 const Command = require('./../Classes/Command.js');
-const { saveManagerRole } = require('./../helpers.js');
+const { saveObject } = require('./../helpers.js');
 
 var command = new Command(["managerrole", "setmanagerrole"], `Sets the bot manager role which allows the use of manager commands`, true, false, false)
 	.addDescription(`This command sets the manager role, which allows users to use manager-only commands without server administrator privilege. If no role is given, the set role will be cleared.`)
@@ -11,14 +11,16 @@ command.execute = (receivedMessage, state, metrics) => {
 	let roleMentions = receivedMessage.mentions.roles.array();
 	if (roleMentions.length > 0) {
 		state.managerRoleID = roleMentions[0].id;
-		receivedMessage.channel.send(`The ${receivedMessage.client.user} manager role has been set to @${roleMentions[0].name}.`)
-			.catch(console.error);
-		saveManagerRole(receivedMessage.guild.id, state.managerRoleID);
+		receivedMessage.channel.send(`Placeholder for setting manager role.`).then(message => {
+			message.edit(`The ${receivedMessage.client.user} manager role has been set to ${roleMentions[0]}.`)
+				.catch(console.error);
+		})
+		saveObject(receivedMessage.guild.id, state.managerRoleID, 'managerRole.txt');
 	} else {
 		state.managerRoleID = null;
 		receivedMessage.channel.send(`The ${receivedMessage.client.user} manager role has been cleared.`)
 			.catch(console.error);
-		saveManagerRole(receivedMessage.guild.id, state.managerRoleID);
+		saveObject(receivedMessage.guild.id, state.managerRoleID, 'managerRole.txt');
 	}
 }
 

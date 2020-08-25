@@ -32,7 +32,7 @@ client.on('ready', () => {
 					fs.readFile(`./data/${guildID}/managerRole.txt`, 'utf8', (error, managerRoleInput) => {
 						if (error) {
 							console.log(error);
-							helpers.saveManagerRole(guildID, helpers.guildDictionary[guildID].managerRoleID);
+							helpers.saveObject(guildID, helpers.guildDictionary[guildID].managerRoleID, 'managerRole.txt');
 						} else {
 							helpers.guildDictionary[guildID].managerRoleID = encrypter.AES.decrypt(managerRoleInput, keyInput).toString(encrypter.enc.Utf8);
 						}
@@ -40,7 +40,7 @@ client.on('ready', () => {
 						fs.readFile(`./data/${guildID}/permissionsRole.txt`, 'utf8', (error, permissionsRoleInput) => {
 							if (error) {
 								console.log(error);
-								helpers.savePermissionsRole(guildID, helpers.guildDictionary[guildID].permissionsRoleID);
+								helpers.saveObject(guildID, helpers.guildDictionary[guildID].permissionsRoleID, 'permissionsRole.txt');
 							} else {
 								helpers.guildDictionary[guildID].permissionsRoleID = encrypter.AES.decrypt(permissionsRoleInput, keyInput).toString(encrypter.enc.Utf8)
 							}
@@ -48,7 +48,7 @@ client.on('ready', () => {
 							fs.readFile(`./data/${guildID}/userDictionary.txt`, 'utf8', (error, userDictionaryInput) => {
 								if (error) {
 									console.log(error);
-									helpers.savePlatformsList(guildID, helpers.guildDictionary[guildID].platformsList);
+									helpers.saveObject(guildID, helpers.guildDictionary[guildID].platformsList, 'platformsList.txt');
 								} else {
 									Object.assign(helpers.guildDictionary[guildID].userDictionary, JSON.parse(encrypter.AES.decrypt(userDictionaryInput, keyInput).toString(encrypter.enc.Utf8)));
 								}
@@ -56,7 +56,7 @@ client.on('ready', () => {
 								fs.readFile(`./data/${guildID}/platformsList.txt`, 'utf8', (error, platformsListInput) => {
 									if (error) {
 										console.log(error);
-										helpers.saveUserDictionary(guildID, helpers.guildDictionary[guildID].userDictionary);
+										helpers.saveObject(guildID, helpers.guildDictionary[guildID].userDictionary, 'userDictionary.txt');
 									} else {
 										Object.assign(helpers.guildDictionary[guildID].platformsList, JSON.parse(encrypter.AES.decrypt(platformsListInput, keyInput).toString(encrypter.enc.Utf8)));
 									}
@@ -94,7 +94,7 @@ client.on('ready', () => {
 										fs.readFile(`./data/${guildID}/blockDictionary.txt`, 'utf8', (error, blockDictionaryInput) => {
 											if (error) {
 												console.log(error);
-												helpers.saveBlockDictionary(guildID, helpers.guildDictionary[guildID].blockDictionary);
+												helpers.saveObject(guildID, helpers.guildDictionary[guildID].blockDictionary, 'blockDictionary.txt');
 											} else {
 												Object.assign(helpers.guildDictionary[guildID].blockDictionary, JSON.parse(encrypter.AES.decrypt(blockDictionaryInput, keyInput).toString(encrypter.enc.Utf8)));
 											}
@@ -103,7 +103,7 @@ client.on('ready', () => {
 											fs.readFile(`./data/${guildID}/infoLifetime.txt`, 'utf8', (error, infoLifetimeInput) => {
 												if (error) {
 													console.log(error);
-													helpers.saveInfoLifetime(guildID, 3600000);
+													helpers.saveObject(guildID, 3600000, 'infoLifetime.txt');
 												} else {
 													helpers.guildDictionary[guildID].infoLifetime = encrypter.AES.decrypt(infoLifetimeInput, keyInput).toString(encrypter.enc.Utf8);
 												}
@@ -111,12 +111,12 @@ client.on('ready', () => {
 												setInterval(() => {
 													saveParticipatingGuildsIDs(true);
 													Object.keys(helpers.guildDictionary).forEach((guildID) => {
-														helpers.saveManagerRole(guildID, helpers.guildDictionary[guildID].managerRoleID, true);
-														helpers.savePermissionsRole(guildID, helpers.guildDictionary[guildID].permissionsRoleID, true);
-														helpers.savePlatformsList(guildID, helpers.guildDictionary[guildID].platformsList, true);
-														helpers.saveUserDictionary(guildID, helpers.guildDictionary[guildID].userDictionary, true);
-														helpers.saveBlockDictionary(guildID, helpers.guildDictionary[guildID].blockDictionary, true);
-														helpers.saveInfoLifetime(guildID, helpers.guildDictionary[guildID].infoLifetime, true);
+														helpers.saveObject(guildID, helpers.guildDictionary[guildID].managerRoleID, 'managerRole.txt', true);
+														helpers.saveObject(guildID, helpers.guildDictionary[guildID].permissionsRoleID, 'permissionsRole.txt', true);
+														helpers.saveObject(guildID, helpers.guildDictionary[guildID].platformsList, 'platformsList.txt', true);
+														helpers.saveObject(guildID, helpers.guildDictionary[guildID].userDictionary, 'userDictionary.txt', true);
+														helpers.saveObject(guildID, helpers.guildDictionary[guildID].blockDictionary, 'blockDictionary.txt', true);
+														helpers.saveObject(guildID, helpers.guildDictionary[guildID].infoLifetime, 'infoLifetime.txt', true);
 													})
 												}, 3600000)
 											})
@@ -259,7 +259,7 @@ client.on('guildMemberRemove', (member) => {
 	if (cachedGuild) {
 		if (cachedGuild.userDictionary[memberID]) {
 			delete cachedGuild.userDictionary[memberID];
-			helpers.saveUserDictionary(guildID, cachedGuild.userDictionary);
+			helpers.saveObject(guildID, cachedGuild.userDictionary, 'userDictionary.txt');
 		}
 	} else {
 		guildCreate(guildID);
@@ -319,12 +319,12 @@ function guildCreate(guildID) {
 	participatingGuildsIDs.push(guildID);
 	helpers.guildDictionary[guildID] = new GuildSpecifics();
 
-	helpers.saveManagerRole(guildID, helpers.guildDictionary[guildID].managerRoleID);
-	helpers.savePermissionsRole(guildID, helpers.guildDictionary[guildID].permissionsRoleID);
-	helpers.savePlatformsList(guildID, helpers.guildDictionary[guildID].platformsList);
-	helpers.saveUserDictionary(guildID, helpers.guildDictionary[guildID].userDictionary);
-	helpers.saveBlockDictionary(guildID, helpers.guildDictionary[guildID].blockDictionary);
-	helpers.saveInfoLifetime(guildID, helpers.guildDictionary[guildID].infoLifetime);
+	helpers.saveObject(guildID, helpers.guildDictionary[guildID].managerRoleID, 'managerRole.txt');
+	helpers.saveObject(guildID, helpers.guildDictionary[guildID].permissionsRoleID, 'permissionsRole.txt');
+	helpers.saveObject(guildID, helpers.guildDictionary[guildID].platformsList, 'platformsList.txt');
+	helpers.saveObject(guildID, helpers.guildDictionary[guildID].userDictionary, 'userDictionary.txt');
+	helpers.saveObject(guildID, helpers.guildDictionary[guildID].blockDictionary, 'blockDictionary.txt');
+	helpers.saveObject(guildID, helpers.guildDictionary[guildID].infoLifetime, 'infoLifetime.txt');
 	saveParticipatingGuildsIDs();
 }
 

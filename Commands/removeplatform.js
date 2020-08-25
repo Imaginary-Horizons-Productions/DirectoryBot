@@ -1,5 +1,5 @@
 const Command = require('./../Classes/Command.js');
-const { savePlatformsList } = require('./../helpers.js');
+const { saveObject } = require('./../helpers.js');
 
 var command = new Command(["removeplatform"], `Stop recording and distributing user information for a game/service`, true, false, false)
 	.addDescription(`This command removes a platform from DirectoryBot's list of platforms for the server.`)
@@ -20,7 +20,7 @@ command.execute = (receivedMessage, state, metrics) => {
 			delete state.platformsList[platform];
 			receivedMessage.channel.send(`${platform} information will no longer be recorded.`)
 				.catch(console.error);
-			savePlatformsList(receivedMessage.guild.id, state.platformsList);
+			saveObject(receivedMessage.guild.id, state.platformsList, 'platformsList.txt');
 		} else {
 			// Error Message
 			receivedMessage.author.send(`${platform} is not currently being recorded in ${receivedMessage.guild}.`)

@@ -2,7 +2,7 @@ const Command = require('./../Classes/Command.js');
 const { MessageMentions } = require('discord.js');
 const PlatformData = require('./../Classes/PlatformData.js');
 const FriendCode = require('./../Classes/FriendCode.js');
-const { savePlatformsList } = require('./../helpers.js');
+const { saveObject } = require('./../helpers.js');
 
 var command = new Command(["newplatform", "addplatform"], `Setup a new game/service for users to record or retrieve information for`, true, false, false)
 	.addDescription(`This command sets up a new game/service for users to record and retrieve information.`)
@@ -24,7 +24,7 @@ command.execute = (receivedMessage, state, metrics) => {
 				})
 				receivedMessage.channel.send(`${platform} ${state.platformsList[platform].term}s can now be recorded and retrieved.`)
 					.catch(console.error);
-				savePlatformsList(receivedMessage.guild.id, state.platformsList);
+				saveObject(receivedMessage.guild.id, state.platformsList, 'platformsList.txt');
 			} else {
 				// Error Message
 				receivedMessage.author.send(`${receivedMessage.guild} already has a platform named *${platform}*.`)

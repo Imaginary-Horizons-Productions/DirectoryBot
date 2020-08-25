@@ -1,6 +1,6 @@
 const Command = require('./../Classes/Command.js');
 const { MessageMentions } = require('discord.js');
-const { saveUserDictionary, guildDictionary } = require('./../helpers.js');
+const { saveObject, guildDictionary } = require('./../helpers.js');
 
 var command = new Command(['import'], `Copies your information from a source server to a destination server`, false, false, false)
 	.addDescription(`This command copies your data for matching platforms from a given server.`)
@@ -40,7 +40,7 @@ command.execute = (receivedMessage, state, metrics) => {
 					})
 					receivedMessage.member.addPlatformRoles(state);
 
-					saveUserDictionary(receivedMessage.guild.id, state.userDictionary);
+					saveObject(receivedMessage.guild.id, state.userDictionary, 'userDictionary.txt');
 					receivedMessage.author.send(feedbackText)
 						.catch(console.error);
 				} else {

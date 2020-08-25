@@ -1,5 +1,5 @@
 const Command = require('./../Classes/Command.js');
-const { savePlatformsList } = require('./../helpers.js');
+const { saveObject } = require('./../helpers.js');
 
 var command = new Command(["setplatformterm", "changeplatformterm"], `Changes what DirectoryBot calls information for the given platform`, true, false, false)
 	.addDescription(`This command changes what DirectoryBot calls data for the given platform (default is "username").`)
@@ -16,7 +16,7 @@ command.execute = (receivedMessage, state, metrics) => {
 				state.platformsList[platform].term = term;
 				receivedMessage.author.send(`Information for *${platform}* will now be referred to as **${term}** in ${receivedMessage.guild}.`)
 					.catch(console.error);
-				savePlatformsList(receivedMessage.guild.id, state.platformsList);
+				saveObject(receivedMessage.guild.id, state.platformsList, 'platformsList.txt');
 			} else {
 				// Error Message
 				receivedMessage.author.send(`${platform} is not currently being recorded in ${receivedMessage.guild}.`)

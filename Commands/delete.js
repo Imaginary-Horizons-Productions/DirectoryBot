@@ -1,6 +1,6 @@
 const Command = require('./../Classes/Command.js');
 const FriendCode = require('./../Classes/FriendCode.js');
-const { saveUserDictionary } = require('./../helpers.js');
+const { saveObject } = require('./../helpers.js');
 const { MessageMentions } = require('discord.js');
 
 var command = new Command(["delete", "remove", "clear"], `Remove your information for a platform`, false, false, false)
@@ -30,7 +30,7 @@ command.execute = (receivedMessage, state, metrics) => {
 							}
 							target.send(`Your ${platform} ${state.platformsList[platform].term} has been removed from ${receivedMessage.guild}${reason ? ` because ${reason}` : ""}.`)
 								.catch(console.error);
-							saveUserDictionary(receivedMessage.guild.id, state.userDictionary);
+							saveObject(receivedMessage.guild.id, state.userDictionary, 'userDictionary.txt');
 							receivedMessage.author.send(`You have removed ${target}'s ${platform} ${state.platformsList[platform].term} from ${receivedMessage.guild}.`)
 								.catch(console.error);
 						} else {
@@ -56,7 +56,7 @@ command.execute = (receivedMessage, state, metrics) => {
 					}
 					receivedMessage.author.send(`You have removed your ${platform} ${state.platformsList[platform].term} from ${receivedMessage.guild}.`)
 						.catch(console.error);
-					saveUserDictionary(receivedMessage.guild.id, state.userDictionary);
+					saveObject(receivedMessage.guild.id, state.userDictionary);
 				} else {
 					// Error Message
 					receivedMessage.author.send(`You do not currently have a ${platform} ${state.platformsList[platform].term} recorded in ${receivedMessage.guild}.`)

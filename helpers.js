@@ -83,80 +83,14 @@ exports.platformsBuilder = function (platformsList) {
 	return `This server's tracked platforms are: ${processedText}`;
 }
 
-exports.saveManagerRole = function (guildID, managerRoleID, backup = false) {
-	fs.readFile(`encryptionKey.txt`, 'utf8', (error, keyInput) => {
-		if (error) {
-			console.log(error);
-		} else {
-			var filePath = `./`;
-			if (backup) {
-				filePath += 'backups/';
-				if (!fs.existsSync('./backups')) {
-					fs.mkdirSync('./backups');
-				}
-				if (!fs.existsSync('./backups/' + guildID)) {
-					fs.mkdirSync('./backups/' + guildID);
-				}
-			} else {
-				filePath += 'data/';
-				if (!fs.existsSync('./data')) {
-					fs.mkdirSync('./data');
-				}
-				if (!fs.existsSync('./data/' + guildID)) {
-					fs.mkdirSync('./data/' + guildID);
-				}
-			}
-			filePath += guildID + '/managerRole.txt';
-			fs.writeFile(filePath, encrypter.AES.encrypt(managerRoleID, keyInput).toString(), 'utf8', (error) => {
-				if (error) {
-					console.log(error);
-				}
-			})
-		}
-	})
-}
-
-exports.savePermissionsRole = function (guildID, permissionsRoleID, backup = false) {
-	fs.readFile(`encryptionKey.txt`, 'utf8', (error, keyInput) => {
-		if (error) {
-			console.log(error);
-		} else {
-			var filePath = `./`;
-			if (backup) {
-				filePath += 'backups/';
-				if (!fs.existsSync('./backups')) {
-					fs.mkdirSync('./backups');
-				}
-				if (!fs.existsSync('./backups/' + guildID)) {
-					fs.mkdirSync('./backups/' + guildID);
-				}
-			} else {
-				filePath += 'data/';
-				if (!fs.existsSync('./data')) {
-					fs.mkdirSync('./data');
-				}
-				if (!fs.existsSync('./data/' + guildID)) {
-					fs.mkdirSync('./data/' + guildID);
-				}
-			}
-			filePath += guildID + '/permissionsRole.txt';
-			fs.writeFile(filePath, encrypter.AES.encrypt(permissionsRoleID, keyInput).toString(), 'utf8', (error) => {
-				if (error) {
-					console.log(error);
-				}
-			})
-		}
-	})
-}
-
-exports.saveUserDictionary = function (guildID, userDictionary, backup = false) {
+exports.saveObject = function (guildID, object, fileName, backup = false) {
 	fs.readFile("encryptionKey.txt", 'utf8', (error, keyInput) => {
 		if (error) {
 			console.log(error);
 		} else {
 			var filePath = `./`;
 			if (backup) {
-				filePath += 'backups/' + guildID + '/userDictionary.txt';
+				filePath += 'backups/' + guildID + '/' + fileName;
 				if (!fs.existsSync('./backups')) {
 					fs.mkdirSync('./backups');
 				}
@@ -164,7 +98,7 @@ exports.saveUserDictionary = function (guildID, userDictionary, backup = false) 
 					fs.mkdirSync('./backups/' + guildID);
 				}
 			} else {
-				filePath += 'data/' + guildID + '/userDictionary.txt';
+				filePath += 'data/' + guildID + '/' + fileName;
 				if (!fs.existsSync('./data')) {
 					fs.mkdirSync('./data');
 				}
@@ -172,103 +106,7 @@ exports.saveUserDictionary = function (guildID, userDictionary, backup = false) 
 					fs.mkdirSync('./data/' + guildID);
 				}
 			}
-			fs.writeFile(filePath, encrypter.AES.encrypt(JSON.stringify(userDictionary), keyInput).toString(), 'utf8', (error) => {
-				if (error) {
-					console.log(error);
-				}
-			})
-		}
-	})
-}
-
-exports.savePlatformsList = function (guildID, platformsList, backup = false) {
-	fs.readFile("encryptionKey.txt", 'utf8', (error, keyInput) => {
-		if (error) {
-			console.log(error);
-		} else {
-			var filePath = `./`;
-			if (backup) {
-				filePath += 'backups/' + guildID + '/platformsList.txt';
-				if (!fs.existsSync('./backups')) {
-					fs.mkdirSync('./backups');
-				}
-				if (!fs.existsSync('./backups/' + guildID)) {
-					fs.mkdirSync('./backups/' + guildID);
-				}
-			} else {
-				filePath += 'data/' + guildID + '/platformsList.txt';
-				if (!fs.existsSync('./data')) {
-					fs.mkdirSync('./data');
-				}
-				if (!fs.existsSync('./data/' + guildID)) {
-					fs.mkdirSync('./data/' + guildID);
-				}
-			}
-			fs.writeFile(filePath, encrypter.AES.encrypt(JSON.stringify(platformsList), keyInput).toString(), 'utf8', (error) => {
-				if (error) {
-					console.log(error);
-				}
-			})
-		}
-	})
-}
-
-exports.saveInfoLifetime = function (guildID, infoLifetime, backup = false) {
-	fs.readFile("encryptionKey.txt", 'utf8', (error, keyInput) => {
-		if (error) {
-			console.log(error);
-		} else {
-			var filePath = `./`;
-			if (backup) {
-				filePath += 'backups/' + guildID + '/infoLifetime.txt';
-				if (!fs.existsSync('./backups')) {
-					fs.mkdirSync('./backups');
-				}
-				if (!fs.existsSync('./backups/' + guildID)) {
-					fs.mkdirSync('./backups/' + guildID);
-				}
-			} else {
-				filePath += 'data/' + guildID + '/infoLifetime.txt';
-				if (!fs.existsSync('./data')) {
-					fs.mkdirSync('./data');
-				}
-				if (!fs.existsSync('./data/' + guildID)) {
-					fs.mkdirSync('./data/' + guildID);
-				}
-			}
-			fs.writeFile(filePath, encrypter.AES.encrypt(infoLifetime.toString(), keyInput).toString(), 'utf8', (error) => {
-				if (error) {
-					console.log(error);
-				}
-			})
-		}
-	})
-}
-
-exports.saveBlockDictionary = function (guildID, blockDictionary, backup = false) {
-	fs.readFile("encryptionKey.txt", 'utf8', (error, keyInput) => {
-		if (error) {
-			console.log(error);
-		} else {
-			var filePath = `./`;
-			if (backup) {
-				filePath += 'backups/' + guildID + '/blockDictionary.txt';
-				if (!fs.existsSync('./backups')) {
-					fs.mkdirSync('./backups');
-				}
-				if (!fs.existsSync('./backups/' + guildID)) {
-					fs.mkdirSync('./backups/' + guildID);
-				}
-			} else {
-				filePath += 'data/' + guildID + '/blockDictionary.txt';
-				if (!fs.existsSync('./data')) {
-					fs.mkdirSync('./data');
-				}
-				if (!fs.existsSync('./data/' + guildID)) {
-					fs.mkdirSync('./data/' + guildID);
-				}
-			}
-			fs.writeFile(filePath, encrypter.AES.encrypt(JSON.stringify(blockDictionary), keyInput).toString(), 'utf8', (error) => {
+			fs.writeFile(filePath, encrypter.AES.encrypt(JSON.stringify(object), keyInput).toString(), 'utf8', (error) => {
 				if (error) {
 					console.log(error);
 				}

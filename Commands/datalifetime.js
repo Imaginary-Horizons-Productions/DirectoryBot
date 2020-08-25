@@ -1,5 +1,5 @@
 const Command = require('./../Classes/Command.js');
-const { saveInfoLifetime } = require('./../helpers.js');
+const { saveObject } = require('./../helpers.js');
 
 var command = new Command(['datalifetime', 'infolifetime'], `Sets the lifetime (in hours) for expiring messages`, true, false, false)
 	.addDescription(`This command sets the number of hours before responses from the \`lookup\` and \`send\` commands expire (decimals allowed).`)
@@ -19,7 +19,7 @@ command.execute = (receivedMessage, state, metrics) => {
 		state.infoLifetime = mentionedNumber * 60 * 60 * 1000;
 		receivedMessage.channel.send(`The expiring message lifetime has been set to ${mentionedNumber} hour(s).`)
 			.catch(console.error);
-		saveInfoLifetime(receivedMessage.guild.id, state.infoLifetime);
+		saveObject(receivedMessage.guild.id, state.infoLifetime, 'infoLifetime.txt');
 	} else {
 		// Error Message
 		receivedMessage.author.send(`The number for your \`${state.command}\` command could not be parsed.`)

@@ -1,5 +1,5 @@
 const Command = require('./../Classes/Command.js');
-const { savePermissionsRole } = require('./../helpers.js');
+const { saveObject } = require('./../helpers.js');
 
 var command = new Command(['permissionsrole', 'setpermissionsrole'], `Sets the bot permissions role; not mentioning a role clears the setting`, true, false, false)
 	.addDescription(`This command updates the permissions role. This allows DirectoryBot to interpret accidental mentions of that role as command messages.`)
@@ -11,14 +11,14 @@ command.execute = (receivedMessage, state, metrics) => {
 	let roleMentions = receivedMessage.mentions.roles.array();
 	if (roleMentions.length > 0) {
 		state.permissionsRoleID = roleMentions[0].id;
-		receivedMessage.channel.send(`The ${receivedMessage.client.user} permissions role has been stored as @${roleMentions[0].name}.`)
+		receivedMessage.channel.send(`The ${receivedMessage.client.user} permissions role has been stored as ${roleMentions[0]}.`)
 			.catch(console.error);
-		savePermissionsRole(receivedMessage.guild.id, state.permissionsRoleID);
+		saveObject(receivedMessage.guild.id, state.permissionsRoleID, 'permissionsRole.txt');
 	} else {
 		state.permissionsRoleID = null;
 		receivedMessage.channel.send(`The ${receivedMessage.client.user} permissions role has been cleared.`)
 			.catch(console.error);
-		savePermissionsRole(receivedMessage.guild.id, state.permissionsRoleID);
+		saveObject(receivedMessage.guild.id, state.permissionsRoleID, 'permissionsRole.txt');
 	}
 }
 

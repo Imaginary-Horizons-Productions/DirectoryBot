@@ -10,7 +10,7 @@ exports.commandSets = [
 	new CommandSet("General Commands", `To interact with DirectoryBot, mention the bot then type one of these commands:`, ['help.js', 'record.js', 'import.js', 'tell.js', 'lookup.js', 'mydata.js', 'whois.js', 'delete.js', 'block.js', 'platforms.js', 'support.js', 'credits.js'], false),
 	new CommandSet("Time Zone Commands", `The time module contains commands for converting time zones, which users can store in the default platform "timezone".`, ['convert.js', 'countdown.js'], false),
 	new CommandSet("Stream Commands", `The streaming module contains commands for supporting live-streamers.`, ['multistream.js', 'shoutout.js'], false),
-	new CommandSet("Configuration Commands", `The following commands can only be used by server members who have Discord administrator privledges or the role determined by **setmanagerrole**.`, ['permissionsrole.js', 'managerrole.js', 'datalifetime.js', 'newplatform.js', 'setplatformterm.js', 'setplatformrole.js', 'removeplatform.js'], true)
+	new CommandSet("Configuration Commands", `The following commands can only be used by server members who have Discord administrator privledges or the role determined by \`setmanagerrole\`.`, ['permissionsrole.js', 'managerrole.js', 'datalifetime.js', 'newplatform.js', 'setplatformterm.js', 'setplatformrole.js', 'removeplatform.js'], true)
 ];
 
 var commandFileNames = [];

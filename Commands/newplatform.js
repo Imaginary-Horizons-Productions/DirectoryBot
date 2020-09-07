@@ -1,6 +1,6 @@
 const Command = require('./../Classes/Command.js');
 const { MessageMentions } = require('discord.js');
-const PlatformData = require('./../Classes/PlatformData.js');
+const Platform = require('./../Classes/Platform.js');
 const FriendCode = require('./../Classes/FriendCode.js');
 const { saveObject } = require('./../helpers.js');
 
@@ -18,7 +18,7 @@ command.execute = (receivedMessage, state, metrics) => {
 
 		if (!platform.match(MessageMentions.USERS_PATTERN)) {
 			if (!state.platformsList[platform]) {
-				state.platformsList[platform] = new PlatformData(term, description);
+				state.platformsList[platform] = new Platform(term, description);
 				Object.keys(state.userDictionary).forEach(userID => {
 					state.userDictionary[userID][platform] = new FriendCode();
 				})

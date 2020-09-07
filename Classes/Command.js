@@ -1,7 +1,8 @@
 const { MessageEmbed } = require('discord.js');
 
 module.exports = class Command {
-	constructor(namesInput, summaryInput, managerCommandInput, premiumCommandInput, dmCommandInput) {
+	constructor(localeInput, namesInput, summaryInput, managerCommandInput, premiumCommandInput, dmCommandInput) {
+		this.locale = localeInput;
 		this.names = namesInput;
 		this.description;
 		this.sections = [];
@@ -34,7 +35,7 @@ module.exports = class Command {
 		return embed;
 	}
 
-	execute(receivedMessage, state, metrics) { }
+	execute(receivedMessage, state, locale) { }
 }
 
 class Section {

@@ -4,7 +4,7 @@ var command = new Command([/* list of overloads goes here*/], /*help summary tex
 	.addDescription(``)
 	.addSection(``, ``);
 
-command.execute = (receivedMessage, state, metrics) => {
+command.execute = (receivedMessage, state, locale) => {
 	// Command specifications go here
 }
 

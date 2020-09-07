@@ -1,6 +1,6 @@
 const Command = require('./../Classes/Command.js');
 const { MessageMentions } = require('discord.js');
-const { saveObject, guildDictionary } = require('./../helpers.js');
+const { saveObject, directories } = require('./../helpers.js');
 
 var command = new Command(['import'], `Copies your information from a source server to a destination server`, false, false, false)
 	.addDescription(`This command copies your data for matching platforms from a given server.`)
@@ -27,7 +27,7 @@ command.execute = (receivedMessage, state, metrics) => {
 
 	if (sourceGuildID) {
 		if (sourceGuildID != receivedMessage.guild.id) {
-			let sourceGuild = guildDictionary[sourceGuildID];
+			let sourceGuild = directories[sourceGuildID];
 			if (sourceGuild) {
 				let sourceDictionary = sourceGuild.userDictionary[receivedMessage.author.id];
 				if (sourceDictionary) {

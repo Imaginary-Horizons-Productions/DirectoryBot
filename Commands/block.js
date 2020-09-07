@@ -5,7 +5,7 @@ var command = new Command(['block'], `Prevents a user from looking up your data`
 	.addDescription(`This command prevents the mentioned user from accessing your data. Unblock a user by using it on the user again.`)
 	.addSection(`Block a user`, `\`@DirectoryBot block (user)\``);
 
-command.execute = (receivedMessage, state, metrics) => {
+command.execute = (receivedMessage, state, locale) => {
 	// Adds the mentioned user to a list that prevents them from checking the author's data
 	let mentionedGuildMember = receivedMessage.mentions.users.array().filter(id => id != receivedMessage.client.user.id);
 

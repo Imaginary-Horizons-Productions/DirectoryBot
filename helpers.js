@@ -2,17 +2,27 @@ const { MessageEmbed, Message, GuildMember } = require('discord.js');
 const fs = require('fs');
 var encrypter = require('crypto-js');
 
-exports.guildDictionary = {};
+// guildID: Directory
+exports.directories = {};
+
+String.prototype.addVariables = function (variables) {
+	let buffer = this;
+	for (const pair of variables) {
+		buffer = buffer.replace(`\${${pair.key}}`, pair.value);
+	}
+
+	return buffer;
+}
 
 MessageEmbed.prototype.addBlankField = function (inline = false) {
 	return this.addField('\u200B', '\u200B', inline);
 }
 
-Message.prototype.setToExpire = function (guildSpecifics, guildID, expirationText) {
-	if (!guildSpecifics.expiringMessages[this.channel.id]) {
-		guildSpecifics.expiringMessages[this.channel.id] = [this.id];
+Message.prototype.setToExpire = function (directory, guildID, expirationText) {
+	if (!directory.expiringMessages[this.channel.id]) {
+		directory.expiringMessages[this.channel.id] = [this.id];
 	} else {
-		guildSpecifics.expiringMessages[this.channel.id].push(this.id);
+		directory.expiringMessages[this.channel.id].push(this.id);
 	}
 	fs.readFile("encryptionKey.txt", 'utf8', (error, keyInput) => {
 		if (error) {
@@ -25,7 +35,7 @@ Message.prototype.setToExpire = function (guildSpecifics, guildID, expirationTex
 				fs.mkdirSync('./data/' + guildID);
 			}
 			var filePath = `./data/${guildID}/expiringMessages.txt`;
-			fs.writeFile(filePath, encrypter.AES.encrypt(JSON.stringify(guildSpecifics.expiringMessages), keyInput).toString(), 'utf8', (error) => {
+			fs.writeFile(filePath, encrypter.AES.encrypt(JSON.stringify(directory.expiringMessages), keyInput).toString(), 'utf8', (error) => {
 				if (error) {
 					console.log(error);
 				}
@@ -36,16 +46,16 @@ Message.prototype.setToExpire = function (guildSpecifics, guildID, expirationTex
 	setTimeout(function (message) {
 		message.edit(expirationText);
 		message.suppressEmbeds(true);
-		guildSpecifics.expiringMessages[message.channel.id].shift();
-	}, guildSpecifics.infoLifetime, this);
+		directory.expiringMessages[message.channel.id].shift();
+	}, directory.infoLifetime, this);
 }
 
-GuildMember.prototype.addPlatformRoles = function (guildSpecifics) {
-	if (guildSpecifics.userDictionary[this.id]) {
-		Object.keys(guildSpecifics.platformsList).forEach(platformName => {
-			if (guildSpecifics.platformsList[platformName].roleID) {
-				if (guildSpecifics.userDictionary[this.id][platformName] && guildSpecifics.userDictionary[this.id][platformName].value) {
-					this.roles.add(guildSpecifics.platformsList[platformName].roleID);
+GuildMember.prototype.addPlatformRoles = function (directory) {
+	if (directory.userDictionary[this.id]) {
+		Object.keys(directory.platformsList).forEach(platformName => {
+			if (directory.platformsList[platformName].roleID) {
+				if (directory.userDictionary[this.id][platformName] && directory.userDictionary[this.id][platformName].value) {
+					this.roles.add(directory.platformsList[platformName].roleID);
 				}
 			}
 		})

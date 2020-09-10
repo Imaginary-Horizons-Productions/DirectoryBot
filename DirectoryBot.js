@@ -3,14 +3,12 @@ const fs = require('fs');
 var encrypter = require('crypto-js');
 
 var helpers = require('./helpers.js');
+const { errorBadCommand } = require('./localization.js');
 const commandDictionary = require(`./Commands/CommandsList.js`).commandDictionary;
 const Directory = require('./Classes/Directory.js');
 const FriendCode = require('./Classes/FriendCode.js');
 
 const client = new Discord.Client();
-
-// guildID: locale
-var guildLocales = {};
 
 var antiSpam = [];
 var commandLimit = 3;
@@ -24,7 +22,7 @@ client.on('ready', () => {
 		if (error) {
 			console.log(error);
 		} else {
-			Object.keys(guildLocales).forEach(guildID => {
+			Object.keys(helpers.guildLocales).forEach(guildID => {
 				var guild = client.guilds.resolve(guildID);
 				if (guild) {
 					helpers.directories[guildID] = new Directory();
@@ -176,7 +174,7 @@ client.on('message', (receivedMessage) => {
 	}
 
 	if (receivedMessage.mentions.users.has(client.user.id) || receivedMessage.mentions.roles.has(helpers.directories[receivedMessage.guild.id].permissionsRoleID)) {
-		if (!Object.keys(guildLocales).includes(receivedMessage.guild.id)) {
+		if (!Object.keys(helpers.guildLocales).includes(receivedMessage.guild.id)) {
 			guildCreate(receivedMessage.guild.id);
 		}
 
@@ -185,14 +183,6 @@ client.on('message', (receivedMessage) => {
 		});
 		let firstWord = messageArray.shift().replace(/\D/g, "");
 		if (messageArray.length > 0 && (firstWord == client.user.id || firstWord != '' && firstWord == helpers.directories[receivedMessage.guild.id].permissionsRoleID)) {
-			var recentInteractions = 0;
-
-			antiSpam.forEach(user => {
-				if (user == receivedMessage.author.id) {
-					recentInteractions++;
-				}
-			})
-
 			if (!helpers.directories[receivedMessage.guild.id].userDictionary[receivedMessage.author.id]) {
 				helpers.directories[receivedMessage.guild.id].userDictionary[receivedMessage.author.id] = {};
 				Object.keys(helpers.directories[receivedMessage.guild.id].platformsList).forEach((platformInList) => {
@@ -200,28 +190,41 @@ client.on('message', (receivedMessage) => {
 				});
 			}
 
-			if (recentInteractions < commandLimit) {
-				var command = messageArray.shift();
-				let directory = helpers.directories[receivedMessage.guild.id];
-				var state = {
-					"command": command, // The primary command
-					"messageArray": messageArray,
-					"botManager": receivedMessage.member.hasPermission(Discord.Permissions.FLAGS.ADMINISTRATOR) || receivedMessage.member.roles.cache.has(helpers.directories[receivedMessage.guild.id].managerRoleID),
-					"userDictionary": directory.userDictionary,
-					"platformsList": directory.platformsList,
-					"managerRoleID": directory.managerRoleID,
-					"permissionsRoleID": directory.permissionsRoleID,
-					"infoLifetime": directory.infoLifetime,
-					"expiringMessages": directory.expiringMessages,
-					"blockDictionary": directory.blockDictionary
-				};
+			var command = messageArray.shift();
 
-				if (commandDictionary[command]) {
+			let directory = helpers.directories[receivedMessage.guild.id];
+			if (commandDictionary[command]) {
+				let locale = commandDictionary[command].locale || directory.locale;
+
+				var recentInteractions = 0;
+
+				antiSpam.forEach(user => {
+					if (user == receivedMessage.author.id) {
+						recentInteractions++;
+					}
+				})
+
+				if (recentInteractions < commandLimit) {
+					var state = {
+						"command": command, // The command alias used
+						"messageArray": messageArray,
+						"botManager": receivedMessage.member.hasPermission(Discord.Permissions.FLAGS.ADMINISTRATOR) || receivedMessage.member.roles.cache.has(helpers.directories[receivedMessage.guild.id].managerRoleID),
+						"userDictionary": directory.userDictionary,
+						"platformsList": directory.platformsList,
+						"managerRoleID": directory.managerRoleID,
+						"permissionsRoleID": directory.permissionsRoleID,
+						"infoLifetime": directory.infoLifetime,
+						"expiringMessages": directory.expiringMessages,
+						"blockDictionary": directory.blockDictionary
+					};
+
 					if (state.botManager || !commandDictionary[command].managerCommand) {
-						let locale = commandDictionary[command].locale || directory.locale;
 						commandDictionary[command].execute(receivedMessage, state, locale);
 					} else {
-						receivedMessage.author.send(`You need a role with the administrator flag${state.managerRoleID ? ` or the @${receivedMessage.guild.roles.resolve(cachedGuild.managerRoleID).name} role` : ``} to use the **${command}** command.`);
+						receivedMessage.author.send(errorNotManager[locale].addVariables({
+							"role": state.managerRoleID ? ` or the @${receivedMessage.guild.roles.resolve(cachedGuild.managerRoleID).name} role` : ``,
+							"alias": command
+						})).catch(console.error);
 					}
 
 					antiSpam.push(receivedMessage.author.id);
@@ -229,16 +232,29 @@ client.on('message', (receivedMessage) => {
 						antiSpam.shift();
 					}, antiSpamInterval);
 				} else {
-					receivedMessage.author.send(`${command} isn't a ${client.user} command. Please check for typos or use ${client.user}\` help\`.`)
-						.catch(console.error);
+					receivedMessage.author.send(errorTooManyCommands[locale].addVariables({
+						"commandLimit": commandLimit,
+						"duration": helpers.millisecondsToHours(locale, antiSpamInterval, true, true),
+						"botNickname": client.user
+					})).catch(console.error);
 				}
 			} else {
-				receivedMessage.author.send(`To prevent excessive messaging, users are unable to enter more than ${commandLimit} commands in ${helpers.millisecondsToHours(antiSpamInterval, true, true)}. You can use ${client.user}\` lookup (platform)\` to look up everyone's information for the given platform at once.`)
-					.catch(console.error);
+				receivedMessage.author.send(errorBadCommand[directory.locale].addVariables({
+					"commandName": command,
+					"botNickname": client.user
+				})).catch(console.error);
 			}
 		}
 	}
 })
+
+let errorNotManager = {
+	"en_US": "You need a role with the administrator flag${role} to use the **${alias}** command."
+}
+
+let errorTooManyCommands = {
+	"en_US": "To prevent excessive messaging, users are unable to enter more than ${commandLimit} commands in ${duration}. You can use ${botNickname}` lookup (platform)` to look up everyone's information for the given platform at once."
+}
 
 
 client.on('guildCreate', (guild) => {
@@ -294,10 +310,10 @@ function login() {
 					console.log(error);
 				} else {
 					if (guildsListInput == "") {
-						guildLocales = {};
+						helpers.guildLocales = {};
 						saveGuildLocales();
 					} else {
-						guildLocales = JSON.parse(encrypter.AES.decrypt(guildsListInput, keyInput).toString(encrypter.enc.Utf8));
+						helpers.guildLocales = JSON.parse(encrypter.AES.decrypt(guildsListInput, keyInput).toString(encrypter.enc.Utf8));
 					}
 				}
 
@@ -317,7 +333,7 @@ function login() {
 
 
 function guildCreate(guildID, locale) {
-	guildLocales[guildID] = locale;
+	helpers.guildLocales[guildID] = locale;
 	helpers.directories[guildID] = new Directory(locale);
 
 	helpers.saveObject(guildID, helpers.directories[guildID].managerRoleID, 'managerRole.txt');
@@ -343,7 +359,7 @@ function guildDelete(guildID) {
 		}
 	})
 
-	delete guildLocales[guildID];
+	delete helpers.guildLocales[guildID];
 	saveGuildLocales();
 }
 
@@ -361,7 +377,7 @@ function saveGuildLocales(backup = false) {
 			} else {
 				filePath += 'guildsList.txt';
 			}
-			fs.writeFile(filePath, encrypter.AES.encrypt(JSON.stringify(guildLocales), keyInput), 'utf8', (error) => {
+			fs.writeFile(filePath, encrypter.AES.encrypt(JSON.stringify(helpers.guildLocales), keyInput), 'utf8', (error) => {
 				if (error) {
 					console.log(error);
 				}

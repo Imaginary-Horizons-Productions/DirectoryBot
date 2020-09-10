@@ -21,11 +21,11 @@ If you leave a server, DirectoryBot will delete all of your data. If you kick Di
 `;
 
 commandSets.forEach(commandSet => {
-	text += `## ${commandSet.name}\n${commandSet.description}\n`;
+	text += `## ${commandSet.name["en_US"]}\n${commandSet.description["en_US"]}\n`;
 	commandSet.fileNames.forEach(filename => {
 		const command = require(`./Commands/${filename}`);
-		text += `### ${command.names.join(', ')}\n${command.description}\n`;
-		command.sections.forEach(section => {
+		text += `### ${command.names["en_US"].join(', ')}\n${command.description["en_US"]}\n`;
+		command.sections["en_US"].forEach(section => {
 			text += `#### ${section.title}\n${section.text}\n`;
 		})
 	})

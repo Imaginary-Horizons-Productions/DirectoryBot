@@ -2,14 +2,17 @@ const { MessageEmbed, Message, GuildMember } = require('discord.js');
 const fs = require('fs');
 var encrypter = require('crypto-js');
 
+// guildID: locale
+exports.guildLocales = {};
+
 // guildID: Directory
 exports.directories = {};
 
 String.prototype.addVariables = function (variables) {
 	let buffer = this;
-	for (const pair of variables) {
-		buffer = buffer.replace(`\${${pair.key}}`, pair.value);
-	}
+	Object.keys(variables).forEach(key => {
+		buffer = buffer.replace(`\${${key}}`, variables[key]);
+	})
 
 	return buffer;
 }
@@ -62,35 +65,61 @@ GuildMember.prototype.addPlatformRoles = function (directory) {
 	}
 }
 
-exports.millisecondsToHours = function (milliseconds, showMinutes = false, showSeconds = false) {
-	var text = "less than an hour";
+exports.millisecondsToHours = function (locale, milliseconds, showMinutes = false, showSeconds = false) {
+	var text = lessThanAnHour[locale];
 	if (milliseconds >= 3600000) {
-		text = `${Math.floor(milliseconds / 3600000)} hour(s)`;
+		text = `${Math.floor(milliseconds / 3600000)} ` + hours[locale];
 	}
 
 	if (showMinutes && Math.floor(milliseconds % 3600000 / 60000) > 0) {
-		if (text == "less than an hour") {
-			text = `${Math.floor(milliseconds % 3600000 / 60000)} minute(s)`;
+		if (text == lessThanAnHour[locale]) {
+			text = `${Math.floor(milliseconds % 3600000 / 60000)} ` + minutes[locale];
 		} else {
-			text += ` and ${Math.floor(milliseconds % 3600000 / 60000)} minute(s)`;
+			text += ` ${and[locale]} ${Math.floor(milliseconds % 3600000 / 60000)} ` + minutes[locale];
 		}
 	}
 
 	if (showSeconds && Math.floor(milliseconds % 60000 / 1000) > 0) {
-		if (text == "less than an hour") {
-			text = `${Math.floor(milliseconds % 60000 / 1000)} seconds(s)`;
+		if (text == lessThanAnHour[locale]) {
+			text = `${Math.floor(milliseconds % 60000 / 1000)} ` + seconds[locale];
 		} else {
-			text += ` and ${Math.floor(milliseconds % 60000 / 1000)} seconds(s)`;
+			text += ` ${and[locale]} ${Math.floor(milliseconds % 60000 / 1000)} ` + seconds[locale];
 		}
 	}
 
 	return text;
 }
 
-exports.platformsBuilder = function (platformsList) {
-	let processedText = Object.keys(platformsList).toString().replace(/,/g, ', ');
+let lessThanAnHour = {
+	"en_US": "less than an hour"
+}
 
-	return `This server's tracked platforms are: ${processedText}`;
+let and = {
+	"en_US": "and"
+}
+
+let hours = {
+	"en_US": "hour(s)"
+}
+
+let minutes = {
+	"en_US": "minute(s)"
+}
+
+let seconds = {
+	"en_US": "second(s)"
+}
+
+exports.platformsBuilder = function (guildName, platformsList, locale) {
+	let listedPlatforms = Object.keys(platformsList).join(', ');
+
+	return platformsMessage[locale].addVariables({
+		"guild": guildName
+	}) + listedPlatforms;
+}
+
+let platformsMessage = {
+	"en_US": "${guild}'s tracked platforms are: "
 }
 
 exports.saveObject = function (guildID, object, fileName, backup = false) {

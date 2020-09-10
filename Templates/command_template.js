@@ -1,8 +1,10 @@
 const Command = require('./../Classes/Command.js');
+const { getString } = require('./../Localization/localization.js');
 
-var command = new Command([/* list of overloads goes here*/], /*help summary text*/``, false, false, false)
-	.addDescription(``)
-	.addSection(``, ``);
+let commandLocale = '';
+var command = new Command(commandLocale, [/* list of overloads goes here*/], getString('', commandLocale), false, false, false)
+	.addDescription(getString('', commandLocale))
+	.addSection(getString('', commandLocale), getString('', commandLocale));
 
 command.execute = (receivedMessage, state, locale) => {
 	// Command specifications go here

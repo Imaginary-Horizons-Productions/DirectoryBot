@@ -31,19 +31,14 @@ The message containing the command will be deleted for security purposes. Discor
 ### import
 This command copies your data for matching platforms from a given server.
 #### Importing data
-`@DirectoryBot import (channel mention or snowflake from source server)`
-There are two ways to indicate which server to import from: by mentioning a channel from that server, or by providing the server's snowflake.
-
-To get a channel mention, start a message in the server you want to import from. Start with #, then autocomplete. You can then copy-paste the blue link into your command in the destination server.
-
-To get a server's snowflake, first activate Developer Mode in your User Settings. Then you can right-click on the source server and select "Copy ID" from the drop-down menu.
+`@DirectoryBot import (channel mention or snowflake from source server)`There are two ways to indicate which server to import from: by mentioning a channel from that server, or by providing the server's snowflake.To get a channel mention, start a message in the server you want to import from. Start with #, then autocomplete. You can then copy-paste the blue link into your command in the destination server.To get a server's snowflake, first activate Developer Mode in your User Settings. Then you can right-click on the source server and select "Copy ID" from the drop-down menu.
 ### tell, send
 This command sends your information on the given platform to the given user.
 #### Tell someone your data
 `@DirectoryBot tell (platform) (user)`
 ### lookup
 This command messages you the entries a given platform. You can limit your results to a set of users by mentioning them at the end of the command.
-#### Look up for a platform
+#### Look up a platform
 `@DirectoryBot lookup (platform)`
 #### Filter for users
 `@DirectoryBot lookup (platform) (users)`
@@ -103,22 +98,26 @@ This command posts the given user's stream information.
 #### Give a stream shoutout
 `@DirectoryBot shoutout (user)`
 ## Configuration Commands
-The following commands can only be used by server members who have Discord administrator privledges or the role determined by **setmanagerrole**.
+The following commands can only be used by server members who have Discord administrator privledges or the role determined by `setmanagerrole`.
 ### permissionsrole, setpermissionsrole
 This command updates the permissions role. This allows DirectoryBot to interpret accidental mentions of that role as command messages.
 #### Set the permissions role
 `@DirectoryBot permissionsrole (role)`
+#### Clear the permissions role
+`@DirectoryBot permissionsrole`
 ### managerrole, setmanagerrole
 This command sets the manager role, which allows users to use manager-only commands without server administrator privilege. If no role is given, the set role will be cleared.
 #### Set a role
 `@DirectoryBot setmanagerrole (role)`
 #### Clear manager role
 `@DirectoryBot setmanagerrole`
-### welcomemessage
-This command sets a message to send to new members of the server.
-#### Set a message to send to new server members
-`@DirectoryBot welcomemessage (message)`
-### infolifetime, datalifetime
+### setlocale, setlanguage
+This command sets the default locale (language) for the server it is used in (default: en_US).
+#### Set the default locale
+`@DirectoryBot ${commandAlias} setlocale (locale)`
+#### Contributing localization
+If you'd like to contribute to localizing, check out our [GitHub](https://github.com/Imaginary-Horizons-Productions/DirectoryBot). Currently supported: en_US
+### datalifetime, infolifetime
 This command sets the number of hours before responses from the `lookup` and `send` commands expire (decimals allowed).
 #### Set the data lifetime
 `@DirectoryBot datalifetime (number of hours)`
@@ -132,9 +131,11 @@ This command changes what DirectoryBot calls data for the given platform (defaul
 #### Change a platform's data term
 `@DirectoryBot setplatformterm (platform) (data term)`
 ### setplatformrole
-This command associates the given role and platform. Anyone who records information for that platform will be automatically given the associated role.
+This command associates the given role and platform. Anyone who records information for that platform will be automatically given the associated role. Using the command without mentioning a role clears the set role for the platform.
 #### Set a platform role
 `@DirectoryBot setplatformrole (platform) (role)`
+#### Clear a platform role
+`@DirectoryBot setplatformrole (platform)`
 ### removeplatform
 This command removes a platform from DirectoryBot's list of platforms for the server.
 #### Remove a platform

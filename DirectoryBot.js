@@ -341,14 +341,7 @@ function guildCreate(guildID) {
 function guildDelete(guildID) {
     ['data', 'backups'].forEach(fileSet => {
         if (fs.existsSync(`./${fileSet}/${guildID}`)) {
-            for (file of fs.readdirSync(`./${fileSet}/${guildID}`)) {
-                fs.unlink(`./${fileSet}/${guildID}/${file}`, (error) => {
-                    if (error) {
-                        console.log(error);
-                    }
-                });
-            }
-            fs.rmdirSync(`./${fileSet}/${guildID}`);
+            fs.rmdirSync(`./${fileSet}/${guildID}`, { recursive: true });
         }
     })
 

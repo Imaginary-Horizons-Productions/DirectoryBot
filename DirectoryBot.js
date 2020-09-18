@@ -300,13 +300,13 @@ function login() {
 			fs.readFile("guildsList.txt", 'utf8', (error, guildsListInput) => {
 				if (error) {
 					console.log(error);
+				}
+
+				if (!guildsListInput) {
+					helpers.guildLocales = {};
+					saveGuildLocales();
 				} else {
-					if (guildsListInput == "") {
-						helpers.guildLocales = {};
-						saveGuildLocales();
-					} else {
-						helpers.guildLocales = JSON.parse(encrypter.AES.decrypt(guildsListInput, keyInput).toString(encrypter.enc.Utf8));
-					}
+					helpers.guildLocales = JSON.parse(encrypter.AES.decrypt(guildsListInput, keyInput).toString(encrypter.enc.Utf8));
 				}
 
 				fs.readFile("authentication.json", 'utf8', (error, authenticationInput) => {

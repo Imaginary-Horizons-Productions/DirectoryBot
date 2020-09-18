@@ -39,8 +39,7 @@ command.execute = (receivedMessage, state, locale) => {
 					.setFooter(getString(locale, "DirectoryBot", "footerText"), receivedMessage.client.user.displayAvatarURL())
 					.setTimestamp();
 				commandSet.fileNames.forEach(filename => {
-					const command = filename.splice(0, -5);
-					embed.addField('**' + getString(locale, command, "names").join(', ') + '**', getString(locale, command, "summary"))
+					embed.addField('**' + getString(locale, filename.slice(0, -3), "names").join(', ') + '**', getString(locale, filename.slice(0, -3), "summary"))
 				})
 
 				receivedMessage.author.send(embed)

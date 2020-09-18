@@ -1,14 +1,12 @@
 const Command = require('./../Classes/Command.js');
+const { getString } = require('./../Localizations/localization.js');
 const FriendCode = require('./../Classes/FriendCode.js');
 const { saveObject } = require('./../helpers.js');
 const { MessageMentions } = require('discord.js');
 
-var command = new Command(["delete", "remove", "clear"], `Remove your information for a platform`, false, false, false)
-	.addDescription(`This command removes your data for the given platform. Bot managers can use this command to remove information for other users.`)
-	.addSection(`Delete your data`, `\`@DirectoryBot delete (platform)\``)
-	.addSection(`Delete another user's data`, `\`@DirectoryBot delete (user) (platform)\``);
+var command = new Command("delete", false, false, false);
 
-command.execute = (receivedMessage, state, metrics) => {
+command.execute = (receivedMessage, state, locale) => {
 	// Removes the user's entry for the given platform, bot managers can remove for other users
 	var platform = state.messageArray.filter(word => !word.match(MessageMentions.USERS_PATTERN))[0];
 	if (platform) {
@@ -28,25 +26,39 @@ command.execute = (receivedMessage, state, metrics) => {
 							if (state.platformsList[platform].roleID) {
 								target.roles.remove(state.platformsList[platform].roleID);
 							}
-							target.send(`Your ${platform} ${state.platformsList[platform].term} has been removed from ${receivedMessage.guild}${reason ? ` because ${reason}` : ""}.`)
-								.catch(console.error);
+							target.send(getString(locale, command.module, "deleteNotice").addVariables({
+								"target": target,
+								"platform": platform,
+								"term": state.platformsList[platform].term,
+								"server": receivedMessage.guild.toString(),
+								"reason": reason ? ` because ${reason}` : ""
+							})).catch(console.error);
 							saveObject(receivedMessage.guild.id, state.userDictionary, 'userDictionary.txt');
-							receivedMessage.author.send(`You have removed ${target}'s ${platform} ${state.platformsList[platform].term} from ${receivedMessage.guild}.`)
-								.catch(console.error);
+							receivedMessage.channel.send(getString(locale, command.module, "successOther").addVariables({
+								"target": target,
+								"platform": platform,
+								"term": state.platformsList[platform].term
+							})).catch(console.error);
 						} else {
 							// Error Message
-							receivedMessage.author.send(`${target} does not have a ${platform} ${state.platformsList[platform].term} recorded in ${receivedMessage.guild}.`)
-								.catch(console.error);
+							receivedMessage.author.send(getString(locale, command.module, "errorNoDataOther").addVariables({
+								"target": target,
+								"platform": platform,
+								"term": state.platformsList[platform].term,
+								"server": receivedMessage.guild
+							})).catch(console.error);
 						}
 					} else {
 						// Error Message
-						receivedMessage.author.send(`You need a role with administrator privileges${state.managerRoleID ? ` or the role @${receivedMessage.guild.roles.resolve(cachedGuild.managerRoleID).name}` : ""} to remove ${state.platformsList[platform].term}s for others.`)
-							.catch(console.error);
+						receivedMessage.author.send(getString(locale, "delete", "errorNotManager").addVariables({
+							"role": state.managerRoleID ? ` or the role @${receivedMessage.guild.roles.resolve(cachedGuild.managerRoleID).name}` : ""
+						})).catch(console.error);
 					}
 				} else {
 					// Error Message
-					receivedMessage.author.send(`That person isn't a member of ${receivedMessage.guild}.`)
-						.catch(console.error);
+					receivedMessage.author.send(getString(locale, "delete", "errorBadMember").addVariables({
+						"server": receivedMessage.guild
+					})).catch(console.error);
 				}
 			} else {
 				if (state.userDictionary[receivedMessage.author.id][platform] && state.userDictionary[receivedMessage.author.id][platform].value) {
@@ -54,23 +66,31 @@ command.execute = (receivedMessage, state, metrics) => {
 					if (state.platformsList[platform].roleID) {
 						receivedMessage.member.roles.remove(state.platformsList[platform].roleID);
 					}
-					receivedMessage.author.send(`You have removed your ${platform} ${state.platformsList[platform].term} from ${receivedMessage.guild}.`)
-						.catch(console.error);
+					receivedMessage.author.send(getString(locale, "delete", "successSelf").addVariables({
+						"platform": platform,
+						"term": state.platformsList[platform].term,
+						"server": receivedMessage.guild
+					})).catch(console.error);
 					saveObject(receivedMessage.guild.id, state.userDictionary);
 				} else {
 					// Error Message
-					receivedMessage.author.send(`You do not currently have a ${platform} ${state.platformsList[platform].term} recorded in ${receivedMessage.guild}.`)
-						.catch(console.error);
+					receivedMessage.author.send(getString(locale, "delete", "errorNoDataSelf").addVariables({
+						"platform": platform,
+						"term": state.platformsList[platform].term,
+						"server": receivedMessage.guild
+					})).catch(console.error);
 				}
 			}
 		} else {
 			// Error Message
-			receivedMessage.author.send(`${platform} is not currently being tracked in ${receivedMessage.guild}.`)
-				.catch(console.error);
+			receivedMessage.author.send(getString(locale, "delete", "errorBadPlatform").addVariables({
+				"platform": platform,
+				"server": receivedMessage.guild
+			})).catch(console.error);
 		}
 	} else {
 		// Error Message
-		receivedMessage.author.send(`Please provide the platform of the information to delete.`)
+		receivedMessage.author.send(getString(locale, "delete", "errorNoPlatform"))
 			.catch(console.error);
 	}
 }

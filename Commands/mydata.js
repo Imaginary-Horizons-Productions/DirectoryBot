@@ -1,16 +1,15 @@
 const Command = require('./../Classes/Command.js');
+const { getString } = require('./../Localizations/localization.js');
 const { MessageEmbed } = require('discord.js');
 
-var command = new Command(['mydata', 'myentries'], `Lists all your platform entries`, false, false, false)
-	.addDescription(`This command sends you a private message with all the information you've recorded.`)
-	.addSection(`Usage`, `\`@DirectoryBot mydata\``);
+var command = new Command("mydata", false, false, false);
 
-command.execute = (receivedMessage, state, metrics) => {
+command.execute = (receivedMessage, state, locale) => {
 	// Sends the user all the information they've input into the bot
 	let embed = new MessageEmbed().setColor('6b81eb')
 		.setAuthor(receivedMessage.guild.name, receivedMessage.guild.iconURL())
-		.setTitle(`Your Data`)
-		.setFooter(`Support development with "@DirectoryBot support"`, `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `)
+		.setTitle(getString(locale, command.module, "yourData"))
+		.setFooter(getString(locale, "DirectoryBot", "footerText"), `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `)
 		.setTimestamp();
 	let text = '';
 	let dictionary = state.userDictionary[receivedMessage.author.id];
@@ -46,8 +45,9 @@ command.execute = (receivedMessage, state, metrics) => {
 			.catch(console.error);
 	} else {
 		// Error Message
-		receivedMessage.author.send(`Your \`${state.command}\` message is too long to fit in a single Discord message. Please try the \`lookup\` command instead.`)
-			.catch(console.error);
+		receivedMessage.author.send(getString(locale, command.module, "errorMessageOverflow").addVariables({
+			"alias": state.command
+		})).catch(console.error);
 	}
 }
 

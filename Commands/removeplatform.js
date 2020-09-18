@@ -1,11 +1,10 @@
 const Command = require('./../Classes/Command.js');
+const { getString } = require('./../Localizations/localization.js');
 const { saveObject } = require('./../helpers.js');
 
-var command = new Command(["removeplatform"], `Stop recording and distributing user information for a game/service`, true, false, false)
-	.addDescription(`This command removes a platform from DirectoryBot's list of platforms for the server.`)
-	.addSection(`Remove a platform`, `\`@DirectoryBot removeplatform (platform)\``);
+var command = new Command("removeplatform", true, false, false);
 
-command.execute = (receivedMessage, state, metrics) => {
+command.execute = (receivedMessage, state, locale) => {
 	// Removes the given platform
 	if (state.messageArray.length > 0) {
 		let platform = state.messageArray[0].toLowerCase();
@@ -18,17 +17,20 @@ command.execute = (receivedMessage, state, metrics) => {
 				delete state.userDictionary[userID][platform];
 			})
 			delete state.platformsList[platform];
-			receivedMessage.channel.send(`${platform} information will no longer be recorded.`)
-				.catch(console.error);
+			receivedMessage.channel.send(getString(locale, command.module, "successMessage").addVariables({
+				"platform": platform
+			})).catch(console.error);
 			saveObject(receivedMessage.guild.id, state.platformsList, 'platformsList.txt');
 		} else {
 			// Error Message
-			receivedMessage.author.send(`${platform} is not currently being recorded in ${receivedMessage.guild}.`)
-				.catch(console.error);
+			receivedMessage.author.send(getString(locale, command.module, "errorBadPlatform").addVariables({
+				"platform": platform,
+				"server": receivedMessage.guild.name
+			})).catch(console.error);
 		}
 	} else {
 		// Error Message
-		receivedMessage.author.send(`Please provide a platform to remove.`)
+		receivedMessage.author.send(getString(locale, command.module, "errorNoPlatform"))
 			.catch(console.error);
 	}
 }

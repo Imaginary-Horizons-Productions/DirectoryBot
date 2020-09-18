@@ -1,36 +1,40 @@
 const Command = require('./../Classes/Command.js');
+const { getString } = require('./../Localizations/localization.js');
 
-var command = new Command(["shoutout", "streamshoutout"], `Have DirectoryBot post someone's stream information`, false, false, false)
-    .addDescription(`This command posts the given user's stream information.`)
-    .addSection(`Give a stream shoutout`, `\`@DirectoryBot shoutout (user)\``);
+var command = new Command("shoutout", false, false, false);
 
-command.execute = (receivedMessage, state, metrics) => {
+command.execute = (receivedMessage, state, locale) => {
 	// Posts the link to a user's recorded stream, currently supported: twitch
-    if (Object.keys(state.platformsList).includes("stream")) {
-        let mentionedGuildMembers = receivedMessage.mentions.members.array().filter(member => member.id != receivedMessage.client.user.id);
-        if (mentionedGuildMembers[0]) {
-            var user = mentionedGuildMembers[0];
+	if (Object.keys(state.platformsList).includes("stream")) {
+		let mentionedGuildMembers = receivedMessage.mentions.members.array().filter(member => member.id != receivedMessage.client.user.id);
+		if (mentionedGuildMembers[0]) {
+			var user = mentionedGuildMembers[0];
 
-            if (state.userDictionary[user.id] && state.userDictionary[user.id].stream.value) {
-                var url = "https://www.twitch.tv/" + state.userDictionary[user.id].stream.value;
+			if (state.userDictionary[user.id] && state.userDictionary[user.id].stream.value) {
+				var url = "https://www.twitch.tv/" + state.userDictionary[user.id].stream.value;
 
-                receivedMessage.channel.send(`Check out ${user}'s stream at ${url} !`)
-                    .catch(console.error);
-            } else {
-                // Error Message
-                receivedMessage.channel.send(`${user} has not set a stream username in this server's DirectoryBot yet.`)
-                    .catch(console.error);
-            }
-        } else {
-            // Error Message
-            receivedMessage.author.send(`That person isn't a member of ${receivedMessage.guild}.`)
-                .catch(console.error);
-        }
-    } else {
-        // Error Message
-        receivedMessage.author.send(`Your \`shoutout\` command could not be completed. ${receivedMessage.guild} does not seem to be tracking stream information.`)
-            .catch(console.error);
-    }
+				receivedMessage.channel.send(getString(locale, command.module, "successMessage").addVariables({
+					"user": user,
+					"url": url
+				})).catch(console.error);
+			} else {
+				// Error Message
+				receivedMessage.channel.send(getString(locale, command.module, "errorNoData").addVariables({
+					"user": user
+				})).catch(console.error);
+			}
+		} else {
+			// Error Message
+			receivedMessage.author.send(getString(locale, command.module, "errorBadUser").addVariables({
+				"server": receivedMessage.guild.name
+			})).catch(console.error);
+		}
+	} else {
+		// Error Message
+		receivedMessage.author.send(getString(locale, command.module, "errorNoPlatform").addVariables({
+			"server": receivedMessage.guild.name
+		})).catch(console.error);
+	}
 }
 
 module.exports = command;

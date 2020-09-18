@@ -1,0 +1,3 @@
+1. Copy authentication.json and encryptionKey.txt from './Dev Setup' into the directory you will be running DirectoryBot.js from
+2. Open authentication.json and populate properties
+3. Open encryptionKey.txt and decide on an encryption key

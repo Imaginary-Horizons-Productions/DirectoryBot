@@ -1,19 +1,16 @@
 const Command = require('./../Classes/Command.js');
 const { platformsBuilder } = require('./../helpers.js');
 
-var command = new Command(["platforms"], `List the games/services DirectoryBot can be used to record or retrieve information for (using help on this command uses the command)`, false, false, false)
-	// Description and Sections set for README generation
-	.addDescription(`This command lists the games/services DirectoryBot can be used to record or retrieve information for. Using \`help\` on this command uses the command.`)
-	.addSection(`Usage`, `\`@DirectoryBot platforms\``);
+var command = new Command("platforms", false, false, false);
 
 // Overwrite detailed help description with executing the command
-command.help = (clientUser, state) => {
-	return platformsBuilder(state.platformsList);
+command.help = (avatarURL, state, locale, guildName, module) => {
+	return platformsBuilder(guildName, state.platformsList, locale);
 }
 
-command.execute = (receivedMessage, state, metrics) => {
+command.execute = (receivedMessage, state, locale) => {
 	// List the platforms being tracked in the guild
-	receivedMessage.channel.send(platformsBuilder(state.platformsList))
+	receivedMessage.channel.send(platformsBuilder(receivedMessage.guild.name, state.platformsList, locale))
 		.catch(console.error);
 }
 

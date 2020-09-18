@@ -1,1 +1,6 @@
-{"token": token goes here, put it in ""  }
+{
+    "token": "",
+    "showVersion": false,
+	"versionGuildID": "",
+	"versionChannelID": ""
+}

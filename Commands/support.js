@@ -1,34 +1,32 @@
 const Command = require('./../Classes/Command.js');
+const { getString } = require('./../Localizations/localization.js');
 const { MessageEmbed } = require('discord.js');
 
-var command = new Command(["support"], `Lists the ways to support development of DirectoryBot`, false, false, false)
-	// Description and Sections set for README generation
-	.addDescription(`This command lists easy ways to support DirectoryBot development. Using \`help\` on this command uses the command.`)
-	.addSection(`Usage`, `\`@DirectoryBot support\``);
+var command = new Command("support", false, false, false);
 
 // Overwrite detailed help description with executing the command
-command.help = (clientUser, state) => {
-	return supportBuilder(clientUser.displayAvatarURL());
+command.help = (avatarURL, state, locale, guildName, module) => {
+	return supportBuilder(avatarURL, locale);
 }
 
-command.execute = (receivedMessage, state, metrics) => {
+command.execute = (receivedMessage, state, locale) => {
 	// Lists ways users can support development
-	receivedMessage.author.send(supportBuilder(receivedMessage.client.user.displayAvatarURL()))
+	receivedMessage.author.send(supportBuilder(receivedMessage.client.user.displayAvatarURL(), locale))
 		.catch(console.error);
 }
 
 module.exports = command;
 
-function supportBuilder(footerURL) {
+function supportBuilder(footerURL, locale) {
 	return new MessageEmbed().setColor('6b81eb')
-		.setAuthor(`Imaginary Horizons Productions`, `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `, `https://discord.gg/bcE3Syu `)
-		.setTitle(`Supporting DirectoryBot`)
-		.setDescription(`Thank you for using DirectoryBot! Here are some ways to support development:`)
-		.addField(`Vote for us on top.gg`, `top.gg is a Discord bot listing and distrabution service. Voting for DirectoryBot causes it to appear earlier in searches. [DirectoryBot's Page](https://top.gg/bot/585336216262803456)`)
-		.addField(`Refer a friend`, `Got a friend interested in adding DirectoryBot to their server? Pass them [this link](https://discord.com/oauth2/authorize?client_id=585336216262803456&permissions=268446720&scope=bot)!`)
-		.addField(`Contribute code or localization support`, `Check out our [GitHub](https://github.com/Imaginary-Horizons-Productions/DirectoryBot) and tackle some issues!`)
-		.addField(`Create some social media buzz`, `Use the #ImaginaryHorizonsProductions hashtag!`)
-		.addField(`Become a Patron`, `Chip in for server costs at the [Imaginary Horizons Productions Patreon](https://www.patreon.com/imaginaryhorizonsproductions)!`)
-		.setFooter(`Thanks in advanced!`, footerURL)
+		.setAuthor(getString(locale, "DirectoryBot", "studioName"), `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `, `https://discord.gg/bcE3Syu `)
+		.setTitle(getString(locale, command.module, "supportingDirectoryBot"))
+		.setDescription(getString(locale, command.module, "embedDescription"))
+		.addField(getString(locale, command.module, "vote"), getString(locale, command.module, "voteText"))
+		.addField(getString(locale, command.module, "refer"), getString(locale, command.module, "referText"))
+		.addField(getString(locale, command.module, "contribute"), getString(locale, command.module, "contributeText"))
+		.addField(getString(locale, command.module, "social"), getString(locale, command.module, "socialText"))
+		.addField(getString(locale, command.module, "patron"), getString(locale, command.module, "patronText"))
+		.setFooter(getString(locale, command.module, "thanks"), footerURL)
 		.setTimestamp();
 }

@@ -19,14 +19,16 @@ exports.getString = function (locale, module, property) {
 				return exports.dictionary[locale][module][property];
 			} else {
 				// If property does not exist, provide en_US and solicit localization help
-				return exports.dictionary.en_US[module][property] + `\nLocalization for the above message is missing. You can contribute it here: https://github.com/Imaginary-Horizons-Productions/DirectoryBot `;
+				return exports.dictionary.en_US[module][property] + `\nLocalization for the above text is missing. You can contribute it here: https://github.com/Imaginary-Horizons-Productions/DirectoryBot `;
 			}
 		} else {
 			// If module is missing, error
-			console.error(`Localization module ${module} is missing from ${locale}.`)
+			console.error(`Localization module ${module} is missing from ${locale}.`);
+			return `Localization for **${locale} ${module}** is missing. You can contribute it here: https://github.com/Imaginary-Horizons-Productions/DirectoryBot `
 		}
 	} else {
 		// If locale is not supported, assume property exists for en_US
+		console.error(`Locale ${locale} is missing.`);
 		return exports.dictionary.en_US[module][property];
 	}
 }

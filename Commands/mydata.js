@@ -1,33 +1,15 @@
 const Command = require('./../Classes/Command.js');
-const Section = require('./../Classes/Section.js');
-const { footerText } = require('./../localization.js');
+const { getString } = require('./../Localizations/localization.js');
 const { MessageEmbed } = require('discord.js');
 
-var command = new Command(false, false, false);
-command.names = {
-	"en_US": ['mydata', 'myentries']
-}
-
-command.summary = {
-	"en_US": "Lists all your platform entries"
-}
-
-command.description = {
-	"en_US": "This command sends you a private message with all the information you've recorded."
-}
-
-command.sections = {
-	"en_US": [
-		new Section("Usage", "`@DirectoryBot mydata`")
-	]
-}
+var command = new Command("mydata", false, false, false);
 
 command.execute = (receivedMessage, state, locale) => {
 	// Sends the user all the information they've input into the bot
 	let embed = new MessageEmbed().setColor('6b81eb')
 		.setAuthor(receivedMessage.guild.name, receivedMessage.guild.iconURL())
-		.setTitle(yourData[locale])
-		.setFooter(footerText[locale], `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `)
+		.setTitle(getString(locale, command.module, "yourData"))
+		.setFooter(getString(locale, "DirectoryBot", "footerText"), `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `)
 		.setTimestamp();
 	let text = '';
 	let dictionary = state.userDictionary[receivedMessage.author.id];
@@ -63,18 +45,10 @@ command.execute = (receivedMessage, state, locale) => {
 			.catch(console.error);
 	} else {
 		// Error Message
-		receivedMessage.author.send(errorMessageOverflow[locale].addVariables({
+		receivedMessage.author.send(getString(locale, command.module, "errorMessageOverflow").addVariables({
 			"alias": state.command
 		})).catch(console.error);
 	}
-}
-
-let yourData = {
-	"en_US": "Your Data"
-}
-
-let errorMessageOverflow = {
-	"en_US": "Your `${alias}` message is too long to fit in a single Discord message. Please try the `lookup` command instead."
 }
 
 module.exports = command;

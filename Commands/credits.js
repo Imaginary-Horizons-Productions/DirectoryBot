@@ -1,30 +1,11 @@
 const Command = require('./../Classes/Command.js');
-const Section = require('./../Classes/Section.js');
-const { studioName, footerText } = require('./../localization.js');
+const { getString } = require('./../Localizations/localization.js');
 const { MessageEmbed } = require('discord.js');
 
-var command = new Command(false, false, true);
-command.names = {
-	"en_US": ["credits", "creditz", "about"]
-}
-
-command.summary = {
-	"en_US": "Version info and contributors (using `help` on this command uses the command)"
-}
-
-// Description and Sections set for README generation
-command.description = {	
-	"en_US": "This command presents version info and contributors. Using `help` on this command uses the command."
-}
-
-command.sections = {
-	"en_US": [
-		new Section("Usage", "`@DirectoryBot creditz`")
-	]
-}
+var command = new Command("credits", false, false, true);
 
 // Overwrite detailed help description with executing the command
-command.help = (avatarURL, state, locale, guildName) => {
+command.help = (avatarURL, state, locale, guildName, module) => {
 	return creditsBuilder(avatarURL, locale);
 }
 
@@ -38,64 +19,16 @@ module.exports = command;
 
 function creditsBuilder(footerURL, locale) {
 	return new MessageEmbed().setColor(`6b81eb`)
-		.setAuthor(studioName[locale], `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `, `https://discord.gg/bcE3Syu `)
-		.setTitle(creditsTitle[locale].addVariables({"versionNumber": "2.0"}))
+		.setAuthor(getString(locale, "DirectoryBot", "studioName"), `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `, `https://discord.gg/bcE3Syu `)
+		.setTitle(getString(locale, command.module, "creditsTitle").addVariables({"versionNumber": "2.0"}))
 		.setURL(`https://github.com/Imaginary-Horizons-Productions/DirectoryBot `)
-		.addField(designAndEngineering[locale], `Nathaniel Tseng ( <@106122478715150336> | [Twitter](https://twitter.com/Archainis) )`)
-		.addField(engineering[locale], `Lucas Ensign ( <@112785244733628416> | [Twitter](https://twitter.com/SillySalamndr) )`)
-		.addField(art[locale], `Angela Lee ( [Website](https://www.angelasylee.com/) )`)
-		.addField(localization[locale], ``)
-		.addField(`\u200B`, patronsDescription[locale])
-		.addField(cartographerTier[locale], `Ralph Beish`, false)
-		.addField(explorerTier[locale], `Eric Hu`, false)
-		.setFooter(footerText[locale], footerURL)
+		.addField(getString(locale, command.module, "designAndEngineering"), `Nathaniel Tseng ( <@106122478715150336> | [Twitter](https://twitter.com/Archainis) )`)
+		.addField(getString(locale, command.module, "engineering"), `Lucas Ensign ( <@112785244733628416> | [Twitter](https://twitter.com/SillySalamndr) )`)
+		.addField(getString(locale, command.module, "art"), `Angela Lee ( [Website](https://www.angelasylee.com/) )`)
+//		.addField(getString(locale, "credits", "localization"), ``)
+		.addField(`\u200B`, getString(locale, "credits", "patronsDescription"))
+		.addField(getString(locale, command.module, "cartographerTier"), `Ralph Beish`, false)
+		.addField(getString(locale, command.module, "explorerTier"), `Eric Hu`, false)
+		.setFooter(getString(locale, "DirectoryBot", "footerText"), footerURL)
 		.setTimestamp();
-}
-
-let creditsTitle = {
-	"en_US": "DirectoryBot Credits (Version ${versionNumber})"
-}
-
-let designAndEngineering = {
-	"en_US": "Design & Engineering"
-}
-
-let engineering = {
-	"en_US": "Engineering"
-}
-
-let art = {
-	"en_US": "Art"
-}
-
-let localization = {
-	"en_US": "Localization"
-}
-
-let patronsDescription = {
-	"en_US": `**__Patrons__**\nImaginary Horizons Productions is supported on [Patreon](https://www.patreon.com/imaginaryhorizonsproductions) by generous users like you, credited below.`
-}
-
-let observerTier = {
-	"en_US": "Observer Tier"
-}
-
-let dreamerTier = {
-	"en_US": "Dreamer Tier"
-}
-
-let explorerTier = {
-	"en_US": "Explorer Tier"
-}
-
-let cartographerTier = {
-	"en_US": "Cartographer Tier"
-}
-
-let archivistTier = {
-	"en_US": "Archivist Tier"
-}
-
-let grandArchivistTier = {
-	"en_US": "Grand Archivist Tier"
 }

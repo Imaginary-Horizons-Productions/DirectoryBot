@@ -1,0 +1,325 @@
+{
+	"DirectoryBot": {
+		"studioName": "Imaginary Horizons Productions",
+		"footerText": "Support development with \"@DirectoryBot support\"",
+		"errorBadCommand": "**${commandName}** isn't a command. Please check for typos or use ${botNickname}` help`.",
+		"errorNotManager": "You need a role with the administrator flag${role} to use the **${alias}** command.",
+		"errorTooManyCommands": "To prevent excessive messaging, users are unable to enter more than ${commandLimit} commands in ${duration}. You can use ${botNickname}` lookup (platform)` to look up everyone's information for the given platform at once.",
+		"expirationWarning": "This message will expire in about ${time}.",
+		"lessThanAnHour": "less than an hour",
+		"and": "and",
+		"hours": "hour(s)",
+		"minutes": "minute(s)",
+		"seconds": "second(s)",
+		"platformsMessage": "${guild}'s tracked platforms are: ",
+		"directoryBotCommand": "DirectoryBot Command: "
+	},
+	"platformPossessivePronoun": {
+		"token": "possessivepronoun",
+		"term": "setting",
+		"description": "The user's possessive pronoun, for use in bot messaging."
+	},
+	"platformTimeZone": {
+		"token": "timezone",
+		"term": "default",
+		"description": "The user's time zone, for use in time conversions."
+	},
+	"platformStream": {
+		"token": "stream",
+		"term": "username",
+		"description": "The user's stream username. Currently supported: Twitch"
+	},
+	"generalCommands": {
+		"title": "General Commands",
+		"description": "To interact with DirectoryBot, mention the bot then type one of these commands:"
+	},
+	"timeZoneCommands": {
+		"title": "Time Zone Commands",
+		"description": "The time module contains commands for converting time zones, which users can store in the default platform \"timezone\"."
+	},
+	"streamCommands": {
+		"title": "Stream Commands",
+		"description": "The streaming module contains commands for supporting live-streamers."
+	},
+	"configCommands": {
+		"title": "Configuration Commands",
+		"description": "The following commands can only be used by server members who have Discord administrator privledges or the role determined by `setmanagerrole`."
+	},
+	"block": {
+		"names": [ "block" ],
+		"summary": "Prevents a user from looking up your data",
+		"description": "This command prevents the mentioned user from accessing your data. Unblock a user by using it on the user again.",
+		"headers": [ "Block a user" ],
+		"texts": [ "`@DirectoryBot block (user)`" ],
+		"blockMessage": "You have blocked ${blockedPerson} from ${server}. They won't be able to look up your information.",
+		"unblockMessage": "You have unblocked ${unblockedPerson} from ${server}.",
+		"errorNoMention": "Please mention a user to block."
+	},
+	"convert": {
+		"names": [ "convert" ],
+		"summary": "Convert a time to someone else's time zone or a given time zone",
+		"description": "This command calculates a time for a given user or time zone. DirectoryBot uses [tz database format](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) for time zones.",
+		"headers": [ "Convert a time to a user's time zone", "Convert a time to a specified time zone", "\u200B" ],
+		"texts": [ "`@DirectoryBot convert (time) in (start time zone) for (user)`", "`@DirectoryBot convert (time) in (start time zone) to (result time zone)`", "If the starting timezone is omitted, the conversion will be attempted with the time zone you've recorded for the \"timezone\" platform." ],
+		"errorUserZoneMissing": "Your time could not be converted. ${targetGuildMember} does not have a time zone recorded.",
+		"errorNotAMember": "Your time could not be converted. ${targetGuildMember} isn't a member of ${server}.",
+		"errorNoPlatform": "Your time could not be converted. ${server} does not seem to be tracking time zones.",
+		"successUser": "*${originalTime}in ${originalTimeZone}* is **${destinationTime} for ${targetGuildMember}**.",
+		"successZone": "*${originalTime}in ${originalTimeZone}* is **${destinationTime} in {destinationTimeZone}**.",
+		"errorBadTime": "The time you provided could not be parsed (remember to specify AM or PM).",
+		"errorBadResultZone": "Please use the IANA timezone format for the **result timezone**. You can look up timezones here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones",
+		"errorNoResultZone": "Please specify a result timezone for your `convert` command.",
+		"errorBadStartZone": "Please use the IANA timezone format for the **starting timezone**. You can look up timezones here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones"
+	},
+	"countdown": {
+		"names": [ "countdown" ],
+		"summary": "How long until the given time",
+		"description": "This command calculates the amount of time until a given time. DirectoryBot uses [tz database format](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) for time zones.",
+		"headers": [ "Count down to a time" ],
+		"texts": [ "`@DirectoryBot countdown (time) in (time zone)`\nIf the time zone is omitted, the countdown will be attempted with the time zone you've recorded for the \"timezone\" platform, then the server's local time zone failing that." ],
+		"successMessage": "*${startTime} in ${startTimezone}* is about **${time}** from now.",
+		"errorBadZone": "The time zone you entered could not be parsed. Remember to use the tz database format for time zones: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones",
+		"errorNoZone": "The time you provided could not be parsed (remember to specify AM or PM)."
+	},
+	"credits": {
+		"names": [ "credits", "creditz", "about" ],
+		"summary": "Version info and contributors (using `help` on this command uses the command)",
+		"description": "This command presents version info and contributors. Using `help` on this command uses the command.",
+		"headers": [ "Usage" ],
+		"texts": [ "`@DirectoryBot creditz`" ],
+		"creditsTitle": "DirectoryBot Credits (Version ${versionNumber})",
+		"designAndEngineering": "Design & Engineering",
+		"engineering": "Engineering",
+		"art": "Art",
+		"localization": "Localization",
+		"patronsDescription": "**__Patrons__**\nImaginary Horizons Productions is supported on [Patreon](https://www.patreon.com/imaginaryhorizonsproductions) by generous users like you, credited below.",
+		"observerTier": "Observer Tier",
+		"dreamerTier": "Dreamer Tier",
+		"explorerTier": "Explorer Tier",
+		"cartographerTier": "Cartographer Tier",
+		"archivistTier": "Archivist Tier",
+		"grandArchivistTier": "Grand Archivist Tier"
+	},
+	"datalifetime": {
+		"names": [ "datalifetime", "infolifetime" ],
+		"summary": "Sets the lifetime (in hours) for expiring messages",
+		"description": "This command sets the number of hours before responses from the `lookup` and `send` commands expire (decimals allowed).",
+		"headers": [ "Set the data lifetime" ],
+		"texts": [ "`@DirectoryBot datalifetime (number of hours)`" ],
+		"successMessage": "The expiring message lifetime has been set to ${mentionedNumber} hour(s).",
+		"errorBadNumber": "The number for your `${alias}` command could not be parsed."
+	},
+	"delete": {
+		"names": [ "delete", "remove", "clear" ],
+		"summary": "Remove your information for a platform",
+		"description": "This command removes your data for the given platform. Bot managers can use this command to remove information for other users.",
+		"headers": [ "Delete your data", "Delete another user's data" ],
+		"texts": [ "`@DirectoryBot delete (platform)`", "`@DirectoryBot delete (user) (platform)`" ],
+		"deleteNotice": "Your ${platform} ${term} has been removed from ${server}${reason}.",
+		"successOther": "${target}'s ${platform} ${term} has been removed.",
+		"errorNoDataOther": "${target} does not have a ${platform} ${term} recorded in ${server}.",
+		"errorNotManager": "You need a role with administrator privileges${role} to remove data for others.",
+		"errorBadMember": "That person isn't a member of ${server}.",
+		"successSelf": "You have removed your ${platform} ${term} from ${server}.",
+		"errorNoDataSelf": "You do not currently have a ${platform} ${term} recorded in ${server}.",
+		"errorBadPlatform": "${platform} is not currently being tracked in ${server}.",
+		"errorNoPlatform": "Please provide the platform of the information to delete."
+	},
+	"help": {
+		"names": [ "help", "commands" ],
+		"summary": "You can type `@DirectoryBot help` followed by a command for more detailed information on that command",
+		"description": "This command provides details on DirectoryBot commands by either listing all commands available to you, or providing details on a specific command.",
+		"headers": [ "List all commands", "Get details on a specific command" ],
+		"texts": [ "`@DirectoryBot help`", "`@DirectoryBot help (command)`" ],
+		"errorNotManager": "You need a role with the administrator flag${role} to view manager commands."
+	},
+	"import": {
+		"names": [ "import" ],
+		"summary": "Copies your information from a source server to a destination server",
+		"description": "This command copies your data for matching platforms from a given server.",
+		"headers": [ "Importing data" ],
+		"texts": [ "`@DirectoryBot import (channel mention or snowflake from source server)`\nThere are two ways to indicate which server to import from: by mentioning a channel from that server, or by providing the server's snowflake.\n\nTo get a channel mention, start a message in the server you want to import from. Start with #, then autocomplete. You can then copy-paste the blue link into your command in the destination server.\n\nTo get a server's snowflake, first activate Developer Mode in your User Settings. Then you can right-click on the source server and select \"Copy ID\" from the drop-down menu." ],
+		"successHeader": "Your import succeeded. Here are the platforms that have been updated:",
+		"errorNoSourceData": "You do not seem to have any information recorded in the source server.",
+		"errorNoSourceBot": "Source server for import does not seem to be running ${botNickname}.",
+		"errorSameGuild": "Source server for import cannot be the same as the destination server.",
+		"errorBadSource": "Source server for import could not be parsed."
+	},
+	"lookup": {
+		"names": [ "lookup" ],
+		"summary": "Look up someone else's information",
+		"description": "This command messages you the entries a given platform. You can limit your results to a set of users by mentioning them at the end of the command.",
+		"headers": [ "Look up a platform", "Filter for users" ],
+		"texts": [ "`@DirectoryBot lookup (platform)`", "`@DirectoryBot lookup (platform) (users)`" ],
+		"detailedHelpHeader": "DirectoryBot Command: ",
+		"detailedHelpPlatforms": "${guildName}'s Platforms",
+		"expiredMessage": "Your lookup of ${server}'s ${platform} ${term}s has expired.",
+		"errorMessageOverflow": "Your lookup of ${server}'s ${platform} ${term} is too long for a single message, please limit your search (2,048 characters max).",
+		"errorBadPlatform": "${platform} is not currently being tracked in ${server}.",
+		"errorNoPlatform": "Please provide a platform in which to look up information."
+	},
+	"managerrole": {
+		"names": [ "managerrole", "setmanagerrole" ],
+		"summary": "Sets the bot manager role which allows the use of manager commands",
+		"description": "This command sets the manager role, which allows users to use manager-only commands without server administrator privilege. If no role is given, the set role will be cleared.",
+		"headers": [ "Set a role", "Clear manager role" ],
+		"texts": [ "`@DirectoryBot setmanagerrole (role)`", "`@DirectoryBot setmanagerrole`" ],
+		"successMessage": "The ${botNickname} manager role has been set to ${role}.",
+		"clearMessage": "The ${botNickname} manager role has been cleared."
+	},
+	"multistream": {
+		"names": [ "multistream", "multitwitch" ],
+		"summary": "Generate a multistream link for the given users",
+		"description": "This command generates a link to watch multiple streams simultaneously. Optionally, you can enter the layout number last if you want to specify that.",
+		"headers": [ "Generate multistream link" ],
+		"texts": [ "`@DirectoryBot multistream (users) (layout)`" ],
+		"multistreamSuccess": "Here's the multistream link: ",
+		"errorMissingUsers": "\n\nThe following users don't have stream info recorded: ",
+		"errorNotEnoughUsers": "Please mention at least two users to generate a multistream link for.",
+		"errorNoPlatform": "Your multistream command could not be completed. ${server} does not seem to be tracking stream information."
+	},
+	"mydata": {
+		"names": [ "mydata", "myentries" ],
+		"summary": "Lists all your platform entries",
+		"description": "This command sends you a private message with all the information you've recorded.",
+		"headers": [ "Usage" ],
+		"texts": [ "`@DirectoryBot mydata`" ],
+		"yourData": "Your Data",
+		"errorMessageOverflow": "Your `${alias}` message is too long to fit in a single Discord message. Please try the `lookup` command instead."
+	},
+	"newplatform": {
+		"names": [ "newplatform", "addplatform" ],
+		"summary": "Setup a new game/service for users to record or retrieve information for",
+		"description": "This command sets up a new game/service for users to record and retrieve information.",
+		"headers": [ "Create a new platform" ],
+		"texts": [ "`@DirectoryBot newplatform (platform name) (information term) (description)`\nOptionally, you can set a term to call the information that is being stored (default is \"username\"). Additionally, you can set an optional description to be displayed when the lookup command is used on the platform." ],
+		"successMessage": "${platform} ${term}s can now be recorded and retrieved.",
+		"errorDupePlatform": "${server} already has a platform named *${platform}*.",
+		"errorNoUserNamedPlatforms": "Please select a platform name that is not a user mention.",
+		"errorNoName": "Please provide a name for the new platform."
+	},
+	"permissionsrole": {
+		"names": [ "permissionsrole", "setpermissionsrole" ],
+		"summary": "Sets the bot permissions role; not mentioning a role clears the setting",
+		"description": "This command updates the permissions role. This allows DirectoryBot to interpret accidental mentions of that role as command messages.",
+		"headers": [ "Set the permissions role", "Clear the permissions role" ],
+		"texts": [ "`@DirectoryBot permissionsrole (role)`", "`@DirectoryBot permissionsrole`" ],
+		"successMessage": "The permissions role has been stored as ${role}.",
+		"clearMessage": "The permissions role has been cleared."
+	},
+	"platforms": {
+		"names": [ "platforms" ],
+		"summary": "List the games/services DirectoryBot can be used to record or retrieve information for (using help on this command uses the command)",
+		"description": "This command lists the games/services DirectoryBot can be used to record or retrieve information for. Using `help` on this command uses the command.",
+		"headers": [ "Usage" ],
+		"texts": [ "`@DirectoryBot platforms`" ]
+	},
+	"record": {
+		"names": [ "record", "log", "add" ],
+		"summary": "Record your information for a platform",
+		"description": "This command adds your information for given platform so people can ask the bot for it.",
+		"headers": [ "Recording data" ],
+		"texts": [ "`@DirectoryBot record (platform) (data)`\nThe message containing the command will be deleted for security purposes. Discord's spoilers markdown (|| on both sides) is removed from code entry to allow hiding entry from mobile via spoilers markdown." ],
+		"successMessage": "${author} has recorded a ${platform} ${term}. Check it with:\n\t${botNickname}` lookup `${author}` ${platform}`.",
+		"errorBadPlatform": "${platform} is not currently being tracked in ${server}.",
+		"errorNoData": "Please provide the information you would like to record.",
+		"errorNoPlatform": "Please provide a platform for which to record your information for."
+	},
+	"removeplatform": {
+		"names": [ "removeplatform" ],
+		"summary": "Stop recording and distributing user information for a game/service",
+		"description": "This command removes a platform from DirectoryBot's list of platforms for the server.",
+		"headers": [ "Remove a platform" ],
+		"texts": [ "`@DirectoryBot removeplatform (platform)`" ],
+		"successMessage": "${platform} data will no longer be recorded.",
+		"errorBadPlatform": "${platform} is not currently being recorded in ${server}.",
+		"errorNoPlatform": "Please provide a platform to remove."
+	},
+	"setlocale": {
+		"names": [ "setlocale", "setlanguage" ],
+		"summary": "Sets the locale (language) for the server",
+		"description": "This command sets the default locale (language) for the server it is used in (default: en_US).",
+		"headers": [ "Set the default locale", "Contributing localization" ],
+		"texts": [ "`@DirectoryBot ${commandAlias} setlocale (locale)`", "If you'd like to contribute to localizing, check out our [GitHub](https://github.com/Imaginary-Horizons-Productions/DirectoryBot). Currently supported: ${supportedLocales}" ],
+		"successMessage": "The default locale has been set to: ${locale}",
+		"errorBadLocale": "The locale you provided is not currently supported. Currently supported: ${supportedLocales}\n\nIf you'd like to contribute to localizing, check out our GitHub (https://github.com/Imaginary-Horizons-Productions/DirectoryBot).",
+		"errorNoLocale": "Please provide a locale to set as the default for ${server}."
+	},
+	"setplatformrole": {
+		"names": [ "setplatformrole" ],
+		"summary": "Automatically give a role to users who record information for a platform",
+		"description": "This command associates the given role and platform. Anyone who records information for that platform will be automatically given the associated role. Using the command without mentioning a role clears the set role for the platform.",
+		"headers": [ "Set a platform role", "Clear a platform role" ],
+		"texts": [ "`@DirectoryBot setplatformrole (platform) (role)`", "`@DirectoryBot setplatformrole (platform)`" ],
+		"successMessage": "Server members who set a ${platform} ${term} will now automatically be given the role ${role}.",
+		"clearMessage": "The ${platform} role has been cleared.",
+		"errorBadPlatform": "${server} doesn't have a platform named ${platform}.",
+		"errorNoPlatform": "Please provide a platform to set a role for."
+	},
+	"setplatformterm": {
+		"names": [ "setplatformterm", "changeplatformterm" ],
+		"summary": "Changes what DirectoryBot calls information for the given platform",
+		"description": "This command changes what DirectoryBot calls data for the given platform (default is \"username\").",
+		"headers": [ "Change a platform's data term" ],
+		"texts": [ "`@DirectoryBot setplatformterm (platform) (data term)`" ],
+		"successMessage": "Information for *${platform}* will now be referred to as **${term}** in ${server}.",
+		"errorBadPlatform": "${platform} is not currently being recorded in ${server}.",
+		"errorNoTerm": "Please provide a term to change to for the platform.",
+		"errorNoPlatform": "Please provide a platform for which to change the term."
+	},
+	"shoutout": {
+		"names": [ "shoutout", "streamshoutout" ],
+		"summary": "Have DirectoryBot post someone's stream information",
+		"description": "This command posts the given user's stream information.",
+		"headers": [ "Give a stream shoutout" ],
+		"texts": [ "`@DirectoryBot shoutout (user)`" ],
+		"successMessage": "Check out ${user}'s stream at ${url} !",
+		"errorNoData": "${user} has not set a stream username in this server's DirectoryBot yet.",
+		"errorBadUser": "That person isn't a member of ${server}.",
+		"errorNoPlatform": "Your `shoutout` command could not be completed. ${server} does not seem to have a \"stream\" platform."
+	},
+	"support": {
+		"names": [ "support" ],
+		"summary": "Lists the ways to support development of DirectoryBot",
+		"description": "This command lists easy ways to support DirectoryBot development. Using `help` on this command uses the command.",
+		"headers": [ "Usage" ],
+		"texts": [ "`@DirectoryBot support`" ],
+		"supportingDirectoryBot": "Supporting DirectoryBot",
+		"embedDescription": "Thank you for using DirectoryBot! Here are some ways to support development:",
+		"vote": "Vote for us on top.gg",
+		"voteText": "top.gg is a Discord bot listing and distrabution service. Voting for DirectoryBot causes it to appear earlier in searches. [DirectoryBot's Page](https://top.gg/bot/585336216262803456)",
+		"refer": "Refer a friend",
+		"referText": "Got a friend interested in adding DirectoryBot to their server? Pass them [this link](https://discord.com/oauth2/authorize?client_id=585336216262803456&permissions=268446720&scope=bot)!",
+		"contribute": "Contribute code or localization support",
+		"contributeText": "Check out our [GitHub](https://github.com/Imaginary-Horizons-Productions/DirectoryBot) and tackle some issues!",
+		"social": "Create some social media buzz",
+		"socialText": "Use the #ImaginaryHorizonsProductions hashtag!",
+		"patron": "Become a Patron",
+		"patronText": "Chip in for server costs at the [Imaginary Horizons Productions Patreon](https://www.patreon.com/imaginaryhorizonsproductions)!",
+		"thanks": "Thanks in advanced!"
+	},
+	"tell": {
+		"names": [ "tell", "send" ],
+		"summary": "Have DirectoryBot send someone your information",
+		"description": "This command sends your information on the given platform to the given user.",
+		"headers": [ "Tell someone your data" ],
+		"texts": [ "`@DirectoryBot tell (platform) (user)`" ],
+		"successMessageRecipient": "${sender} from ${server} has sent you ${possessivepronoun} ${platform} ${term}",
+		"dataMessage": ". It is:\n\t${value}\n\n",
+		"expiredMessage": ", but it has expired. You can look it up again with ${botNickname}` lookup `${sender}` ${platform}`.",
+		"successMessageSender": "Your ${platform} ${term} has been sent to ${mentionedGuildMembers}.",
+		"errorNoData": "You have not recorded a ${platform} ${term} in ${server}.",
+		"errorBadPlatform": "${platform} is not currently being tracked in ${server}.",
+		"errorNoPlatform": "Please provide the platform of the information to send.",
+		"errorNoRecipient": "Please mention someone in ${server} to send your information to."
+	},
+	"whois": {
+		"names": [ "whois" ],
+		"summary": "Ask DirectoryBot who a certain username belongs to",
+		"description": "This command checks if anyone uses the given username and private messages you the result.",
+		"headers": [ "Look up a username" ],
+		"texts": [ "`@DirectoryBot", "whois", "(username)`" ],
+		"successMessage": "The following people have recorded ${searchTerm} in ${server}:",
+		"errorNoUsername": "Please specify a username to check for."
+	}
+}

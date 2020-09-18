@@ -1,27 +1,10 @@
 const Command = require('./../Classes/Command.js');
-const Section = require('./../Classes/Section.js');
+const { getString } = require('./../Localizations/localization.js');
 const { DateTime, IANAZone, LocalZone } = require("luxon");
 var chrono = require('chrono-node');
 const { millisecondsToHours } = require('./../helpers.js');
 
-var command = new Command(false, false, true);
-command.names = {
-	"en_US": ["countdown"]
-}
-
-command.summary = {
-	"en_US": "How long until the given time"
-}
-
-command.description = {
-	"en_US": "This command calculates the amount of time until a given time. DirectoryBot uses [tz database format](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) for time zones."
-}
-
-command.sections = {
-	"en_US": [
-		new Section("Count down to a time", "`@DirectoryBot countdown (time) in (time zone)`\nIf the time zone is omitted, the countdown will be attempted with the time zone you've recorded for the \"timezone\" platform, then the server's local time zone failing that.")
-	]
-}
+var command = new Command("countdown", false, false, true);
 
 command.execute = (receivedMessage, state, locale) => {
 	// Calculates the amount of time until the given date
@@ -54,33 +37,21 @@ command.execute = (receivedMessage, state, locale) => {
 				duration = duration.plus(86400000); // 86400000 is a day in milliseconds
 				duration.normalize();
 			}
-			receivedMessage.author.send(successMessage[locale].addVariables({
+			receivedMessage.author.send(getString(locale, command.module, "successMessage").addVariables({
 				"startTime": timeText,
 				"startTimezone": startTimezone,
 				"time": millisecondsToHours(locale, duration.milliseconds, true)
 			})).catch(console.error);
 		} else {
 			// Error message
-			receivedMessage.author.send(errorBadZone[locale])
+			receivedMessage.author.send(getString(locale, command.module, "errorBadZone"))
 				.catch(console.error);
 		}
 	} else {
 		// Error Message
-		receivedMessage.author.send(errorNoZone[locale])
+		receivedMessage.author.send(getString(locale, command.module, "errorNoZone"))
 			.catch(console.error);
 	}
-}
-
-let successMessage = {
-	"en_US": "*${startTime} in ${startTimezone}* is about **${time}** from now."
-}
-
-let errorBadZone = {
-	"en_US": `The time zone you entered could not be parsed. Remember to use the tz database format for time zones: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones`
-}
-
-let errorNoZone = {
-	"en_US": `The time you provided could not be parsed (remember to specify AM or PM).`
 }
 
 module.exports = command;

@@ -90,36 +90,12 @@ exports.millisecondsToHours = function (locale, milliseconds, showMinutes = fals
 	return text;
 }
 
-let lessThanAnHour = {
-	"en_US": "less than an hour"
-}
-
-let and = {
-	"en_US": "and"
-}
-
-let hours = {
-	"en_US": "hour(s)"
-}
-
-let minutes = {
-	"en_US": "minute(s)"
-}
-
-let seconds = {
-	"en_US": "second(s)"
-}
-
 exports.platformsBuilder = function (guildName, platformsList, locale) {
 	let listedPlatforms = Object.keys(platformsList).join(', ');
 
 	return platformsMessage[locale].addVariables({
 		"guild": guildName
 	}) + listedPlatforms;
-}
-
-let platformsMessage = {
-	"en_US": "${guild}'s tracked platforms are: "
 }
 
 exports.saveObject = function (guildID, object, fileName, backup = false) {

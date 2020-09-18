@@ -1,0 +1,325 @@
+{
+	"DirectoryBot": {
+		"studioName": "",
+		"footerText": "",
+		"errorBadCommand": "",
+		"errorNotManager": "",
+		"errorTooManyCommands": "",
+		"expirationWarning": "",
+		"lessThanAnHour": "",
+		"and": "",
+		"hours": "",
+		"minutes": "",
+		"seconds": "",
+		"platformsMessage": "",
+		"directoryBotCommand": ""
+	},
+	"platformPossessivePronoun": {
+		"token": "",
+		"term": "",
+		"description": ""
+	},
+	"platformTimeZone": {
+		"token": "",
+		"term": "",
+		"description": ""
+	},
+	"platformStream": {
+		"token": "",
+		"term": "",
+		"description": ""
+	},
+	"generalCommands": {
+		"title": "",
+		"description": ""
+	},
+	"timeZoneCommands": {
+		"title": "",
+		"description": ""
+	},
+	"streamCommands": {
+		"title": "",
+		"description": ""
+	},
+	"configCommands": {
+		"title": "",
+		"description": ""
+	},
+	"block": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"blockMessage": "",
+		"unblockMessage": "",
+		"errorNoMention": ""
+	},
+	"convert": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"errorUserZoneMissing": "",
+		"errorNotAMember": "",
+		"errorNoPlatform": "",
+		"successUser": "",
+		"successZone": "",
+		"errorBadTime": "",
+		"errorBadResultZone": "",
+		"errorNoResultZone": "",
+		"errorBadStartZone": ""
+	},
+	"countdown": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"successMessage": "",
+		"errorBadZone": "",
+		"errorNoZone": ""
+	},
+	"credits": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"creditsTitle": "",
+		"designAndEngineering": "",
+		"engineering": "",
+		"art": "",
+		"localization": "",
+		"patronsDescription": "",
+		"observerTier": "",
+		"dreamerTier": "",
+		"explorerTier": "",
+		"cartographerTier": "",
+		"archivistTier": "",
+		"grandArchivistTier": ""
+	},
+	"datalifetime": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [ "" ],
+		"texts": [],
+		"successMessage": "",
+		"errorBadNumber": ""
+	},
+	"delete": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"deleteNotice": "",
+		"successOther": "",
+		"errorNoDataOther": "",
+		"errorNotManager": "",
+		"errorBadMember": "",
+		"successSelf": "",
+		"errorNoDataSelf": "",
+		"errorBadPlatform": "",
+		"errorNoPlatform": ""
+	},
+	"help": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"errorNotManager": ""
+	},
+	"import": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"successHeader": "",
+		"errorNoSourceData": "",
+		"errorNoSourceBot": "",
+		"errorSameGuild": "",
+		"errorBadSource": ""
+	},
+	"lookup": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"detailedHelpHeader": "",
+		"detailedHelpPlatforms": "",
+		"expiredMessage": "",
+		"errorMessageOverflow": "",
+		"errorBadPlatform": "",
+		"errorNoPlatform": ""
+	},
+	"managerrole": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"successMessage": "",
+		"clearMessage": ""
+	},
+	"multistream": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"multistreamSuccess": "",
+		"errorMissingUsers": "",
+		"errorNotEnoughUsers": "",
+		"errorNoPlatform": ""
+	},
+	"mydata": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"yourData": "",
+		"errorMessageOverflow": ""
+	},
+	"newplatform": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"successMessage": "",
+		"errorDupePlatform": "",
+		"errorNoUserNamedPlatforms": "",
+		"errorNoName": ""
+	},
+	"permissionsrole": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"successMessage": "",
+		"clearMessage": ""
+	},
+	"platforms": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": []
+	},
+	"record": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"successMessage": "",
+		"errorBadPlatform": "",
+		"errorNoData": "",
+		"errorNoPlatform": ""
+	},
+	"removeplatform": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"successMessage": "",
+		"errorBadPlatform": "",
+		"errorNoPlatform": ""
+	},
+	"setlocale": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"successMessage": "",
+		"errorBadLocale": "",
+		"errorNoLocale": ""
+	},
+	"setplatformrole": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"successMessage": "",
+		"clearMessage": "",
+		"errorBadPlatform": "",
+		"errorNoPlatform": ""
+	},
+	"setplatformterm": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"successMessage": "",
+		"errorBadPlatform": "",
+		"errorNoTerm": "",
+		"errorNoPlatform": ""
+	},
+	"shoutout": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"successMessage": "",
+		"errorNoData": "",
+		"errorBadUser": "",
+		"errorNoPlatform": ""
+	},
+	"support": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"supportingDirectoryBot": "",
+		"embedDescription": "",
+		"vote": "",
+		"voteText": "",
+		"refer": "",
+		"referText": "",
+		"contribute": "",
+		"contributeText": "",
+		"social": "",
+		"socialText": "",
+		"patron": "",
+		"patronText": "",
+		"thanks": ""
+	},
+	"tell": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"successMessageRecipient": "",
+		"dataMessage": "",
+		"expiredMessage": "",
+		"successMessageSender": "",
+		"errorNoData": "",
+		"errorBadPlatform": "",
+		"errorNoPlatform": "",
+		"errorNoRecipient": ""
+	},
+	"whois": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"successMessage": "",
+		"errorNoUsername": ""
+	}
+}

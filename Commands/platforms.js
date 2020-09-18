@@ -1,29 +1,10 @@
 const Command = require('./../Classes/Command.js');
-const Section = require('./../Classes/Section.js');
 const { platformsBuilder } = require('./../helpers.js');
 
-var command = new Command(false, false, false);
-command.names = {
-	"en_US": ["platforms"]
-}
-
-command.summary = {
-	"en_US": "List the games/services DirectoryBot can be used to record or retrieve information for (using help on this command uses the command)"
-}
-
-// Description and Sections set for README generation
-command.description = {
-	"en_US": "This command lists the games/services DirectoryBot can be used to record or retrieve information for. Using `help` on this command uses the command."
-}
-
-command.sections = {
-	"en_US": [
-		new Section("Usage", "`@DirectoryBot platforms`")
-	]
-}
+var command = new Command("platforms", false, false, false);
 
 // Overwrite detailed help description with executing the command
-command.help = (avatarURL, state, locale, guildName) => {
+command.help = (avatarURL, state, locale, guildName, module) => {
 	return platformsBuilder(guildName, state.platformsList, locale);
 }
 

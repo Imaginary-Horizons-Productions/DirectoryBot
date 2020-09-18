@@ -1,4 +1,5 @@
 const fs = require('fs');
+const { getString } = require('./Localizations/localization.js');
 const { commandSets } = require('./Commands/CommandsList.js');
 
 let text = `# DirectoryBot
@@ -21,13 +22,15 @@ If you leave a server, DirectoryBot will delete all of your data. If you kick Di
 `;
 
 commandSets.forEach(commandSet => {
-	text += `## ${commandSet.name["en_US"]}\n${commandSet.description["en_US"]}\n`;
+	text += `## ${getString("en_US", commandSet.module, "title")}\n${getString("en_US", commandSet.module, "description")}\n`;
 	commandSet.fileNames.forEach(filename => {
-		const command = require(`./Commands/${filename}`);
-		text += `### ${command.names["en_US"].join(', ')}\n${command.description["en_US"]}\n`;
-		command.sections["en_US"].forEach(section => {
-			text += `#### ${section.title}\n${section.text}\n`;
-		})
+		const command = filename.slice(0, -5);
+		text += `### ${getString("en_US", command, "names").join(', ')}\n${getString("en_US", command, "description")}\n`;
+		let headers = getString("en_US", command, "headers");
+		let texts = getString("en_US", command, "texts");
+		for (var i = 0; i < headers.length; i++) {
+			text += `#### ${headers[i]}\n${texts[i]}\n`;
+		}
 	})
 })
 

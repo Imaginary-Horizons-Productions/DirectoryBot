@@ -1,25 +1,8 @@
 const Command = require('./../Classes/Command.js');
-const Section = require('./../Classes/Section.js');
+const { getString } = require('./../Localizations/localization.js');
 const { saveObject } = require('./../helpers.js');
 
-var command = new Command(true, false, false);
-command.names = {
-	"en_US": ["removeplatform"]
-}
-
-command.summary = {
-	"en_US": "Stop recording and distributing user information for a game/service"
-}
-
-command.description = {
-	"en_US": `This command removes a platform from DirectoryBot's list of platforms for the server.`
-}
-
-command.sections = {
-	"en_US": [
-		new Section(`Remove a platform`, `\`@DirectoryBot removeplatform (platform)\``)
-	]
-}
+var command = new Command("removeplatform", true, false, false);
 
 command.execute = (receivedMessage, state, locale) => {
 	// Removes the given platform
@@ -34,34 +17,22 @@ command.execute = (receivedMessage, state, locale) => {
 				delete state.userDictionary[userID][platform];
 			})
 			delete state.platformsList[platform];
-			receivedMessage.channel.send(successMessage[locale].addVariables({
+			receivedMessage.channel.send(getString(locale, command.module, "successMessage").addVariables({
 				"platform": platform
 			})).catch(console.error);
 			saveObject(receivedMessage.guild.id, state.platformsList, 'platformsList.txt');
 		} else {
 			// Error Message
-			receivedMessage.author.send(errorBadPlatform[locale].addVariables({
+			receivedMessage.author.send(getString(locale, command.module, "errorBadPlatform").addVariables({
 				"platform": platform,
 				"server": receivedMessage.guild.name
 			})).catch(console.error);
 		}
 	} else {
 		// Error Message
-		receivedMessage.author.send(errorNoPlatform[locale])
+		receivedMessage.author.send(getString(locale, command.module, "errorNoPlatform"))
 			.catch(console.error);
 	}
-}
-
-let successMessage = {
-	"en_US": "${platform} data will no longer be recorded."
-}
-
-let errorBadPlatform = {
-	"en_US": "${platform} is not currently being recorded in ${server}."
-}
-
-let errorNoPlatform = {
-	"en_US": "Please provide a platform to remove."
 }
 
 module.exports = command;

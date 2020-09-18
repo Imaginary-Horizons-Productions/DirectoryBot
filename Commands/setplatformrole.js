@@ -1,26 +1,8 @@
 const Command = require('./../Classes/Command.js');
-const Section = require('./../Classes/Section.js');
+const { getString } = require('./../Localizations/localization.js');
 const { saveObject } = require('./../helpers.js');
 
-var command = new Command(true, false, false);
-command.names = {
-	"en_US": ["setplatformrole"]
-}
-
-command.summary = {
-	"en_US": "Automatically give a role to users who record information for a platform"
-}
-
-command.description = {
-	"en_US": "This command associates the given role and platform. Anyone who records information for that platform will be automatically given the associated role. Using the command without mentioning a role clears the set role for the platform."
-}
-
-command.sections = {
-	"en_US": [
-		new Section("Set a platform role", "`@DirectoryBot setplatformrole (platform) (role)`"),
-		new Section("Clear a platform role", "`@DirectoryBot setplatformrole (platform)`")
-	]
-}
+var command = new Command("setplatformrole", true, false, false);
 
 command.execute = (receivedMessage, state, locale) => {
 	// Sets a role to automatically give to users who set information for the given platform
@@ -34,7 +16,7 @@ command.execute = (receivedMessage, state, locale) => {
 				Object.keys(state.userDictionary).forEach(userID => {
 					receivedMessage.guild.members.resolve(userID).addPlatformRoles(state);
 				})
-				receivedMessage.channel.send(successMessage[locale].addVariables({
+				receivedMessage.channel.send(getString(locale, command.module, "successMessage").addVariables({
 					"platform": platform,
 					"term": state.platformsList[platform].term,
 					"role":role
@@ -48,39 +30,23 @@ command.execute = (receivedMessage, state, locale) => {
 					})
 					state.platformsList[platform].roleID = "";
 				}
-				receivedMessage.channel.send(clearMessage[locale].addVariables({
+				receivedMessage.channel.send(getString(locale, command.module, "clearMessage").addVariables({
 					"platform": platform
 				})).catch(console.error);
 			}
 			saveObject(receivedMessage.guild.id, state.platformsList, 'platformsList.txt');
 		} else {
 			// Error Message
-			receivedMessage.author.send(errorBadPlatform[locale].addVariables({
+			receivedMessage.author.send(getString(locale, command.module, "errorBadPlatform").addVariables({
 				"server": receivedMessage.guild.name,
 				"platform": platform
 			})).catch(console.error);
 		}
 	} else {
 		// Error Message
-		receivedMessage.author.send(errorNoPlatform[locale])
+		receivedMessage.author.send(getString(locale, command.module, "errorNoPlatform"))
 			.catch(console.error);
 	}
-}
-
-let successMessage = {
-	"en_US": "Server members who set a ${platform} ${term} will now automatically be given the role ${role}."
-}
-
-let clearMessage = {
-	"en_US": "The ${platform} role has been cleared."
-}
-
-let errorBadPlatform = {
-	"en_US": "${server} doesn't have a platform named ${platform}."
-}
-
-let errorNoPlatform = {
-	"en_US": "Please provide a platform to set a role for."
 }
 
 module.exports = command;

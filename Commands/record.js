@@ -1,26 +1,9 @@
 const Command = require('./../Classes/Command.js');
-const Section = require('./../Classes/Section.js');
+const { getString } = require('./../Localizations/localization.js');
 const FriendCode = require('./../Classes/FriendCode.js');
 const { saveObject } = require('./../helpers.js');
 
-var command = new Command(false, false, false);
-command.names = {
-	"en_US": ["record", "log", "add"]
-}
-
-command.summary = {
-	"en_US": "Record your information for a platform"
-}
-
-command.description = {
-	"en_US": "This command adds your information for given platform so people can ask the bot for it."
-}
-
-command.sections = {
-	"en_US": [
-		new Section("Recording data", "`@DirectoryBot record (platform) (data)`\nThe message containing the command will be deleted for security purposes. Discord's spoilers markdown (|| on both sides) is removed from code entry to allow hiding entry from mobile via spoilers markdown.")
-	]
-}
+var command = new Command("record", false, false, false);
 
 command.execute = (receivedMessage, state, metrics) => {
 	// Records a user's information for a given platform
@@ -39,7 +22,7 @@ command.execute = (receivedMessage, state, metrics) => {
 
 				state.userDictionary[receivedMessage.author.id][platform].value = friendcode;
 				receivedMessage.member.addPlatformRoles(state);
-				receivedMessage.delete().then(message => message.channel.send(successMessage[locale].addVariables({
+				receivedMessage.delete().then(message => message.channel.send(getString(locale, command.module, "successMessage").addVariables({
 					"author": message.author,
 					"platform": platform,
 					"term": state.platformsList[platform].term,
@@ -48,37 +31,21 @@ command.execute = (receivedMessage, state, metrics) => {
 				saveObject(receivedMessage.guild.id, state.userDictionary, 'userDictionary.txt');
 			} else {
 				// Error Message
-				receivedMessage.author.send(errorBadPlatform[locale].addVariables({
+				receivedMessage.author.send(getString(locale, command.module, "errorBadPlatform").addVariables({
 					"platform": platform,
 					"server": receivedMessage.guild
 				})).catch(console.error);
 			}
 		} else {
 			// Error Message
-			receivedMessage.author.send(errorNoData[locale])
+			receivedMessage.author.send(getString(locale, command.module, "errorNoData"))
 				.catch(console.error);
 		}
 	} else {
 		// Error Message
-		receivedMessage.author.send(errorNoPlatform[locale])
+		receivedMessage.author.send(getString(locale, command.module, "errorNoPlatform"))
 			.catch(console.error);
 	}
-}
-
-let successMessage = {
-	"en_US": "${author} has recorded a ${platform} ${term}. Check it with:\n\t${botNickname}` lookup `${author}` ${platform}`."
-}
-
-let errorBadPlatform = {
-	"en_US": "${platform} is not currently being tracked in ${server}."
-}
-
-let errorNoData = {
-	"en_US": "Please provide the information you would like to record."
-}
-
-let errorNoPlatform = {
-	"en_US": "Please provide a platform for which to record your information for."
 }
 
 module.exports = command;

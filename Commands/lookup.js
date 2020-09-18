@@ -1,51 +1,24 @@
 const Command = require('./../Classes/Command.js');
-const Section = require('./../Classes/Section.js');
-const { studioName, footerText, expirationWarning } = require('./../localization.js');
+const { getString } = require('./../Localizations/localization.js');
 const { MessageEmbed, MessageMentions } = require('discord.js');
 const { millisecondsToHours } = require('./../helpers.js');
 
-var command = new Command(false, false, false);
-command.names = {
-	"en_US": ["lookup"]
-}
-
-command.summary = {
-	"en_US": "Look up someone else's information"
-}
-
-// Description set for README generation
-command.description = {
-	"en_US": "This command messages you the entries a given platform. You can limit your results to a set of users by mentioning them at the end of the command."
-}
-
-command.sections = {
-	"en_US": [
-		new Section("Look up a platform", "`@DirectoryBot lookup (platform)`"),
-		new Section("Filter for users", "`@DirectoryBot lookup (platform) (users)`")
-	]
-}
+var command = new Command("lookup", false, false, false);
 
 // Generate embed on call to add up-to-date list of platforms
-command.help = (avatarURL, state, locale, guildName) => {
-	let embed = new MessageEmbed().setAuthor(studioName[locale], `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `, `https://discord.gg/bcE3Syu `)
-		.setTitle(detailedHelpHeader[locale] + command.names[locale].join(', '))
-		.setDescription(command.description)
-		.setFooter(footerText[locale], avatarURL);
+command.help = (avatarURL, state, locale, guildName, module) => {
+	let embed = new MessageEmbed().setAuthor(getString(locale, "DirectoryBot", "studioName"), `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `, `https://discord.gg/bcE3Syu `)
+		.setTitle(getString(locale, "DirectoryBot", "directoryBotCommand") + getString(locale, module, "names").join(', '))
+		.setDescription(getString(locale, module, "description"))
+		.setFooter(getString(locale, "DirectoryBot", "footerText"), avatarURL);
 
-	command.sections.forEach(section => {
-		embed.addField(section.title, section.text);
-	})
-	embed.addField(detailedHelpPlatforms[locale], Object.keys(state.platformsList).join(', '));
+	let headers = getString(locale, module, "headers");
+	let texts = getString(locale, module, "texts");
+	for (var i = 0; i < headers.length; i++) {
+		embed.addField(headers[i], texts[i]);
+	}
 
-	return embed;
-}
-
-let detailedHelpHeader = {
-	"en_US": "DirectoryBot Command: "
-}
-
-let detailedHelpPlatforms = {
-	"en_US": "${guildName}'s Platforms"
+	return embed.addField(getString(locale, module, "detailedHelpPlatforms"), Object.keys(state.platformsList).join(', '));
 }
 
 command.execute = (receivedMessage, state, locale) => {
@@ -76,10 +49,10 @@ command.execute = (receivedMessage, state, locale) => {
 					.setAuthor(receivedMessage.guild.name, receivedMessage.guild.iconURL())
 					.setTitle(`${state.command}: ${platform}`)
 					.setDescription(text)
-					.setFooter(expirationWarning[locale].addVariables({ "time": millisecondsToHours(locale, state.infoLifetime)}), receivedMessage.client.user.avatarURL())
+					.setFooter(getString(locale, "DirectoryBot", "expirationWarning").addVariables({ "time": millisecondsToHours(locale, state.infoLifetime)}), receivedMessage.client.user.avatarURL())
 					.setTimestamp();
 				receivedMessage.author.send(embed).then(sentMessage => {
-					sentMessage.setToExpire(state, receivedMessage.guild.id, expiredMessage[locale].addVariables({
+					sentMessage.setToExpire(state, receivedMessage.guild.id, getString(locale, command.module, "expiredMessage").addVariables({
 						"server": receivedMessage.guild.name,
 						"platform": platform,
 						"term": state.platformsList[platform].term
@@ -87,7 +60,7 @@ command.execute = (receivedMessage, state, locale) => {
 				}).catch(console.error);
 			} else {
 				// Error Message
-				receivedMessage.author.send(errorMessageOverflow[locale].addVariables({
+				receivedMessage.author.send(getString(locale, command.module, "errorMessageOverflow").addVariables({
 					"server": receivedMessage.guild.name,
 					"platform": platform,
 					"term": state.platformsList[platform].term
@@ -95,32 +68,16 @@ command.execute = (receivedMessage, state, locale) => {
 			}
 		} else {
 			// Error Message
-			receivedMessage.author.send(errorBadPlatform[locale].addVariables({
+			receivedMessage.author.send(getString(locale, command.module, "errorBadPlatform").addVariables({
 				"platform": platform,
 				"server": receivedMessage.guild.name
 			})).catch(console.error);
 		}
 	} else {
 		// Error Message
-		receivedMessage.author.send(errorNoPlatform[locale])
+		receivedMessage.author.send(getString(locale, command.module, "errorNoPlatform"))
 			.catch(console.error);
 	}
-}
-
-let expiredMessage = {
-	"en_US": "Your lookup of ${server}'s ${platform} ${term}s has expired."
-}
-
-let errorMessageOverflow = {
-	"en_US": "Your lookup of ${server}'s ${platform} ${term} is too long for a single message, please limit your search (2,048 characters max)."
-}
-
-let errorBadPlatform = {
-	"en_US": "${platform} is not currently being tracked in ${server}."
-}
-
-let errorNoPlatform = {
-	"en_US": "Please provide a platform in which to look up information."
 }
 
 module.exports = command;

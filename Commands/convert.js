@@ -1,29 +1,9 @@
 const Command = require('./../Classes/Command.js');
-const Section = require('./../Classes/Section.js');
+const { getString } = require('./../Localizations/localization.js');
 const { DateTime, IANAZone, LocalZone } = require("luxon");
 var chrono = require('chrono-node');
 
-var command = new Command(false, false, true);
-command.names = {
-	"en_US": ["convert"]
-}
-
-command.summary = {
-	"en_US": "Convert a time to someone else's time zone or a given time zone"
-}
-
-command.description = {
-	"en_US": "This command calculates a time for a given user or time zone. DirectoryBot uses [tz database format](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) for time zones."
-}
-
-command.sections = {
-	"en_US": [
-		new Section("Convert a time to a user's time zone", "`@DirectoryBot convert (time) in (start time zone) for (user)`"),
-		new Section("Convert a time to a specified time zone", "`@DirectoryBot convert (time) in (start time zone) to (result time zone)`"),
-		new Section("\u200B", "If the starting timezone is omitted, the conversion will be attempted with the time zone you've recorded for the \"timezone\" platform.")
-	]
-}
-
+var command = new Command("convert", false, false, true);
 command.execute = (receivedMessage, state, locale) => {
 	// Calculates the time for a user or time zone, given an inital time zone
 	let mentionedGuildMembers = receivedMessage.mentions.members.array().filter(member => member.id != receivedMessage.client.user.id);
@@ -49,14 +29,14 @@ command.execute = (receivedMessage, state, locale) => {
 					resultTimezone = state.userDictionary[targetGuildMember.id].timezone.value;
 				} else {
 					// Error Message
-					receivedMessage.author.send(errorUserZoneMissing[locale].addVariables({
+					receivedMessage.author.send(getString(locale, command.module, "errorUserZoneMissing").addVariables({
 						"targetGuildMember": targetGuildMember,
 					})).catch(console.error);
 					return;
 				}
 			} else {
 				// Error Message
-				receivedMessage.author.send(errorNotAMember[locale].addVariables({
+				receivedMessage.author.send(getString(locale, command.module, "errorNotAMember").addVariables({
 					"targetGuildMember": targetGuildMember,
 					"server": receivedMessage.guild.toString()
 				})).catch(console.eror);
@@ -64,7 +44,7 @@ command.execute = (receivedMessage, state, locale) => {
 			}
 		} else {
 			// Error Message
-			receivedMessage.author.send(errorNoPlatform[locale].addVariables({
+			receivedMessage.author.send(getString(locale, command.module, "errorNoPlatform").addVariables({
 				"server": receivedMessage.guild.toString()
 			})).catch(console.error);
 			return;
@@ -101,14 +81,14 @@ command.execute = (receivedMessage, state, locale) => {
 					var convertedDateTime = dateTimeObject.setZone(resultTimezone);
 
 					if (mentionedGuildMembers.length == 1) {
-						receivedMessage.author.send(successUser[locale].addVariables({
+						receivedMessage.author.send(getString(locale, command.module, "successUser").addVariables({
 							"originalTime": timeText,
 							"originalTimeZone": startTimezone,
 							"destinationTime": convertedDateTime.toLocaleString(DateTime.TIME_24_SIMPLE),
 							"targetGuildMember": targetGuildMember
 						})).catch(console.error);
 					} else {
-						receivedMessage.author.send(successZone[locale].addVariables({
+						receivedMessage.author.send(getString(locale, command.module, "successZone").addVariables({
 							"originalTime": timeText,
 							"originalTimeZone": startTimezone,
 							"destinationTime": convertedDateTime.toLocaleString(DateTime.TIME_24_SIMPLE),
@@ -117,60 +97,24 @@ command.execute = (receivedMessage, state, locale) => {
 					}
 				} else {
 					// Error Message
-					receivedMessage.author.send(errorBadTime[locale])
+					receivedMessage.author.send(getString(locale, command.module, "errorBadTime"))
 						.catch(console.error);
 				}
 			} else {
 				// Error Message
-				receivedMessage.author.send(errorBadResultZone[locale])
+				receivedMessage.author.send(getString(locale, command.module, "errorBadResultZone"))
 					.catch(console.error);
 			}
 		} else {
 			// Error Message
-			receivedMessage.author.send(errorNoResultZone[locale])
+			receivedMessage.author.send(getString(locale, command.module, "errorNoResultZone"))
 				.catch(console.error);
 		}
 	} else {
 		// Error Message
-		receivedMessage.author.send(errorBadStartZone[locale])
+		receivedMessage.author.send(getString(locale, command.module, "errorBadStartZone"))
 			.catch(console.error);
 	}
-}
-
-let errorUserZoneMissing = {
-	"en_US": "Your time could not be converted. ${targetGuildMember} does not have a time zone recorded."
-}
-
-let errorNotAMember = {
-	"en_US": "Your time could not be converted. ${targetGuildMember} isn't a member of ${server}."
-}
-
-let errorNoPlatform = {
-	"en_US": "Your time could not be converted. ${server} does not seem to be tracking time zones."
-}
-
-let successUser = {
-	"en_US": "*${originalTime}in ${originalTimeZone}* is **${destinationTime} for ${targetGuildMember}**."
-}
-
-let successZone = {
-	"en_US": "*${originalTime}in ${originalTimeZone}* is **${destinationTime} in {destinationTimeZone}**."
-}
-
-let errorBadTime = {
-	"en_US": "The time you provided could not be parsed (remember to specify AM or PM)."
-}
-
-let errorBadResultZone = {
-	"en_US": "Please use the IANA timezone format for the **result timezone**. You can look up timezones here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones"
-}
-
-let errorNoResultZone = {
-	"en_US": "Please specify a result timezone for your `convert` command."
-}
-
-let errorBadStartZone = {
-	"en_US": "Please use the IANA timezone format for the **starting timezone**. You can look up timezones here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones"
 }
 
 module.exports = command;

@@ -3,7 +3,7 @@ const fs = require('fs');
 var encrypter = require('crypto-js');
 
 var helpers = require('./helpers.js');
-const { errorBadCommand } = require('./localization.js');
+const { getString } = require('./Localizations/localization.js');
 const commandDictionary = require(`./Commands/CommandsList.js`).commandDictionary;
 const Directory = require('./Classes/Directory.js');
 const FriendCode = require('./Classes/FriendCode.js');
@@ -221,7 +221,7 @@ client.on('message', (receivedMessage) => {
 					if (state.botManager || !commandDictionary[command].managerCommand) {
 						commandDictionary[command].execute(receivedMessage, state, locale);
 					} else {
-						receivedMessage.author.send(errorNotManager[locale].addVariables({
+						receivedMessage.author.send(getString(locale, "DirectoryBot", "errorNotManager").addVariables({
 							"role": state.managerRoleID ? ` or the @${receivedMessage.guild.roles.resolve(cachedGuild.managerRoleID).name} role` : ``,
 							"alias": command
 						})).catch(console.error);
@@ -232,14 +232,14 @@ client.on('message', (receivedMessage) => {
 						antiSpam.shift();
 					}, antiSpamInterval);
 				} else {
-					receivedMessage.author.send(errorTooManyCommands[locale].addVariables({
+					receivedMessage.author.send(getString(locale, "DirectoryBot", "errorTooManyCommands").addVariables({
 						"commandLimit": commandLimit,
 						"duration": helpers.millisecondsToHours(locale, antiSpamInterval, true, true),
 						"botNickname": client.user
 					})).catch(console.error);
 				}
 			} else {
-				receivedMessage.author.send(errorBadCommand[directory.locale].addVariables({
+				receivedMessage.author.send(getString(directory.locale, "DirectoryBot", "errorBadCommand").addVariables({
 					"commandName": command,
 					"botNickname": client.user
 				})).catch(console.error);
@@ -247,14 +247,6 @@ client.on('message', (receivedMessage) => {
 		}
 	}
 })
-
-let errorNotManager = {
-	"en_US": "You need a role with the administrator flag${role} to use the **${alias}** command."
-}
-
-let errorTooManyCommands = {
-	"en_US": "To prevent excessive messaging, users are unable to enter more than ${commandLimit} commands in ${duration}. You can use ${botNickname}` lookup (platform)` to look up everyone's information for the given platform at once."
-}
 
 
 client.on('guildCreate', (guild) => {

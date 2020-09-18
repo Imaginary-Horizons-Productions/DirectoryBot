@@ -1,26 +1,25 @@
 const Command = require('./../Classes/Command.js');
-const Section = require('./../Classes/Section.js');
-const { supportedLocales } = require('./../localization.js');
+const { getString, supportedLocales } = require('./../Localizations/localization.js');
 const { guildLocales } = require('./../helpers.js');
 
-var command = new Command(true, false, false);
-command.names = {
-	"en_US": ['setlocale', 'setlanguage']
-}
+var command = new Command("setlocale", true, false, false);
 
-command.summary = {
-	"en_US": "Sets the locale (language) for the server"
-}
+// Overload help command to add supported locales to field on execute
+command.help = (clientUser, state, locale, guildName, module) => {
+	let embed = new MessageEmbed().setAuthor(getString(locale, "DirectoryBot", "studioName"), `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `, `https://discord.gg/bcE3Syu `)
+		.setTitle(getString(locale, "DirectoryBot", "directoryBotCommand") + getString(locale, command.module, "names").join(', '))
+		.setDescription(getString(locale, command.module, "description"))
+		.setFooter(getString(locale, "DirectoryBot", "footerText"), clientUser.displayAvatarURL());
 
-command.description = {
-	"en_US": "This command sets the default locale (language) for the server it is used in (default: en_US)."
-}
+	let headers = getString(locale, command.module, "headers");
+	let texts = getString(locale, command.module, "texts");
+	for (var i = 0; i < headers.length; i++) {
+		embed.addField(headers[i], texts[i].addVariables({
+			"supportedLocales": supportedLocales.join(', ')
+		}));
+	}
 
-command.sections = {
-	"en_US": [
-		new Section("Set the default locale", "`@DirectoryBot ${commandAlias} setlocale (locale)`"),
-		new Section("Contributing localization", "If you'd like to contribute to localizing, check out our [GitHub](https://github.com/Imaginary-Horizons-Productions/DirectoryBot). Currently supported: " + supportedLocales.join(', '))
-	]
+	return embed;
 }
 
 command.execute = (receivedMessage, state, locale) => {
@@ -29,33 +28,21 @@ command.execute = (receivedMessage, state, locale) => {
 	if (localeInput) {
 		if (supportedLocales.includes(localeInput)) {
 			guildLocales[receivedMessage.guild.id] = localeInput;
-			receivedMessage.channel.send(successMessage[locale].addVariables({
+			receivedMessage.channel.send(getString(locale, command.module, "successMessage").addVariables({
 				"locale": state.messageArray[0]
 			})).catch(console.error);
 		} else {
 			// Error Message
-			receivedMessage.author.send(errorBadLocale[locale].addVariables({
+			receivedMessage.author.send(getString(locale, command.module, "errorBadLocale").addVariables({
 				"supportedLocales": supportedLocales.join(', ')
 			})).catch(console.error);
 		}
 	} else {
 		// Error Message
-		receivedMessage.author.send(errorNoLocale[locale].addVariables({
+		receivedMessage.author.send(getString(locale, command.module, "errorNoLocale").addVariables({
 			"server": receivedMessage.guild.name
 		})).catch(console.error);
 	}
-}
-
-let successMessage = {
-	"en_US": "The default locale has been set to: ${locale}"
-}
-
-let errorBadLocale = {
-	"en_US": "The locale you provided is not currently supported. Currently supported: ${supportedLocales}\n\nIf you'd like to contribute to localizing, check out our GitHub (https://github.com/Imaginary-Horizons-Productions/DirectoryBot)."
-}
-
-let errorNoLocale = {
-	"en_US": "Please provide a locale to set as the default for ${server}."
 }
 
 module.exports = command;

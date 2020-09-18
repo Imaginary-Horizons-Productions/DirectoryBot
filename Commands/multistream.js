@@ -1,24 +1,7 @@
 const Command = require('./../Classes/Command.js');
-const Section = require('./../Classes/Section.js');
+const { getString } = require('./../Localizations/localization.js');
 
-var command = new Command(false, false, false);
-command.names = {
-	"en_US": ["multistream", "multitwitch"]
-}
-
-command.summary = {
-	"en_US": "Generate a multistream link for the given users"
-}
-
-command.description = {
-	"en_US": "This command generates a link to watch multiple streams simultaneously. Optionally, you can enter the layout number last if you want to specify that."
-}
-
-command.sections = {
-	"en_US": [
-		new Section("Generate multistream link", "`@DirectoryBot multistream (users) (layout)`")
-	]
-}
+var command = new Command("multistream", false, false, false);
 
 command.execute = (receivedMessage, state, metrics) => {
 	// Generates a url for viewing multiple streams simultaneously (Supported: Twitch)
@@ -45,42 +28,26 @@ command.execute = (receivedMessage, state, metrics) => {
 			}
 
 			if (missingUsers.length < mentionedGuildMembers.length) {
-				returnText += multistreamSuccess[locale] + url;
+				returnText += getString(locale, command.module, "multistreamSuccess") + url;
 			}
 
 			if (missingUsers.length > 0) {
-				returnText += errorMissingUsers[locale] + missingUsers.join(", ");
+				returnText += getString(locale, command.module, "errorMissingUsers") + missingUsers.join(", ");
 			}
 
 			receivedMessage.author.send(returnText)
 				.catch(console.error);
 		} else {
 			// Error Message
-			receivedMessage.author.send(errorNotEnoughUsers[locale])
+			receivedMessage.author.send(getString(locale, command.module, "errorNotEnoughUsers"))
 				.catch(console.error);
 		}
 	} else {
 		// Error Message
-		receivedMessage.author.send(errorNoPlatform.addVariables({
+		receivedMessage.author.send(getString(locale, command.module, "errorNoPlatform").addVariables({
 			"server": receivedMessage.guild.name
 		})).catch(console.error);
 	}
-}
-
-let multistreamSuccess = {
-	"en_US": "Here's the multistream link: "
-}
-
-let errorMissingUsers = {
-	"en_US": "\n\nThe following users don't have stream info recorded: "
-}
-
-let errorNotEnoughUsers = {
-	"en_US": "Please mention at least two users to generate a multistream link for."
-}
-
-let errorNoPlatform = {
-	"en_US": "Your multistream command could not be completed. ${server} does not seem to be tracking stream information."
 }
 
 module.exports = command;

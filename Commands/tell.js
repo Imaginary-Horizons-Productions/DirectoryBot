@@ -1,27 +1,9 @@
 const Command = require('./../Classes/Command.js');
-const Section = require('./../Classes/Section.js');
-const { expirationWarning } = require('./../localization.js');
+const { getString } = require('./../Localizations/localization.js');
 const { MessageMentions } = require('discord.js');
 const { millisecondsToHours } = require('./../helpers.js');
 
-var command = new Command(false, false, false);
-command.names = {
-	"en_US": ["tell", "send"]
-}
-
-command.summary = {
-	"en_US": "Have DirectoryBot send someone your information"
-}
-
-command.description = {
-	"en_US": "This command sends your information on the given platform to the given user."
-}
-
-command.sections = {
-	"en_US": [
-		new Section("Tell someone your data", "`@DirectoryBot tell (platform) (user)`")
-	]
-}
+var command = new Command("tell", false, false, false);
 
 command.execute = (receivedMessage, state, locale) => {
 	// Sends the user's given information to another user, which later expires
@@ -34,7 +16,7 @@ command.execute = (receivedMessage, state, locale) => {
 			if (Object.keys(state.platformsList).includes(platform)) {
 				if (state.userDictionary[receivedMessage.author.id] && state.userDictionary[receivedMessage.author.id][platform].value) {
 					let sender = receivedMessage.author;
-					var senderInfo = successMessageRecipient[locale].addVariables({
+					var senderInfo = getString(locale, command.module, "successMessageRecipient").addVariables({
 						"sender": sender,
 						"server": receivedMessage.guild.name,
 						"possessivepronoun": state.userDictionary[receivedMessage.author.id].possessivepronoun && state.userDictionary[receivedMessage.author.id]["possessivepronoun"].value ? state.userDictionary[receivedMessage.author.id].possessivepronoun.value : 'their',
@@ -44,8 +26,8 @@ command.execute = (receivedMessage, state, locale) => {
 
 					mentionedGuildMembers.forEach(recipient => {
 						if (!recipient.bot) {
-							recipient.send(senderInfo + dataMessage[locale].addVariables({ "value": state.userDictionary[receivedMessage.author.id][platform].value }) + expirationWarning[locale].addVariables({ "time": millisecondsToHours(locale, state.infoLifetime) })).then(sentMessage => {
-								sentMessage.setToExpire(state, receivedMessage.guild.id, senderInfo + expiredMessage[locale].addVariables({
+							recipient.send(senderInfo + getString(locale, command.module, "dataMessage").addVariables({ "value": state.userDictionary[receivedMessage.author.id][platform].value }) + expirationWarning[locale].addVariables({ "time": millisecondsToHours(locale, state.infoLifetime) })).then(sentMessage => {
+								sentMessage.setToExpire(state, receivedMessage.guild.id, senderInfo + getString(locale, command.module, "expiredMessage").addVariables({
 									"botNickname": receivedMessage.client.user,
 									"sender": sender,
 									"platform": platform
@@ -53,14 +35,14 @@ command.execute = (receivedMessage, state, locale) => {
 							}).catch(console.error);
 						}
 					})
-					receivedMessage.author.send(successMessageSender[locale].addVariables({
+					receivedMessage.author.send(getString(locale, command.module, "successMessageSender").addVariables({
 						"platform": platform,
 						"term": state.platformsList[platform].term,
 						"mentionedGuildMembers": mentionedGuildMembers.toString()
 					})).catch(console.error);
 				} else {
 					// Error Message
-					receivedMessage.author.send(errorNoData[locale].addVariables({
+					receivedMessage.author.send(getString(locale, command.module, "errorNoData").addVariables({
 						"platform": platform,
 						"term": state.platformsList[platform].term,
 						"server": receivedMessage.guild.name
@@ -68,54 +50,22 @@ command.execute = (receivedMessage, state, locale) => {
 				}
 			} else {
 				// Error Message
-				receivedMessage.author.send(errorBadPlatform[locale].addVariables({
+				receivedMessage.author.send(getString(locale, command.module, "errorBadPlatform").addVariables({
 					"platform": platform,
 					"server": receivedMessage.guild.name
 				})).catch(console.error);
 			}
 		} else {
 			// Error Message
-			receivedMessage.author.send(errorNoPlatform[locale])
+			receivedMessage.author.send(getString(locale, command.module, "errorNoPlatform"))
 				.catch(console.error);
 		}
 	} else {
 		// Error Message
-		receivedMessage.author.send(errorNoRecipient[locale].addVariables({
+		receivedMessage.author.send(getString(locale, command.module, "errorNoRecipient").addVariables({
 			"server": receivedMessage.guild.name
 		})).catch(console.error);
 	}
-}
-
-let successMessageRecipient = {
-	"en_US": "${sender} from ${server} has sent you ${possessivepronoun} ${platform} ${term}"
-}
-
-let dataMessage = {
-	"en_US": ". It is:\n\t${value}\n\n"
-}
-
-let expiredMessage = {
-	"en_US": ", but it has expired. You can look it up again with ${botNickname}` lookup `${sender}` ${platform}`."
-}
-
-let successMessageSender = {
-	"en_US": "Your ${platform} ${term} has been sent to ${mentionedGuildMembers}."
-}
-
-let errorNoData = {
-	"en_US": "You have not recorded a ${platform} ${term} in ${server}."
-}
-
-let errorBadPlatform = {
-	"en_US": "${platform} is not currently being tracked in ${server}."
-}
-
-let errorNoPlatform = {
-	"en_US": "Please provide the platform of the information to send."
-}
-
-let errorNoRecipient = {
-	"en_US": "Please mention someone in ${server} to send your information to."
 }
 
 module.exports = command;

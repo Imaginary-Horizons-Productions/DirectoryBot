@@ -11,8 +11,8 @@
 		"hours": "hour(s)",
 		"minutes": "minute(s)",
 		"seconds": "second(s)",
-		"platformsMessage": "${guild}'s tracked platforms are: ",
-		"platformRole": "(role: ${role})",
+		"platformsMessage": "${guild}'s platforms are: ",
+		"platformRole": "(role: @${role})",
 		"directoryBotCommand": "DirectoryBot Command: "
 	},
 	"platformPossessivePronoun": {
@@ -153,8 +153,7 @@
 		"headers": [ "Look up a platform", "Filter for users" ],
 		"texts": [ "`@DirectoryBot lookup (platform)`", "`@DirectoryBot lookup (platform) (users)`" ],
 		"platformRoleTitle": "Platform Role",
-		"platformRoleText": "Users who record a ${term} for this platform will be givne the @${role} role.",
-		"detailedHelpPlatforms": "${guildName}'s Platforms",
+		"platformRoleText": "Users who record a ${term} for this platform will be given the @${role} role.",
 		"expiredMessage": "Your lookup of ${server}'s ${platform} ${term}s has expired.",
 		"errorMessageOverflow": "Your lookup of ${server}'s ${platform} ${term} is too long for a single message, please limit your search (2,048 characters max).",
 		"errorBadPlatform": "${platform} is not currently being tracked in ${server}.",

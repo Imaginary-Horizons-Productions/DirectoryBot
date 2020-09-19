@@ -13,6 +13,7 @@ command.execute = (receivedMessage, state, locale) => {
 		if (state.platformsList[platform]) {
 			if (role) {
 				state.platformsList[platform].roleID = role.id;
+				state.platformsList[platform].roleName = role.name;
 				Object.keys(state.userDictionary).forEach(userID => {
 					receivedMessage.guild.members.resolve(userID).addPlatformRoles(state);
 				})
@@ -29,6 +30,7 @@ command.execute = (receivedMessage, state, locale) => {
 						}
 					})
 					state.platformsList[platform].roleID = "";
+					state.platformsList[platform].roleName = "";
 				}
 				receivedMessage.channel.send(getString(locale, command.module, "clearMessage").addVariables({
 					"platform": platform

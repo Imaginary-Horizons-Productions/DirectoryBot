@@ -1,7 +1,7 @@
 const Command = require('./../Classes/Command.js');
 const { getString } = require('./../Localizations/localization.js');
 const { MessageEmbed, MessageMentions } = require('discord.js');
-const { millisecondsToHours } = require('./../helpers.js');
+const { millisecondsToHours, platformsBuilder } = require('./../helpers.js');
 
 var command = new Command("lookup", false, false, false);
 
@@ -18,7 +18,7 @@ command.help = (avatarURL, state, locale, guildName, module) => {
 		embed.addField(headers[i], texts[i]);
 	}
 
-	return embed.addField(getString(locale, module, "detailedHelpPlatforms"), Object.keys(state.platformsList).join(', '));
+	return embed.addField('\u200B', platformsBuilder(guildName, state.platformsList, locale));
 }
 
 command.execute = (receivedMessage, state, locale) => {
@@ -52,10 +52,10 @@ command.execute = (receivedMessage, state, locale) => {
 					.setFooter(getString(locale, "DirectoryBot", "expirationWarning").addVariables({ "time": millisecondsToHours(locale, state.infoLifetime)}), receivedMessage.client.user.avatarURL())
 					.setTimestamp();
 
-					if (state.platformsList[platform].roleID) {
+					if (state.platformsList[platform].roleName) {
 						embed.addField(getString(locale, command.module, "platformRoleTitle"), getString(locale, command.module, "platformRoleText").addVariables({
 							"term": state.platformsList[platform].term,
-							"role": receivedMessage.guild.roles.resolve(state.platformsList[platform].roleID).name
+							"role": state.platformsList[platform].roleName
 						}))
 					}
 		

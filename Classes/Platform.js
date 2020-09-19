@@ -4,5 +4,6 @@ module.exports = class Platform {
 		this.term = termInput;
 		this.description = descriptionInput;
 		this.roleID;
+		this.roleName;
 	}
 }

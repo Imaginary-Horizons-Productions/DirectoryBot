@@ -92,9 +92,15 @@ exports.millisecondsToHours = function (locale, milliseconds, showMinutes = fals
 }
 
 exports.platformsBuilder = function (guildName, platformsList, locale) {
-	let listedPlatforms = Object.keys(platformsList).join(', ');
+	let platformTexts = [];
+	for (const platform of Object.keys(platformsList)) {
+		platformTexts.push(`${platform}${platformsList[platform].roleName ? " " + getString(locale, "DirectoryBot", "platformRole").addVariables({
+			"role": platformsList[platform].roleName
+		}) : ''}`);
+	}
 
-	return platformsMessage[locale].addVariables({
+	let listedPlatforms = platformTexts.join(', ');
+	return getString(locale, "DirectoryBot", "platformsMessage").addVariables({
 		"guild": guildName
 	}) + listedPlatforms;
 }

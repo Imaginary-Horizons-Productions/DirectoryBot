@@ -259,6 +259,15 @@ client.on('error', (error) => {
 })
 
 
+client.on('roleUpdate', (oldRole, newRole) => {
+	Object.values(helpers.platformsList).forEach(platform => {
+		if (platform.roleID == newRole.id) {
+			platform.roleName = newRole.name;
+		}
+	})
+})
+
+
 function login() {
 	fs.readFile(`encryptionKey.txt`, `utf8`, (error, keyInput) => {
 		if (error) {

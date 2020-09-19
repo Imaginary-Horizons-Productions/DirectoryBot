@@ -13,7 +13,7 @@ fs.readFile("./../../encryptionKey.txt", 'utf8', (error, keyInput) => {
                 let guildIDList = JSON.parse(encrypter.AES.decrypt(guildsListInput, keyInput).toString(encrypter.enc.Utf8))["list"];
                 var platformsList = {};
                 guildIDList.forEach(guildID => {
-                    platformsList[guildID] = "en_US";
+                    platformsList[guildID] = "en-US";
                 });
             }
 

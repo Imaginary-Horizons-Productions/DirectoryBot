@@ -112,11 +112,11 @@ This command sets the manager role, which allows users to use manager-only comma
 #### Clear manager role
 `@DirectoryBot setmanagerrole`
 ### setlocale, setlanguage
-This command sets the default locale (language) for the server it is used in (default: en_US).
+This command sets the default locale (language) for the server it is used in (default: en-US).
 #### Set the default locale
 `@DirectoryBot ${commandAlias} setlocale (locale)`
 #### Contributing localization
-If you'd like to contribute to localizing, check out our [GitHub](https://github.com/Imaginary-Horizons-Productions/DirectoryBot). Currently supported: en_US
+If you'd like to contribute to localizing, check out our [GitHub](https://github.com/Imaginary-Horizons-Productions/DirectoryBot). Currently supported: en-US
 ### datalifetime, infolifetime
 This command sets the number of hours before responses from the `lookup` and `send` commands expire (decimals allowed).
 #### Set the data lifetime

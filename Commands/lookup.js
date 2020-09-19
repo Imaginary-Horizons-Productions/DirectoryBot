@@ -51,6 +51,14 @@ command.execute = (receivedMessage, state, locale) => {
 					.setDescription(text)
 					.setFooter(getString(locale, "DirectoryBot", "expirationWarning").addVariables({ "time": millisecondsToHours(locale, state.infoLifetime)}), receivedMessage.client.user.avatarURL())
 					.setTimestamp();
+
+					if (state.platformsList[platform].roleID) {
+						embed.addField(getString(locale, command.module, "platformRoleTitle"), getString(locale, command.module, "platformRoleText").addVariables({
+							"term": state.platformsList[platform].term,
+							"role": receivedMessage.guild.roles.resolve(state.platformsList[platform].roleID).name
+						}))
+					}
+		
 				receivedMessage.author.send(embed).then(sentMessage => {
 					sentMessage.setToExpire(state, receivedMessage.guild.id, getString(locale, command.module, "expiredMessage").addVariables({
 						"server": receivedMessage.guild.name,

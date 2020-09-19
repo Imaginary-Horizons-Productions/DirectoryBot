@@ -1,6 +1,6 @@
 const fs = require('fs');
 
-exports.supportedLocales = ['en_US'];
+exports.supportedLocales = ['en-US', 'en-GB', 'zh-CN', 'zh-TW', 'cs', 'da', 'nl', 'fr', 'de', 'el', 'hu', 'it', 'ja', 'ko', 'no', 'pl', 'pt-BR', 'ru', 'es-ES', 'sv-SE', 'tr', 'bg', 'uk', 'fi', 'hr', 'ro', 'lt'];
 
 const localesFiles = fs.readdirSync('./Localizations').filter(file => exports.supportedLocales.includes(file.slice(0, -5)));
 exports.dictionary = {};
@@ -18,8 +18,8 @@ exports.getString = function (locale, module, property) {
 				// If property exists, return it
 				return exports.dictionary[locale][module][property];
 			} else {
-				// If property does not exist, provide en_US and solicit localization help
-				return exports.dictionary.en_US[module][property] + `\nLocalization for the above text is missing. You can contribute it here: https://github.com/Imaginary-Horizons-Productions/DirectoryBot `;
+				// If property does not exist, provide en-US and solicit localization help
+				return exports.dictionary[en-US][module][property] + `\nLocalization for the above text is missing. You can contribute it here: https://github.com/Imaginary-Horizons-Productions/DirectoryBot `;
 			}
 		} else {
 			// If module is missing, error
@@ -27,8 +27,8 @@ exports.getString = function (locale, module, property) {
 			return `Localization for **${locale} ${module}** is missing. You can contribute it here: https://github.com/Imaginary-Horizons-Productions/DirectoryBot `
 		}
 	} else {
-		// If locale is not supported, assume property exists for en_US
+		// If locale is not supported, assume property exists for en-US
 		console.error(`Locale ${locale} is missing.`);
-		return exports.dictionary.en_US[module][property];
+		return exports.dictionary["en-US"][module][property];
 	}
 }

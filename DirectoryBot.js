@@ -135,49 +135,16 @@ client.on('ready', () => {
 	client.user.setActivity(`@DirectoryBot help`, { type: "LISTENING" }).catch(console.error);
 })
 
-//TODO going live notification
-/*
- * We don't currently have a URL (which is required for the Twitch API subscriber model).
- * When we get to implementing this after having a URL, we should consider using a helper module
- * like the one at https://openbase.io/js/twitch-webhook
- */
-// exports.twitchSubscriber = function() {
-//     //create server to send request to twitch API
-//     https.get(``, response => {
-
-//     }).on('error', console.error);
-//     //create server to handle response
-//     //save the way that we handle the subscription
-// }
-
-// exports.twitchUnsubscriber = function() {
-//     //create server to send request to twitch API
-//     https.get(``, response => {
-
-//     }).on('error', console.error);
-//     //create server to handle response
-//     //remove saved information on how we handle the subscription
-// }
-
-// twitchEventHandler = https.createServer((request, response) => {
-//     const {hearders, method, url} = request;
-
-// });
-
 client.on('message', (receivedMessage) => {
 	if (receivedMessage.author == client.user || !receivedMessage.guild) {
 		return;
 	}
 
-	if (!helpers.directories[receivedMessage.guild.id]) {
-		guildCreate(receivedMessage.guild.id);
+	if (!(helpers.directories[receivedMessage.guild.id] && Object.keys(helpers.guildLocales).includes(receivedMessage.guild.id))) {
+		guildCreate(receivedMessage.guild.id, receivedMessage.guild.preferredLocale);
 	}
 
 	if (receivedMessage.mentions.users.has(client.user.id) || receivedMessage.mentions.roles.has(helpers.directories[receivedMessage.guild.id].permissionsRoleID)) {
-		if (!Object.keys(helpers.guildLocales).includes(receivedMessage.guild.id)) {
-			guildCreate(receivedMessage.guild.id);
-		}
-
 		var messageArray = receivedMessage.content.split(" ").filter(element => {
 			return element != "";
 		});
@@ -251,7 +218,7 @@ client.on('message', (receivedMessage) => {
 
 client.on('guildCreate', (guild) => {
 	console.log(`Added to server: ${guild.name}`);
-	guildCreate(guild.id);
+	guildCreate(guild.id, guild.preferredLocale);
 })
 
 
@@ -271,7 +238,7 @@ client.on('guildMemberRemove', (member) => {
 			helpers.saveObject(guildID, cachedGuild.userDictionary, 'userDictionary.txt');
 		}
 	} else {
-		guildCreate(guildID);
+		guildCreate(guildID, member.guild.preferredLocale);
 	}
 })
 
@@ -325,8 +292,21 @@ function login() {
 
 
 function guildCreate(guildID, locale) {
-	helpers.guildLocales[guildID] = locale;
-	helpers.directories[guildID] = new Directory(locale);
+	if (locale) {
+		if (!helpers.guildLocales[guildID]) {
+			helpers.guildLocales[guildID] = locale;
+		}
+		if (!helpers.directories[guildID]) {
+			helpers.directories[guildID] = new Directory(locale);	
+		}
+	} else {
+		if (!helpers.guildLocales[guildID]) {
+			helpers.guildLocales[guildID] = 'en-US';
+		}
+		if (!helpers.directories[guildID]) {
+			helpers.directories[guildID] = new Directory('en-US');	
+		}
+	}
 
 	helpers.saveObject(guildID, helpers.directories[guildID].managerRoleID, 'managerRole.txt');
 	helpers.saveObject(guildID, helpers.directories[guildID].permissionsRoleID, 'permissionsRole.txt');

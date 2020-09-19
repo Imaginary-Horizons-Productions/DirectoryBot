@@ -22,12 +22,12 @@ If you leave a server, DirectoryBot will delete all of your data. If you kick Di
 `;
 
 commandSets.forEach(commandSet => {
-	text += `## ${getString("en_US", commandSet.module, "title")}\n${getString("en_US", commandSet.module, "description")}\n`;
+	text += `## ${getString("en-US", commandSet.module, "title")}\n${getString("en-US", commandSet.module, "description")}\n`;
 	commandSet.fileNames.forEach(filename => {
 		const command = filename.slice(0, -5);
-		text += `### ${getString("en_US", command, "names").join(', ')}\n${getString("en_US", command, "description")}\n`;
-		let headers = getString("en_US", command, "headers");
-		let texts = getString("en_US", command, "texts");
+		text += `### ${getString("en-US", command, "names").join(', ')}\n${getString("en-US", command, "description")}\n`;
+		let headers = getString("en-US", command, "headers");
+		let texts = getString("en-US", command, "texts");
 		for (var i = 0; i < headers.length; i++) {
 			text += `#### ${headers[i]}\n${texts[i]}\n`;
 		}

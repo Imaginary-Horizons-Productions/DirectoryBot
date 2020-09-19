@@ -2,7 +2,7 @@ const Platform = require('./Platform.js');
 const { getString } = require('./../Localizations/localization.js');
 
 module.exports = class Directory {
-	constructor(localeInput = "en_US", userDictionaryInput = {}, platformsListInput = {}, managerRoleInput = "", permissionsRoleInput = "", infoLifetimeInput = 3600000) {
+	constructor(localeInput = "en-US", userDictionaryInput = {}, platformsListInput = {}, managerRoleInput = "", permissionsRoleInput = "", infoLifetimeInput = 3600000) {
 		this.locale = localeInput;
 		this.userDictionary = userDictionaryInput;
 		this.platformsList = platformsListInput;

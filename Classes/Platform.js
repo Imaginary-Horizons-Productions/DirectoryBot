@@ -3,6 +3,6 @@ module.exports = class Platform {
 	constructor(termInput = "username", descriptionInput = "") {
 		this.term = termInput;
 		this.description = descriptionInput;
-		this.role;
+		this.roleID;
 	}
 }

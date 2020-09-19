@@ -1,5 +1,6 @@
 const { MessageEmbed, Message, GuildMember } = require('discord.js');
 const fs = require('fs');
+const { getString } = require('./Localizations/localization.js');
 var encrypter = require('crypto-js');
 
 // guildID: locale
@@ -66,24 +67,24 @@ GuildMember.prototype.addPlatformRoles = function (directory) {
 }
 
 exports.millisecondsToHours = function (locale, milliseconds, showMinutes = false, showSeconds = false) {
-	var text = lessThanAnHour[locale];
+	var text = getString(locale, "DirectoryBot", "lessThanAnHour");
 	if (milliseconds >= 3600000) {
-		text = `${Math.floor(milliseconds / 3600000)} ` + hours[locale];
+		text = `${Math.floor(milliseconds / 3600000)} ` +  getString(locale, "DirectoryBot", "hours");
 	}
 
 	if (showMinutes && Math.floor(milliseconds % 3600000 / 60000) > 0) {
-		if (text == lessThanAnHour[locale]) {
-			text = `${Math.floor(milliseconds % 3600000 / 60000)} ` + minutes[locale];
+		if (text ==  getString(locale, "DirectoryBot", "lessThanAnHour")) {
+			text = `${Math.floor(milliseconds % 3600000 / 60000)} ` +  getString(locale, "DirectoryBot", "minutes");
 		} else {
-			text += ` ${and[locale]} ${Math.floor(milliseconds % 3600000 / 60000)} ` + minutes[locale];
+			text += ` ${ getString(locale, "DirectoryBot", "and")} ${Math.floor(milliseconds % 3600000 / 60000)} ` +  getString(locale, "DirectoryBot", "minutes");
 		}
 	}
 
 	if (showSeconds && Math.floor(milliseconds % 60000 / 1000) > 0) {
-		if (text == lessThanAnHour[locale]) {
-			text = `${Math.floor(milliseconds % 60000 / 1000)} ` + seconds[locale];
+		if (text ==  getString(locale, "DirectoryBot", "lessThanAnHour")) {
+			text = `${Math.floor(milliseconds % 60000 / 1000)} ` +  getString(locale, "DirectoryBot", "seconds");
 		} else {
-			text += ` ${and[locale]} ${Math.floor(milliseconds % 60000 / 1000)} ` + seconds[locale];
+			text += ` ${ getString(locale, "DirectoryBot", "and")} ${Math.floor(milliseconds % 60000 / 1000)} ` +  getString(locale, "DirectoryBot", "seconds");
 		}
 	}
 

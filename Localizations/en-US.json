@@ -12,6 +12,7 @@
 		"minutes": "minute(s)",
 		"seconds": "second(s)",
 		"platformsMessage": "${guild}'s tracked platforms are: ",
+		"platformRole": "(role: ${role})",
 		"directoryBotCommand": "DirectoryBot Command: "
 	},
 	"platformPossessivePronoun": {
@@ -151,7 +152,8 @@
 		"description": "This command messages you the entries a given platform. You can limit your results to a set of users by mentioning them at the end of the command.",
 		"headers": [ "Look up a platform", "Filter for users" ],
 		"texts": [ "`@DirectoryBot lookup (platform)`", "`@DirectoryBot lookup (platform) (users)`" ],
-		"detailedHelpHeader": "DirectoryBot Command: ",
+		"platformRoleTitle": "Platform Role",
+		"platformRoleText": "Users who record a ${term} for this platform will be givne the @${role} role.",
 		"detailedHelpPlatforms": "${guildName}'s Platforms",
 		"expiredMessage": "Your lookup of ${server}'s ${platform} ${term}s has expired.",
 		"errorMessageOverflow": "Your lookup of ${server}'s ${platform} ${term} is too long for a single message, please limit your search (2,048 characters max).",
@@ -238,7 +240,7 @@
 	"setlocale": {
 		"names": [ "setlocale", "setlanguage" ],
 		"summary": "Sets the locale (language) for the server",
-		"description": "This command sets the default locale (language) for the server it is used in (default: en_US).",
+		"description": "This command sets the default locale (language) for the server it is used in (default: en-US).",
 		"headers": [ "Set the default locale", "Contributing localization" ],
 		"texts": [ "`@DirectoryBot ${commandAlias} setlocale (locale)`", "If you'd like to contribute to localizing, check out our [GitHub](https://github.com/Imaginary-Horizons-Productions/DirectoryBot). Currently supported: ${supportedLocales}" ],
 		"successMessage": "The default locale has been set to: ${locale}",

@@ -26,7 +26,7 @@ command.execute = (receivedMessage, state, locale) => {
 
 					mentionedGuildMembers.forEach(recipient => {
 						if (!recipient.bot) {
-							recipient.send(senderInfo + getString(locale, command.module, "dataMessage").addVariables({ "value": state.userDictionary[receivedMessage.author.id][platform].value }) + expirationWarning[locale].addVariables({ "time": millisecondsToHours(locale, state.infoLifetime) })).then(sentMessage => {
+							recipient.send(senderInfo + getString(locale, command.module, "dataMessage").addVariables({ "value": state.userDictionary[receivedMessage.author.id][platform].value }) + getString(locale, "DirectoryBot", "expirationWarning").addVariables({ "time": millisecondsToHours(locale, state.infoLifetime) })).then(sentMessage => {
 								sentMessage.setToExpire(state, receivedMessage.guild.id, senderInfo + getString(locale, command.module, "expiredMessage").addVariables({
 									"botNickname": receivedMessage.client.user,
 									"sender": sender,

@@ -19,7 +19,7 @@ exports.getString = function (locale, module, property) {
 				return exports.dictionary[locale][module][property];
 			} else {
 				// If property does not exist, provide en-US and solicit localization help
-				return exports.dictionary[en-US][module][property] + `\nLocalization for the above text is missing. You can contribute it here: https://github.com/Imaginary-Horizons-Productions/DirectoryBot `;
+				return exports.dictionary["en-US"][module][property] + `\nLocalization for the above text is missing. You can contribute it here: https://github.com/Imaginary-Horizons-Productions/DirectoryBot `;
 			}
 		} else {
 			// If module is missing, error

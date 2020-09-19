@@ -5,7 +5,7 @@ const { saveObject } = require('./../helpers.js');
 
 var command = new Command("record", false, false, false);
 
-command.execute = (receivedMessage, state, metrics) => {
+command.execute = (receivedMessage, state, locale) => {
 	// Records a user's information for a given platform
 	var platform = state.messageArray[0];
 	if (platform) {

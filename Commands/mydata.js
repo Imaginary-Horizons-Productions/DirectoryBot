@@ -14,9 +14,7 @@ command.execute = (receivedMessage, state, locale) => {
 	let text = '';
 	let dictionary = state.userDictionary[receivedMessage.author.id];
 	Object.keys(dictionary).forEach(platform => {
-		if (dictionary[platform].value) {
-			text += '\n' + platform + ': ' + dictionary[platform].value;
-		}
+		text += `\n${platform}: ${dictionary[platform].value ? dictionary[platform].value : ''}`;
 	})
 	let observers = [];
 	let dreamers = [];

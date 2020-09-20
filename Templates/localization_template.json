@@ -1,6 +1,5 @@
 {
 	"DirectoryBot": {
-		"studioName": "",
 		"footerText": "",
 		"errorBadCommand": "",
 		"errorNotManager": "",
@@ -61,6 +60,8 @@
 		"description": "",
 		"headers": [],
 		"texts": [],
+		"in": "",
+		"for": "",
 		"errorUserZoneMissing": "",
 		"errorNotAMember": "",
 		"errorNoPlatform": "",
@@ -77,6 +78,7 @@
 		"description": "",
 		"headers": [],
 		"texts": [],
+		"in": "",
 		"successMessage": "",
 		"errorBadZone": "",
 		"errorNoZone": ""

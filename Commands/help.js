@@ -33,7 +33,7 @@ command.execute = (receivedMessage, state, locale) => {
 		commandSets.forEach(commandSet => {
 			if (state.botManager || !commandSet.managerCommand) {
 				var embed = new MessageEmbed().setColor('6b81eb')
-					.setAuthor(getString(locale, "DirectoryBot", "studioName"), `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `, `https://discord.gg/bcE3Syu `)
+					.setAuthor("Imaginary Horizons Productions", `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `, `https://discord.gg/bcE3Syu `)
 					.setTitle(getString(locale, commandSet.module, "title"))
 					.setDescription(getString(locale, commandSet.module, "description"))
 					.setFooter(getString(locale, "DirectoryBot", "footerText"), receivedMessage.client.user.displayAvatarURL())

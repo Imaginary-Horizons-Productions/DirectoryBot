@@ -1,6 +1,5 @@
 {
 	"DirectoryBot": {
-		"studioName": "Imaginary Horizons Productions",
 		"footerText": "Support development with \"@DirectoryBot support\"",
 		"errorBadCommand": "**${commandName}** isn't a command. Please check for typos or use ${botNickname}` help`.",
 		"errorNotManager": "You need a role with the administrator flag${role} to use the **${alias}** command.",
@@ -62,6 +61,8 @@
 		"description": "This command calculates a time for a given user or time zone. DirectoryBot uses [tz database format](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) for time zones.",
 		"headers": [ "Convert a time to a user's time zone", "Convert a time to a specified time zone", "\u200B" ],
 		"texts": [ "`@DirectoryBot convert (time) in (start time zone) for (user)`", "`@DirectoryBot convert (time) in (start time zone) to (result time zone)`", "If the starting timezone is omitted, the conversion will be attempted with the time zone you've recorded for the \"timezone\" platform." ],
+		"in": "in",
+		"for": "for",
 		"errorUserZoneMissing": "Your time could not be converted. ${targetGuildMember} does not have a time zone recorded.",
 		"errorNotAMember": "Your time could not be converted. ${targetGuildMember} isn't a member of ${server}.",
 		"errorNoPlatform": "Your time could not be converted. ${server} does not seem to be tracking time zones.",
@@ -78,6 +79,7 @@
 		"description": "This command calculates the amount of time until a given time. DirectoryBot uses [tz database format](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) for time zones.",
 		"headers": [ "Count down to a time" ],
 		"texts": [ "`@DirectoryBot countdown (time) in (time zone)`\nIf the time zone is omitted, the countdown will be attempted with the time zone you've recorded for the \"timezone\" platform, then the server's local time zone failing that." ],
+		"in": "in",
 		"successMessage": "*${startTime} in ${startTimezone}* is about **${time}** from now.",
 		"errorBadZone": "The time zone you entered could not be parsed. Remember to use the tz database format for time zones: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones",
 		"errorNoZone": "The time you provided could not be parsed (remember to specify AM or PM)."

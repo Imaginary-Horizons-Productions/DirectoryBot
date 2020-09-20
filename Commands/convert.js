@@ -17,10 +17,10 @@ command.execute = (receivedMessage, state, locale) => {
 			if (targetGuildMember) {
 				if (state.userDictionary[targetGuildMember.id] && state.userDictionary[targetGuildMember.id].timezone) {
 					for (var i = 0; i < state.messageArray.length; i++) {
-						if (state.messageArray[i] == "in") {
+						if (state.messageArray[i] == getString(locale, command.module, "in")) {
 							startTimezone = state.messageArray[i + 1]
 							i++;
-						} else if (state.messageArray[i] == "for") {
+						} else if (state.messageArray[i] == getString(locale, command.module, "for")) {
 							break;
 						} else {
 							timeText += state.messageArray[i] + " ";

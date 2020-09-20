@@ -10,7 +10,7 @@ module.exports = class Command {
 	}
 
 	help(avatarURL, state, locale, guildName, module) {
-		let embed = new MessageEmbed().setAuthor(getString(locale, "DirectoryBot", "studioName"), `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `, `https://discord.gg/bcE3Syu `)
+		let embed = new MessageEmbed().setAuthor("Imaginary Horizons Productions", `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `, `https://discord.gg/bcE3Syu `)
 			.setTitle(getString(locale, "DirectoryBot", "directoryBotCommand") + getString(locale, module, "names").join(', '))
 			.setDescription(getString(locale, module, "description"))
 			.setFooter(getString(locale, "DirectoryBot", "footerText"), avatarURL);

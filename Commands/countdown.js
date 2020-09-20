@@ -11,7 +11,7 @@ command.execute = (receivedMessage, state, locale) => {
 	var startTimezone = "";
 	var timeText = "";
 	for (var i = 0; i < state.messageArray.length; i++) {
-		if (state.messageArray[i] == "in") {
+		if (state.messageArray[i] == getString(locale, command.module, "in")) {
 			startTimezone = state.messageArray[i + 1]
 			i++;
 		} else {

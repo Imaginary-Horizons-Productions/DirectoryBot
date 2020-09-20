@@ -19,7 +19,7 @@ module.exports = command;
 
 function supportBuilder(footerURL, locale) {
 	return new MessageEmbed().setColor('6b81eb')
-		.setAuthor(getString(locale, "DirectoryBot", "studioName"), `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `, `https://discord.gg/bcE3Syu `)
+		.setAuthor("Imaginary Horizons Productions", `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `, `https://discord.gg/bcE3Syu `)
 		.setTitle(getString(locale, command.module, "supportingDirectoryBot"))
 		.setDescription(getString(locale, command.module, "embedDescription"))
 		.addField(getString(locale, command.module, "vote"), getString(locale, command.module, "voteText"))

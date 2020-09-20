@@ -6,7 +6,7 @@ var command = new Command("setlocale", true, false, false);
 
 // Overload help command to add supported locales to field on execute
 command.help = (clientUser, state, locale, guildName, module) => {
-	let embed = new MessageEmbed().setAuthor(getString(locale, "DirectoryBot", "studioName"), `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `, `https://discord.gg/bcE3Syu `)
+	let embed = new MessageEmbed().setAuthor("Imaginary Horizons Productions", `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `, `https://discord.gg/bcE3Syu `)
 		.setTitle(getString(locale, "DirectoryBot", "directoryBotCommand") + getString(locale, command.module, "names").join(', '))
 		.setDescription(getString(locale, command.module, "description"))
 		.setFooter(getString(locale, "DirectoryBot", "footerText"), clientUser.displayAvatarURL());

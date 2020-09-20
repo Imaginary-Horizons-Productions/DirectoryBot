@@ -10,9 +10,9 @@ exports.guildLocales = {};
 exports.directories = {};
 
 String.prototype.addVariables = function (variables) {
-	let buffer = this;
+	var buffer = this;
 	Object.keys(variables).forEach(key => {
-		buffer = buffer.replace(`\${${key}}`, variables[key]);
+		buffer = buffer.split(`\${${key}}`).join(variables[key]);
 	})
 
 	return buffer;

@@ -9,7 +9,7 @@ command.execute = (receivedMessage, state, locale) => {
 		var searchTerm = state.messageArray[0];
 		var reply = getString(locale, command.module, "successMessage").addVariables({
 			"searchTerm": searchTerm,
-			"server": recievedMessage.guild.name
+			"server": receivedMessage.guild.name
 		});
 		Object.keys(state.userDictionary).forEach(userID => {
 			for (var platform in state.userDictionary[userID]) {

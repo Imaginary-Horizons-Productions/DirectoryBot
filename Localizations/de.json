@@ -1,0 +1,327 @@
+{
+	"DirectoryBot": {
+		"footerText": "",
+		"errorBadCommand": "**${commandName}** ist kein bekannter Befehl. Bitte überprüfen sie auf Rechtschreibfehler oder benutzen sie ${botNickname}` Hilfe`.",
+		"errorNotManager": "Sie benötigen eine Rolle mit dem Administrator flag${role} um den **${alias}** Befehl zu benutzen.",
+		"errorTooManyCommands": "Um ein Übermaß and Nachrichten zu verhindern, sind Benutzer/innen nicht in der Lage mehr als ${commandLimit} Befehle innerhalb von ${duration} einzugeben. Sie können ${botNickname}` lookup (platform)` nutzen um die Informationen aller für eine gegebene Platform einzusehen.",
+		"expirationWarning": "Diese Nachricht wird in ungefähr ${time} ungültig werden.",
+		"lessThanAnHour": "Weniger als eine Stunde",
+		"and": "und",
+		"hours": "Stunde(n)",
+		"minutes": "Minute(n)",
+		"seconds": "Sekunde(n)",
+		"platformsMessage": "${guild} Platformen sind: ",
+		"directoryBotCommand": "DirectoryBot Befehl: "
+	},
+	"platformPossessivePronoun": {
+		"token": "",
+		"term": "Einstellung",
+		"description": "Die Possessivpronomen des Benutzers/der Benutzerin für die Nutzung innerhalb von Bot Nachrichten."
+	},
+	"platformTimeZone": {
+		"token": "",
+		"term": "Standard",
+		"description": "Die Zeitzone des Benutzers/der Benutzerin, für die Nutzung innerhab von Zeitzonen Konvertierung."
+	},
+	"platformStream": {
+		"token": "",
+		"term": "Benutzername",
+		"description": "Der Stream Nutzername des Benutzers/der Benutzerin. Derzeit unterstützt: Twitch"
+	},
+	"generalCommands": {
+		"title": "Allgemeine Befehle",
+		"description": "Um mit DirectoryBot zu interagieren, erwähnen Sie den Bot und geben dann einen dieser Befehle ein:"
+	},
+	"timeZoneCommands": {
+		"title": "Zeitzonen Befehle",
+		"description": "Das Zeit Modul beinhaltet Befehle zum konvertieren von Zeitangaben für verschiedene Zeitzonen, welche vom Nutzer in der \"timezone\" Plattform gespeichert werden kann."
+	},
+	"streamCommands": {
+		"title": "Stream Befehle",
+		"description": "Das streaming Modul enthält Befehle um Streamer/innen zu unterstützen."
+	},
+	"configCommands": {
+		"title": "Konfigurations Befehle",
+		"description": "Die folgenden Befehle können nur von Mitgliedern genutzt werden die in Discord Administrator Privilegien haben oder die Rolle haben die durch `setmanagerrole` festgelegt wurde."
+	},
+	"block": {
+		"names": ["Blockieren"],
+		"summary": "Sie haben die Blockierung von ${blockedPerson} von ${server} aufgehoben.",
+		"description": "Dieser Befehl verhindert das ein/e Benutzer/in daran auf ihre Daten zuzugreifen. Heben Sie die Blockierung auf indem Sie den Befehl noch einmal verwenden.",
+		"headers": ["Blockiere eine/n Benutzer/in"],
+		"texts": ["`@DirectoryBot blockiere (user)`"],
+		"blockMessage": "Sie haben ${blockedPerson} von ${server} blockiert. ${blockedPerson} hat somit keinen Zugriff mehr auf ihre Daten.",
+		"unblockMessage": "Sie haben die Blockierung von ${blockedPerson} von ${server} aufgehoben.",
+		"errorNoMention": "Bitte erwähnen sie eine/n Benutzer/in um ihn/sie zu blockieren."
+	},
+	"convert": {
+		"names": [],
+		"summary": "Konvertiere eine Zeit in die Zeitzone von jemanden oder einer beliebigen Zeitzone",
+		"description": "Dieser Befehl berechnet eine Zeit für einen angegebenen Benutzer oder eine Zeitzone. DirectoryBot verwendet [tz database format](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) für Zeitzonen.",
+		"headers": ["Konvertiere eine Zeit in die Zeitzone eines Benutzers/einer Benutzerin", "Konvertiere eine Zeit in eine bestimmte Zeitzone", "\u200B"],
+		"texts": ["`@DirectoryBot konvertiere (time) in (start time zone) für (user)`", "", ""],
+		"in": "in",
+		"for": "für",
+		"errorUserZoneMissing": "",
+		"errorNotAMember": "",
+		"errorNoPlatform": "",
+		"successUser": "",
+		"successZone": "",
+		"errorBadTime": "",
+		"errorBadResultZone": "",
+		"errorNoResultZone": "",
+		"errorBadStartZone": ""
+	},
+	"countdown": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"in": "",
+		"successMessage": "",
+		"errorBadZone": "",
+		"errorNoZone": ""
+	},
+	"credits": {
+		"names": [],
+		"summary": "Version informationen und Mitwirkende (die Nutzung von `help` bei diesem Befehl benutz den Befehl)t",
+		"description": "Version informationen und Mitwirkende. Die Nutzung von `help` bei diesem Befehl benutzt den Befehl.",
+		"headers": ["Verwendung"],
+		"texts": [],
+		"creditsTitle": "",
+		"designAndEngineering": "Design & Entwicklung",
+		"engineering": "Entwicklung",
+		"art": "Kunst",
+		"localization": "Lokalisierung",
+		"patronsDescription": "",
+		"observerTier": "",
+		"dreamerTier": "",
+		"explorerTier": "",
+		"cartographerTier": "",
+		"archivistTier": "",
+		"grandArchivistTier": ""
+	},
+	"datalifetime": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"successMessage": "",
+		"errorBadNumber": ""
+	},
+	"delete": {
+		"names": [],
+		"summary": "",
+		"description": "Löschen sie ihre Daten",
+		"headers": ["", ""],
+		"texts": ["", "Löschen sie die Daten eines/einer anderen Benutzers/Benutzerin"],
+		"deleteNotice": "",
+		"successOther": "",
+		"errorNoDataOther": "",
+		"errorNotManager": "",
+		"errorBadMember": "Diese Person ist kein Mitglied von ${server}.",
+		"successSelf": "",
+		"errorNoDataSelf": "",
+		"errorBadPlatform": "",
+		"errorNoPlatform": ""
+	},
+	"help": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"errorNotManager": ""
+	},
+	"import": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"successHeader": "",
+		"errorNoSourceData": "",
+		"errorNoSourceBot": "",
+		"errorSameGuild": "",
+		"errorBadSource": ""
+	},
+	"lookup": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"detailedHelpHeader": "",
+		"detailedHelpPlatforms": "",
+		"expiredMessage": "",
+		"errorMessageOverflow": "",
+		"errorBadPlatform": "",
+		"errorNoPlatform": ""
+	},
+	"managerrole": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"successMessage": "",
+		"clearMessage": ""
+	},
+	"multistream": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"multistreamSuccess": "",
+		"errorMissingUsers": "",
+		"errorNotEnoughUsers": "",
+		"errorNoPlatform": ""
+	},
+	"mydata": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"yourData": "",
+		"errorMessageOverflow": ""
+	},
+	"newplatform": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"successMessage": "",
+		"errorDupePlatform": "",
+		"errorNoUserNamedPlatforms": "",
+		"errorNoName": ""
+	},
+	"permissionsrole": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"successMessage": "",
+		"clearMessage": ""
+	},
+	"platforms": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": []
+	},
+	"record": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"successMessage": "",
+		"errorBadPlatform": "",
+		"errorNoData": "",
+		"errorNoPlatform": ""
+	},
+	"removeplatform": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"successMessage": "",
+		"errorBadPlatform": "",
+		"errorNoPlatform": ""
+	},
+	"setlocale": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"successMessage": "",
+		"errorBadLocale": "",
+		"errorNoLocale": ""
+	},
+	"setplatformrole": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"successMessage": "",
+		"clearMessage": "",
+		"errorBadPlatform": "",
+		"errorNoPlatform": ""
+	},
+	"setplatformterm": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"successMessage": "",
+		"errorBadPlatform": "",
+		"errorNoTerm": "",
+		"errorNoPlatform": ""
+	},
+	"shoutout": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"successMessage": "",
+		"errorNoData": "",
+		"errorBadUser": "",
+		"errorNoPlatform": ""
+	},
+	"support": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"supportingDirectoryBot": "",
+		"embedDescription": "",
+		"vote": "",
+		"voteText": "",
+		"refer": "",
+		"referText": "",
+		"contribute": "",
+		"contributeText": "",
+		"social": "",
+		"socialText": "",
+		"patron": "",
+		"patronText": "",
+		"thanks": ""
+	},
+	"tell": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"successMessageRecipient": "",
+		"dataMessage": "",
+		"expiredMessage": "",
+		"successMessageSender": "",
+		"errorNoData": "",
+		"errorBadPlatform": "",
+		"errorNoPlatform": "",
+		"errorNoRecipient": ""
+	},
+	"whois": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"successMessage": "",
+		"errorNoUsername": ""
+	}
+}

@@ -25,7 +25,7 @@ function creditsBuilder(footerURL, locale) {
 		.addField(getString(locale, command.module, "designAndEngineering"), `Nathaniel Tseng ( <@106122478715150336> | [Twitter](https://twitter.com/Archainis) )`)
 		.addField(getString(locale, command.module, "engineering"), `Lucas Ensign ( <@112785244733628416> | [Twitter](https://twitter.com/SillySalamndr) )`)
 		.addField(getString(locale, command.module, "art"), `Angela Lee ( [Website](https://www.angelasylee.com/) )`)
-		.addField(getString(locale, command.module, "localization"), `Mnemmy (fr)`)
+		.addField(getString(locale, command.module, "localization"), `Mnemmy (fr), towoko (de), Lille (de)`))
 		.addField(`\u200B`, getString(locale, "credits", "patronsDescription"))
 		.addField(getString(locale, command.module, "cartographerTier"), `Ralph Beish`, false)
 		.addField(getString(locale, command.module, "explorerTier"), `Eric Hu`, false)

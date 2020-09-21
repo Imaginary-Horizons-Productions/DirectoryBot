@@ -1,6 +1,6 @@
 const Command = require('./../Classes/Command.js');
 const { getString } = require('./../Localizations/localization.js');
-const { saveBlockDictionary } = require('./../helpers.js');
+const { saveObject } = require('./../helpers.js');
 
 var command = new Command("block", false, false, false);
 
@@ -26,7 +26,7 @@ command.execute = (receivedMessage, state, locale) => {
 				"server": receivedMessage.guild
 			})).catch(console.error);
 		}
-		saveBlockDictionary(receivedMessage.guild.id, state.blockDictionary);
+		saveObject(receivedMessage.guild.id, state.blockDictionary, 'blockDictionary.txt');
 	} else {
 		// Error Message
 		receivedMessage.author.send(errorNoMention[locale])

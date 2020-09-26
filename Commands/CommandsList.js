@@ -33,7 +33,11 @@ Object.keys(dictionary).forEach(locale => {
 			let searchableAlias = alias.toLowerCase();
 			if (commandDictionary[searchableAlias]) {
 				// Set locale to null (so that the command handling defaults to guild locale)
-				commandDictionary[searchableAlias].locale = null;
+				commandDictionary[searchableAlias] = Object.create(command, {
+					locale: {
+						value: null
+					}
+				});
 			} else {
 				// Add overload to command dictionary
 				commandDictionary[searchableAlias] = Object.create(command, {

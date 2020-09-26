@@ -15,17 +15,17 @@
 		"directoryBotCommand": "DirectoryBot Command: "
 	},
 	"platformPossessivePronoun": {
-		"token": "possessivepronoun",
+		"token": "PossessivePronoun",
 		"term": "setting",
 		"description": "The user's possessive pronoun, for use in bot messaging."
 	},
 	"platformTimeZone": {
-		"token": "timezone",
+		"token": "TimeZone",
 		"term": "default",
 		"description": "The user's time zone, for use in time conversions."
 	},
 	"platformStream": {
-		"token": "stream",
+		"token": "Stream",
 		"term": "username",
 		"description": "The user's stream username. Currently supported: Twitch"
 	},
@@ -46,7 +46,7 @@
 		"description": "The following commands can only be used by server members who have Discord administrator privledges or the role determined by `setmanagerrole`."
 	},
 	"block": {
-		"names": [ "block" ],
+		"names": [ "Block" ],
 		"summary": "Prevents a user from looking up your data",
 		"description": "This command prevents the mentioned user from accessing your data. Unblock a user by using it on the user again.",
 		"headers": [ "Block a user" ],
@@ -56,7 +56,7 @@
 		"errorNoMention": "Please mention a user to block."
 	},
 	"convert": {
-		"names": [ "convert" ],
+		"names": [ "Convert" ],
 		"summary": "Convert a time to someone else's time zone or a given time zone",
 		"description": "This command calculates a time for a given user or time zone. DirectoryBot uses [tz database format](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) for time zones.",
 		"headers": [ "Convert a time to a user's time zone", "Convert a time to a specified time zone", "\u200B" ],
@@ -74,7 +74,7 @@
 		"errorBadStartZone": "Please use the IANA timezone format for the **starting timezone**. You can look up timezones here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones"
 	},
 	"countdown": {
-		"names": [ "countdown" ],
+		"names": [ "Countdown" ],
 		"summary": "How long until the given time",
 		"description": "This command calculates the amount of time until a given time. DirectoryBot uses [tz database format](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) for time zones.",
 		"headers": [ "Count down to a time" ],
@@ -85,7 +85,7 @@
 		"errorNoZone": "The time you provided could not be parsed (remember to specify AM or PM)."
 	},
 	"credits": {
-		"names": [ "credits", "creditz", "about" ],
+		"names": [ "Credits", "Creditz", "About" ],
 		"summary": "Version info and contributors (using `help` on this command uses the command)",
 		"description": "This command presents version info and contributors. Using `help` on this command uses the command.",
 		"headers": [ "Usage" ],
@@ -104,7 +104,7 @@
 		"grandArchivistTier": "Grand Archivist Tier"
 	},
 	"datalifetime": {
-		"names": [ "datalifetime", "infolifetime" ],
+		"names": [ "DataLifetime", "InfoLifetime" ],
 		"summary": "Sets the lifetime (in hours) for expiring messages",
 		"description": "This command sets the number of hours before responses from the `lookup` and `send` commands expire (decimals allowed).",
 		"headers": [ "Set the data lifetime" ],
@@ -113,7 +113,7 @@
 		"errorBadNumber": "The number for your `${alias}` command could not be parsed."
 	},
 	"delete": {
-		"names": [ "delete", "remove", "clear" ],
+		"names": [ "Delete", "Remove", "Clear" ],
 		"summary": "Remove your information for a platform",
 		"description": "This command removes your data for the given platform. Bot managers can use this command to remove information for other users.",
 		"headers": [ "Delete your data", "Delete another user's data" ],
@@ -129,7 +129,7 @@
 		"errorNoPlatform": "Please provide the platform of the information to delete."
 	},
 	"help": {
-		"names": [ "help", "commands" ],
+		"names": [ "Help", "Commands" ],
 		"summary": "You can type `@DirectoryBot help` followed by a command for more detailed information on that command",
 		"description": "This command provides details on DirectoryBot commands by either listing all commands available to you, or providing details on a specific command.",
 		"headers": [ "List all commands", "Get details on a specific command" ],
@@ -137,7 +137,7 @@
 		"errorNotManager": "You need a role with the administrator flag${role} to view manager commands."
 	},
 	"import": {
-		"names": [ "import" ],
+		"names": [ "Import" ],
 		"summary": "Copies your information from a source server to a destination server",
 		"description": "This command copies your data for matching platforms from a given server.",
 		"headers": [ "Importing data" ],
@@ -149,7 +149,7 @@
 		"errorBadSource": "Source server for import could not be parsed."
 	},
 	"lookup": {
-		"names": [ "lookup" ],
+		"names": [ "Lookup" ],
 		"summary": "Look up someone else's information",
 		"description": "This command messages you the entries a given platform. You can limit your results to a set of users by mentioning them at the end of the command.",
 		"headers": [ "Look up a platform", "Filter for users" ],
@@ -162,7 +162,7 @@
 		"errorNoPlatform": "Please provide a platform in which to look up information."
 	},
 	"managerrole": {
-		"names": [ "managerrole", "setmanagerrole" ],
+		"names": [ "ManagerRole", "SetManagerRole" ],
 		"summary": "Sets the bot manager role which allows the use of manager commands",
 		"description": "This command sets the manager role, which allows users to use manager-only commands without server administrator privilege. If no role is given, the set role will be cleared.",
 		"headers": [ "Set a role", "Clear manager role" ],
@@ -171,7 +171,7 @@
 		"clearMessage": "The ${botNickname} manager role has been cleared."
 	},
 	"multistream": {
-		"names": [ "multistream", "multitwitch" ],
+		"names": [ "Multistream", "Multitwitch" ],
 		"summary": "Generate a multistream link for the given users",
 		"description": "This command generates a link to watch multiple streams simultaneously. Optionally, you can enter the layout number last if you want to specify that.",
 		"headers": [ "Generate multistream link" ],
@@ -182,7 +182,7 @@
 		"errorNoPlatform": "Your multistream command could not be completed. ${server} does not seem to be tracking stream information."
 	},
 	"mydata": {
-		"names": [ "mydata", "myentries" ],
+		"names": [ "MyData", "MyEntries" ],
 		"summary": "Lists all your platform entries",
 		"description": "This command sends you a private message with all the information you've recorded.",
 		"headers": [ "Usage" ],
@@ -191,7 +191,7 @@
 		"errorMessageOverflow": "Your `${alias}` message is too long to fit in a single Discord message. Please try the `lookup` command instead."
 	},
 	"newplatform": {
-		"names": [ "newplatform", "addplatform" ],
+		"names": [ "NewPlatform", "AddPlatform" ],
 		"summary": "Setup a new game/service for users to record or retrieve information for",
 		"description": "This command sets up a new game/service for users to record and retrieve information.",
 		"headers": [ "Create a new platform" ],
@@ -202,7 +202,7 @@
 		"errorNoName": "Please provide a name for the new platform."
 	},
 	"permissionsrole": {
-		"names": [ "permissionsrole", "setpermissionsrole" ],
+		"names": [ "PermissionsRole", "SetPermissionsRole" ],
 		"summary": "Sets the bot permissions role; not mentioning a role clears the setting",
 		"description": "This command updates the permissions role. This allows DirectoryBot to interpret accidental mentions of that role as command messages.",
 		"headers": [ "Set the permissions role", "Clear the permissions role" ],
@@ -211,14 +211,14 @@
 		"clearMessage": "The permissions role has been cleared."
 	},
 	"platforms": {
-		"names": [ "platforms" ],
+		"names": [ "Platforms" ],
 		"summary": "List the games/services DirectoryBot can be used to record or retrieve information for (using help on this command uses the command)",
 		"description": "This command lists the games/services DirectoryBot can be used to record or retrieve information for. Using `help` on this command uses the command.",
 		"headers": [ "Usage" ],
 		"texts": [ "`@DirectoryBot platforms`" ]
 	},
 	"record": {
-		"names": [ "record", "log", "add" ],
+		"names": [ "Record", "Log", "Add" ],
 		"summary": "Record your information for a platform",
 		"description": "This command adds your information for given platform so people can ask the bot for it.",
 		"headers": [ "Recording data" ],
@@ -229,7 +229,7 @@
 		"errorNoPlatform": "Please provide a platform for which to record your information for."
 	},
 	"removeplatform": {
-		"names": [ "removeplatform" ],
+		"names": [ "RemovePlatform" ],
 		"summary": "Stop recording and distributing user information for a game/service",
 		"description": "This command removes a platform from DirectoryBot's list of platforms for the server.",
 		"headers": [ "Remove a platform" ],
@@ -239,7 +239,7 @@
 		"errorNoPlatform": "Please provide a platform to remove."
 	},
 	"setlocale": {
-		"names": [ "setlocale", "setlanguage" ],
+		"names": [ "SetLocale", "SetLanguage" ],
 		"summary": "Sets the locale (language) for the server",
 		"description": "This command sets the default locale (language) for the server it is used in (default: en-US).",
 		"headers": [ "Set the default locale", "Contributing localization" ],
@@ -249,7 +249,7 @@
 		"errorNoLocale": "Please provide a locale to set as the default for ${server}."
 	},
 	"setplatformrole": {
-		"names": [ "setplatformrole" ],
+		"names": [ "SetPlatformRole" ],
 		"summary": "Automatically give a role to users who record information for a platform",
 		"description": "This command associates the given role and platform. Anyone who records information for that platform will be automatically given the associated role. Using the command without mentioning a role clears the set role for the platform.",
 		"headers": [ "Set a platform role", "Clear a platform role" ],
@@ -260,7 +260,7 @@
 		"errorNoPlatform": "Please provide a platform to set a role for."
 	},
 	"setplatformterm": {
-		"names": [ "setplatformterm", "changeplatformterm" ],
+		"names": [ "SetPlatformTerm", "ChangePlatformTerm" ],
 		"summary": "Changes what DirectoryBot calls information for the given platform",
 		"description": "This command changes what DirectoryBot calls data for the given platform (default is \"username\").",
 		"headers": [ "Change a platform's data term" ],
@@ -271,7 +271,7 @@
 		"errorNoPlatform": "Please provide a platform for which to change the term."
 	},
 	"shoutout": {
-		"names": [ "shoutout", "streamshoutout" ],
+		"names": [ "Shoutout", "StreamShoutout" ],
 		"summary": "Have DirectoryBot post someone's stream information",
 		"description": "This command posts the given user's stream information.",
 		"headers": [ "Give a stream shoutout" ],
@@ -282,7 +282,7 @@
 		"errorNoPlatform": "Your `shoutout` command could not be completed. ${server} does not seem to have a \"stream\" platform."
 	},
 	"support": {
-		"names": [ "support" ],
+		"names": [ "Support" ],
 		"summary": "Lists the ways to support development of DirectoryBot",
 		"description": "This command lists easy ways to support DirectoryBot development. Using `help` on this command uses the command.",
 		"headers": [ "Usage" ],
@@ -302,7 +302,7 @@
 		"thanks": "Thanks in advanced!"
 	},
 	"tell": {
-		"names": [ "tell", "send" ],
+		"names": [ "Tell", "Send" ],
 		"summary": "Have DirectoryBot send someone your information",
 		"description": "This command sends your information on the given platform to the given user.",
 		"headers": [ "Tell someone your data" ],
@@ -317,7 +317,7 @@
 		"errorNoRecipient": "Please mention someone in ${server} to send your information to."
 	},
 	"whois": {
-		"names": [ "whois" ],
+		"names": [ "WhoIs" ],
 		"summary": "Ask DirectoryBot who a certain username belongs to",
 		"description": "This command checks if anyone uses the given username and private messages you the result.",
 		"headers": [ "Look up a username" ],

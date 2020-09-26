@@ -30,12 +30,13 @@ Object.keys(dictionary).forEach(locale => {
 	for (const file of commandFiles) {
 		const command = require(`./${file}`);
 		getString(locale, file.slice(0, -3), "names").forEach(alias => {
-			if (commandDictionary[alias]) {
+			let searchableAlias = alias.toLowerCase();
+			if (commandDictionary[searchableAlias]) {
 				// Set locale to null (so that the command handling defaults to guild locale)
-				commandDictionary[alias].locale = null;
+				commandDictionary[searchableAlias].locale = null;
 			} else {
 				// Add overload to command dictionary
-				commandDictionary[alias] = Object.create(command, {
+				commandDictionary[searchableAlias] = Object.create(command, {
 					locale: {
 						value: locale
 					}

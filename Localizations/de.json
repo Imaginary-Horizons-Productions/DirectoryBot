@@ -14,17 +14,17 @@
 		"directoryBotCommand": "DirectoryBot Befehl: "
 	},
 	"platformPossessivePronoun": {
-		"token": "",
+		"token": "Possessivpronomen",
 		"term": "Einstellung",
 		"description": "Die Possessivpronomen des Benutzers/der Benutzerin für die Nutzung innerhalb von Bot Nachrichten."
 	},
 	"platformTimeZone": {
-		"token": "",
+		"token": "Zeitzone",
 		"term": "Standard",
 		"description": "Die Zeitzone des Benutzers/der Benutzerin, für die Nutzung innerhab von Zeitzonen Konvertierung."
 	},
 	"platformStream": {
-		"token": "",
+		"token": "Stream",
 		"term": "Benutzername",
 		"description": "Der Stream Nutzername des Benutzers/der Benutzerin. Derzeit unterstützt: Twitch"
 	},
@@ -55,7 +55,7 @@
 		"errorNoMention": "Bitte erwähnen sie eine/n Benutzer/in um ihn/sie zu blockieren."
 	},
 	"convert": {
-		"names": [],
+		"names": ["Konvertierung"],
 		"summary": "Konvertiere eine Zeit in die Zeitzone von jemanden oder einer beliebigen Zeitzone",
 		"description": "Dieser Befehl berechnet eine Zeit für einen angegebenen Benutzer oder eine Zeitzone. DirectoryBot verwendet [tz database format](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) für Zeitzonen.",
 		"headers": ["Konvertiere eine Zeit in die Zeitzone eines Benutzers/einer Benutzerin", "Konvertiere eine Zeit in eine bestimmte Zeitzone", "\u200B"],
@@ -73,7 +73,7 @@
 		"errorBadStartZone": ""
 	},
 	"countdown": {
-		"names": [],
+		"names": ["Countdown"],
 		"summary": "",
 		"description": "",
 		"headers": [],
@@ -84,7 +84,7 @@
 		"errorNoZone": ""
 	},
 	"credits": {
-		"names": [],
+		"names": ["Credits", "überuns"],
 		"summary": "Version informationen und Mitwirkende (die Nutzung von `help` bei diesem Befehl benutz den Befehl)t",
 		"description": "Version informationen und Mitwirkende. Die Nutzung von `help` bei diesem Befehl benutzt den Befehl.",
 		"headers": ["Verwendung"],
@@ -128,7 +128,7 @@
 		"errorNoPlatform": ""
 	},
 	"help": {
-		"names": [],
+		"names": ["Hilfe", "Befehle"],
 		"summary": "",
 		"description": "",
 		"headers": [],

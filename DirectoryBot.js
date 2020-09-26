@@ -333,7 +333,7 @@ function guildDelete(guildID) {
         }
     })
 
-    participatingGuildsIDs.splice(participatingGuildsIDs.indexOf(guildID), 1);
+	delete helpers.guildLocales[guildID];
 	saveGuildLocales();
 }
 

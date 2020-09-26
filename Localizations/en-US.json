@@ -67,7 +67,7 @@
 		"errorNotAMember": "Your time could not be converted. ${targetGuildMember} isn't a member of ${server}.",
 		"errorNoPlatform": "Your time could not be converted. ${server} does not seem to be tracking time zones.",
 		"successUser": "*${originalTime}in ${originalTimeZone}* is **${destinationTime} for ${targetGuildMember}**.",
-		"successZone": "*${originalTime}in ${originalTimeZone}* is **${destinationTime} in {destinationTimeZone}**.",
+		"successZone": "*${originalTime}in ${originalTimeZone}* is **${destinationTime} in ${destinationTimeZone}**.",
 		"errorBadTime": "The time you provided could not be parsed (remember to specify AM or PM).",
 		"errorBadResultZone": "Please use the IANA timezone format for the **result timezone**. You can look up timezones here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones",
 		"errorNoResultZone": "Please specify a result timezone for your `convert` command.",

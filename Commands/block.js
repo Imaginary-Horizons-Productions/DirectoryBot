@@ -29,7 +29,7 @@ command.execute = (receivedMessage, state, locale) => {
 		saveObject(receivedMessage.guild.id, state.blockDictionary, 'blockDictionary.txt');
 	} else {
 		// Error Message
-		receivedMessage.author.send(errorNoMention[locale])
+		receivedMessage.author.send(getString(locale, command.module, "errorNoMention"))
 			.catch(console.error);
 	}
 }

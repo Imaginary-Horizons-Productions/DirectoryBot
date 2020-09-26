@@ -71,7 +71,7 @@ command.execute = (receivedMessage, state, locale) => {
 						"term": state.platformsList[platform].term,
 						"server": receivedMessage.guild
 					})).catch(console.error);
-					saveObject(receivedMessage.guild.id, state.userDictionary);
+					saveObject(receivedMessage.guild.id, state.userDictionary, 'userDictionary.txt');
 				} else {
 					// Error Message
 					receivedMessage.author.send(getString(locale, "delete", "errorNoDataSelf").addVariables({

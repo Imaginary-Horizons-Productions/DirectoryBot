@@ -12,7 +12,7 @@ command.execute = (receivedMessage, state, locale) => {
 	var resultTimezone;
 
 	if (mentionedGuildMembers.length == 1) {
-		let targetGuildMember = mentionedGuildMembers[0];
+		var targetGuildMember = mentionedGuildMembers[0];
 		if (Object.keys(state.platformsList).includes("timezone")) {
 			if (targetGuildMember) {
 				if (state.userDictionary[targetGuildMember.id] && state.userDictionary[targetGuildMember.id].timezone) {
@@ -80,7 +80,7 @@ command.execute = (receivedMessage, state, locale) => {
 					var dateTimeObject = DateTime.fromJSDate(inputTime[0].start.date(), { zone: startTimezone });
 					var convertedDateTime = dateTimeObject.setZone(resultTimezone);
 
-					if (mentionedGuildMembers.length == 1) {
+					if (targetGuildMember) {
 						receivedMessage.author.send(getString(locale, command.module, "successUser").addVariables({
 							"originalTime": timeText,
 							"originalTimeZone": startTimezone,

@@ -49,8 +49,8 @@
 		"names": [ "Block" ],
 		"summary": "Prevents a user from looking up your data",
 		"description": "This command prevents the mentioned user from accessing your data. Unblock a user by using it on the user again.",
-		"headers": [ "Block a user" ],
-		"texts": [ "`@DirectoryBot block (user)`" ],
+		"headers": [ "Block a user", "Unblock a user" ],
+		"texts": [ "`@DirectoryBot block (user)`", "`@DirectoryBot block (user)`" ],
 		"blockMessage": "You have blocked ${blockedPerson} from ${server}. They won't be able to look up your information.",
 		"unblockMessage": "You have unblocked ${unblockedPerson} from ${server}.",
 		"errorNoMention": "Please mention a user to block."
@@ -64,8 +64,7 @@
 		"in": "in",
 		"for": "for",
 		"errorUserZoneMissing": "Your time could not be converted. ${targetGuildMember} does not have a time zone recorded.",
-		"errorNotAMember": "Your time could not be converted. ${targetGuildMember} isn't a member of ${server}.",
-		"errorNoPlatform": "Your time could not be converted. ${server} does not seem to be tracking time zones.",
+		"errorNoPlatform": "Your time could not be converted for ${targetGuildMember}. ${server} does not seem to be tracking time zones.",
 		"successUser": "*${originalTime}in ${originalTimeZone}* is **${destinationTime} for ${targetGuildMember}**.",
 		"successZone": "*${originalTime}in ${originalTimeZone}* is **${destinationTime} in ${destinationTimeZone}**.",
 		"errorBadTime": "The time you provided could not be parsed (remember to specify AM or PM).",
@@ -82,7 +81,7 @@
 		"in": "in",
 		"successMessage": "*${startTime} in ${startTimezone}* is about **${time}** from now.",
 		"errorBadZone": "The time zone you entered could not be parsed. Remember to use the tz database format for time zones: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones",
-		"errorNoZone": "The time you provided could not be parsed (remember to specify AM or PM)."
+		"errorBadTime": "The time you provided could not be parsed (remember to specify AM or PM)."
 	},
 	"credits": {
 		"names": [ "Credits", "Creditz", "About" ],

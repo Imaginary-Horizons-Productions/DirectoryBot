@@ -11,40 +11,32 @@ command.execute = (receivedMessage, state, locale) => {
 	var startTimezone = "";
 	var resultTimezone;
 
-	if (mentionedGuildMembers.length == 1) {
+	if (mentionedGuildMembers.length > 0) {
 		var targetGuildMember = mentionedGuildMembers[0];
 		if (Object.keys(state.platformsList).includes("timezone")) {
-			if (targetGuildMember) {
-				if (state.userDictionary[targetGuildMember.id] && state.userDictionary[targetGuildMember.id].timezone) {
-					for (var i = 0; i < state.messageArray.length; i++) {
-						if (state.messageArray[i] == getString(locale, command.module, "in")) {
-							startTimezone = state.messageArray[i + 1]
-							i++;
-						} else if (state.messageArray[i] == getString(locale, command.module, "for")) {
-							break;
-						} else {
-							timeText += state.messageArray[i] + " ";
-						}
+			if (state.userDictionary[targetGuildMember.id] && state.userDictionary[targetGuildMember.id].timezone && state.userDictionary[targetGuildMember.id].timezone.value) {
+				for (var i = 0; i < state.messageArray.length; i++) {
+					if (state.messageArray[i] == getString(locale, command.module, "in")) {
+						startTimezone = state.messageArray[i + 1]
+						i++;
+					} else if (state.messageArray[i] == getString(locale, command.module, "for")) {
+						break;
+					} else {
+						timeText += state.messageArray[i] + " ";
 					}
-					resultTimezone = state.userDictionary[targetGuildMember.id].timezone.value;
-				} else {
-					// Error Message
-					receivedMessage.author.send(getString(locale, command.module, "errorUserZoneMissing").addVariables({
-						"targetGuildMember": targetGuildMember,
-					})).catch(console.error);
-					return;
 				}
+				resultTimezone = state.userDictionary[targetGuildMember.id].timezone.value;
 			} else {
 				// Error Message
-				receivedMessage.author.send(getString(locale, command.module, "errorNotAMember").addVariables({
-					"targetGuildMember": targetGuildMember,
-					"server": receivedMessage.guild.toString()
-				})).catch(console.eror);
+				receivedMessage.author.send(getString(locale, command.module, "errorUserZoneMissing").addVariables({
+					"targetGuildMember": targetGuildMember
+				})).catch(console.error);
 				return;
 			}
 		} else {
 			// Error Message
 			receivedMessage.author.send(getString(locale, command.module, "errorNoPlatform").addVariables({
+				"targetGuildMember": targetGuildMember,
 				"server": receivedMessage.guild.toString()
 			})).catch(console.error);
 			return;

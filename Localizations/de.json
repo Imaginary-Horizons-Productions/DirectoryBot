@@ -63,7 +63,6 @@
 		"in": "in",
 		"for": "für",
 		"errorUserZoneMissing": "",
-		"errorNotAMember": "",
 		"errorNoPlatform": "",
 		"successUser": "",
 		"successZone": "",
@@ -81,7 +80,7 @@
 		"in": "",
 		"successMessage": "",
 		"errorBadZone": "",
-		"errorNoZone": ""
+		"errorBadTime": ""
 	},
 	"credits": {
 		"names": ["Credits", "überuns"],

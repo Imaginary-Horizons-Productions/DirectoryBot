@@ -49,7 +49,7 @@ command.execute = (receivedMessage, state, locale) => {
 		}
 	} else {
 		// Error Message
-		receivedMessage.author.send(getString(locale, command.module, "errorNoZone"))
+		receivedMessage.author.send(getString(locale, command.module, "errorBadTime"))
 			.catch(console.error);
 	}
 }

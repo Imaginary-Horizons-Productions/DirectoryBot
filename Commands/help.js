@@ -10,22 +10,23 @@ command.execute = (receivedMessage, state, locale) => {
 
 	// Provides a summary about bot commands, or details about a given command
 	if (state.messageArray.length > 0) {
-		let commandName = state.messageArray[0];
+		let commandName = state.messageArray[0].toLowerCase();
 		var lookedUpCommand = commandDictionary[commandName];
+		let commandLocale = lookedUpCommand.locale || locale;
 		if (lookedUpCommand) {
 			if (state.botManager || !lookedUpCommand.managerCommand) {
-				receivedMessage.author.send(lookedUpCommand.help(receivedMessage.client.user.displayAvatarURL(), state, locale, receivedMessage.guild.name, lookedUpCommand.module))
+				receivedMessage.author.send(lookedUpCommand.help(receivedMessage.client.user.displayAvatarURL(), state, commandLocale, receivedMessage.guild.name, lookedUpCommand.module))
 					.catch(console.error);
 			} else {
 				// Error Message
-				receivedMessage.author.send(getString(locale, command.module, "errorNotManager").addVariables({
+				receivedMessage.author.send(getString(commandLocale, command.module, "errorNotManager").addVariables({
 					"role": state.managerRoleID ? ` or the @${receivedMessage.guild.roles.resolve(state.managerRoleID).name} role` : ``
 				})).catch(console.error);
 			}
 		} else {
 			// Error Message
-			receivedMessage.author.send(getString(locale, "DirectoryBot", "errorBadCommand").addVariables({
-				"commandName": state.command,
+			receivedMessage.author.send(getString(commandLocale, "DirectoryBot", "errorBadCommand").addVariables({
+				"commandName": state.messageArray[0],
 				"botNickname": receivedMessage.client.user
 			})).catch(console.error);
 		}

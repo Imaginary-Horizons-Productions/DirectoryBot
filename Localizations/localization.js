@@ -15,8 +15,19 @@ exports.getString = function (locale, module, property) {
 		if (exports.dictionary[locale][module]) {
 			// If module exists, continue
 			if (exports.dictionary[locale][module][property]) {
-				// If property exists, return it
-				return exports.dictionary[locale][module][property];
+				// If property exists, check if array (and empty strings)
+				let dataToReturn = exports.dictionary[locale][module][property];
+				if (dataToReturn instanceof Array) {
+					return exports.dictionary[locale][module][property].map(string => {
+						if (string === "") {
+							return `Localization for this text is missing. You can contribute it here: https://github.com/Imaginary-Horizons-Productions/DirectoryBot `
+						} else {
+							return string;
+						}
+					} );
+				} else {
+					return exports.dictionary[locale][module][property];
+				}				
 			} else {
 				// If property does not exist, provide en-US and solicit localization help
 				return exports.dictionary["en-US"][module][property] + `\nLocalization for the above text is missing. You can contribute it here: https://github.com/Imaginary-Horizons-Productions/DirectoryBot `;

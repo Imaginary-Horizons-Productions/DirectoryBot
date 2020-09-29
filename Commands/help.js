@@ -12,8 +12,8 @@ command.execute = (receivedMessage, state, locale) => {
 	if (state.messageArray.length > 0) {
 		let commandName = state.messageArray[0].toLowerCase();
 		var lookedUpCommand = commandDictionary[commandName];
-		let commandLocale = lookedUpCommand.locale || locale;
 		if (lookedUpCommand) {
+			let commandLocale = lookedUpCommand.locale || locale;
 			if (state.botManager || !lookedUpCommand.managerCommand) {
 				receivedMessage.author.send(lookedUpCommand.help(receivedMessage.client.user.displayAvatarURL(), state, commandLocale, receivedMessage.guild.name, lookedUpCommand.module))
 					.catch(console.error);
@@ -25,7 +25,7 @@ command.execute = (receivedMessage, state, locale) => {
 			}
 		} else {
 			// Error Message
-			receivedMessage.author.send(getString(commandLocale, "DirectoryBot", "errorBadCommand").addVariables({
+			receivedMessage.author.send(getString(locale, "DirectoryBot", "errorBadCommand").addVariables({
 				"commandName": state.messageArray[0],
 				"botNickname": receivedMessage.client.user
 			})).catch(console.error);

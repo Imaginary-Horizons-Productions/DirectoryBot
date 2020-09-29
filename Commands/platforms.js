@@ -4,8 +4,8 @@ const { directories, platformsBuilder } = require('./../helpers.js');
 var command = new Command("platforms", false, false, false);
 
 // Overwrite detailed help description with executing the command
-command.help = (avatarURL, state, locale, guildName, module) => {
-	return platformsBuilder(guildName, directories[receivedMessage.guild.id].platformsList, locale);
+command.help = (avatarURL, guildID, locale, guildName, module) => {
+	return platformsBuilder(guildName, directories[guildID].platformsList, locale);
 }
 
 command.execute = (receivedMessage, state, locale) => {

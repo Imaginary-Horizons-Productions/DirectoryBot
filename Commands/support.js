@@ -5,7 +5,7 @@ const { MessageEmbed } = require('discord.js');
 var command = new Command("support", false, false, false);
 
 // Overwrite detailed help description with executing the command
-command.help = (avatarURL, state, locale, guildName, module) => {
+command.help = (avatarURL, guildID, locale, guildName, module) => {
 	return supportBuilder(avatarURL, locale);
 }
 

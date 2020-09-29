@@ -16,7 +16,7 @@ command.execute = (receivedMessage, state, locale) => {
 		if (lookedUpCommand) {
 			let commandLocale = lookedUpCommand.locale || locale;
 			if (state.botManager || !lookedUpCommand.managerCommand) {
-				receivedMessage.author.send(lookedUpCommand.help(receivedMessage.client.user.displayAvatarURL(), state, commandLocale, receivedMessage.guild.name, lookedUpCommand.module))
+				receivedMessage.author.send(lookedUpCommand.help(receivedMessage.client.user.displayAvatarURL(), receivedMessage.guild.id, commandLocale, receivedMessage.guild.name, lookedUpCommand.module))
 					.catch(console.error);
 			} else {
 				// Error Message

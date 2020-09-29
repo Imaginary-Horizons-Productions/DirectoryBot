@@ -6,7 +6,7 @@ const { directories, millisecondsToHours, platformsBuilder } = require('./../hel
 var command = new Command("lookup", false, false, false);
 
 // Generate embed on call to add up-to-date list of platforms
-command.help = (avatarURL, state, locale, guildName, module) => {
+command.help = (avatarURL, guildID, locale, guildName, module) => {
 	let embed = new MessageEmbed().setAuthor("Imaginary Horizons Productions", `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `, `https://discord.gg/bcE3Syu `)
 		.setTitle(getString(locale, "DirectoryBot", "directoryBotCommand") + getString(locale, module, "names").join(', '))
 		.setDescription(getString(locale, module, "description"))
@@ -18,7 +18,7 @@ command.help = (avatarURL, state, locale, guildName, module) => {
 		embed.addField(headers[i], texts[i]);
 	}
 
-	return embed.addField('\u200B', platformsBuilder(guildName, directories[receivedMessage.guild.id].platformsList, locale));
+	return embed.addField('\u200B', platformsBuilder(guildName, directories[guildID].platformsList, locale));
 }
 
 command.execute = (receivedMessage, state, locale) => {
@@ -60,7 +60,7 @@ command.execute = (receivedMessage, state, locale) => {
 					}
 		
 				receivedMessage.author.send(embed).then(sentMessage => {
-					sentMessage.setToExpire(state, receivedMessage.guild.id, getString(locale, command.module, "expiredMessage").addVariables({
+					sentMessage.setToExpire(directories[receivedMessage.guild.id], receivedMessage.guild.id, getString(locale, command.module, "expiredMessage").addVariables({
 						"server": receivedMessage.guild.name,
 						"platform": platform,
 						"term": directories[receivedMessage.guild.id].platformsList[platform].term

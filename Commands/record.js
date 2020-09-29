@@ -21,7 +21,7 @@ command.execute = (receivedMessage, state, locale) => {
 				}
 
 				directories[receivedMessage.guild.id].userDictionary[receivedMessage.author.id][platform].value = friendcode;
-				receivedMessage.member.addPlatformRoles(state);
+				receivedMessage.member.addPlatformRoles(directories[receivedMessage.guild.id]);
 				receivedMessage.delete().then(message => message.channel.send(getString(locale, command.module, "successMessage").addVariables({
 					"author": message.author,
 					"platform": platform,

@@ -4,7 +4,7 @@ const { directories } = require('../helpers.js');
 
 var command = new Command("multistream", false, false, false);
 
-command.execute = (receivedMessage, state, metrics) => {
+command.execute = (receivedMessage, state, locale) => {
 	// Generates a url for viewing multiple streams simultaneously (Supported: Twitch)
 	if (Object.keys(directories[receivedMessage.guild.id].platformsList).includes("stream")) {
 		var url = "https://multistre.am/";

@@ -2,7 +2,7 @@ const Command = require('./../Classes/Command.js');
 const { getString } = require('./../Localizations/localization.js');
 const { DateTime, IANAZone, LocalZone } = require("luxon");
 var chrono = require('chrono-node');
-const { millisecondsToHours } = require('./../helpers.js');
+const { directories, millisecondsToHours } = require('./../helpers.js');
 
 var command = new Command("countdown", false, false, true);
 
@@ -22,8 +22,8 @@ command.execute = (receivedMessage, state, locale) => {
 	var inputTime = new chrono.parse(timeText);
 	if (inputTime.length > 0) {
 		if (startTimezone == "") {
-			if (state.userDictionary[receivedMessage.author.id].timezone.value) {
-				startTimezone = state.userDictionary[receivedMessage.author.id].timezone.value;
+			if (directories[receivedMessage.guild.id].userDictionary[receivedMessage.author.id].timezone.value) {
+				startTimezone = directories[receivedMessage.guild.id].userDictionary[receivedMessage.author.id].timezone.value;
 			} else {
 				startTimezone = LocalZone.instance.name;
 			}

@@ -1,6 +1,7 @@
 const Command = require('./../Classes/Command.js');
 const { getString } = require('./../Localizations/localization.js');
 const { MessageEmbed } = require('discord.js');
+const { directories } = require('../helpers.js');
 
 var command = new Command("mydata", false, false, false);
 
@@ -12,7 +13,7 @@ command.execute = (receivedMessage, state, locale) => {
 		.setFooter(getString(locale, "DirectoryBot", "footerText"), `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `)
 		.setTimestamp();
 	let text = '';
-	let dictionary = state.userDictionary[receivedMessage.author.id];
+	let dictionary = directories[receivedMessage.guild.id].userDictionary[receivedMessage.author.id];
 	Object.keys(dictionary).forEach(platform => {
 		text += `\n${platform}: ${dictionary[platform].value ? dictionary[platform].value : ''}`;
 	})

@@ -1,5 +1,6 @@
 const Command = require('./../Classes/Command.js');
 const { getString } = require('./../Localizations/localization.js');
+const { directories } = require('../helpers.js');
 const { MessageEmbed } = require('discord.js');
 
 var command = new Command("help", false, false, true);
@@ -20,7 +21,7 @@ command.execute = (receivedMessage, state, locale) => {
 			} else {
 				// Error Message
 				receivedMessage.author.send(getString(commandLocale, command.module, "errorNotManager").addVariables({
-					"role": state.managerRoleID ? ` or the @${receivedMessage.guild.roles.resolve(state.managerRoleID).name} role` : ``
+					"role": directories[receivedMessage.guild.id].managerRoleID ? ` or the @${receivedMessage.guild.roles.resolve(directories[receivedMessage.guild.id].managerRoleID).name} role` : ``
 				})).catch(console.error);
 			}
 		} else {

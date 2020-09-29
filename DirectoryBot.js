@@ -158,9 +158,8 @@ client.on('message', (receivedMessage) => {
 			}
 
 			var command = messageArray.shift();
-
-			let directory = helpers.directories[receivedMessage.guild.id];
 			if (commandDictionary[command]) {
+				let directory = helpers.directories[receivedMessage.guild.id];
 				let locale = commandDictionary[command].locale || directory.locale;
 
 				var recentInteractions = 0;
@@ -176,20 +175,13 @@ client.on('message', (receivedMessage) => {
 						"command": command, // The command alias used
 						"messageArray": messageArray,
 						"botManager": receivedMessage.member.hasPermission(Discord.Permissions.FLAGS.ADMINISTRATOR) || receivedMessage.member.roles.cache.has(helpers.directories[receivedMessage.guild.id].managerRoleID),
-						"userDictionary": directory.userDictionary,
-						"platformsList": directory.platformsList,
-						"managerRoleID": directory.managerRoleID,
-						"permissionsRoleID": directory.permissionsRoleID,
-						"infoLifetime": directory.infoLifetime,
-						"expiringMessages": directory.expiringMessages,
-						"blockDictionary": directory.blockDictionary
 					};
 
 					if (state.botManager || !commandDictionary[command].managerCommand) {
 						commandDictionary[command].execute(receivedMessage, state, locale);
 					} else {
 						receivedMessage.author.send(getString(locale, "DirectoryBot", "errorNotManager").addVariables({
-							"role": state.managerRoleID ? ` or the @${receivedMessage.guild.roles.resolve(cachedGuild.managerRoleID).name} role` : ``,
+							"role": directory.managerRoleID ? ` or the @${receivedMessage.guild.roles.resolve(directory.managerRoleID).name} role` : ``,
 							"alias": command
 						})).catch(console.error);
 					}
@@ -307,14 +299,14 @@ function guildCreate(guildID, locale) {
 			helpers.guildLocales[guildID] = locale;
 		}
 		if (!helpers.directories[guildID]) {
-			helpers.directories[guildID] = new Directory(locale);	
+			helpers.directories[guildID] = new Directory(locale);
 		}
 	} else {
 		if (!helpers.guildLocales[guildID]) {
 			helpers.guildLocales[guildID] = 'en-US';
 		}
 		if (!helpers.directories[guildID]) {
-			helpers.directories[guildID] = new Directory('en-US');	
+			helpers.directories[guildID] = new Directory('en-US');
 		}
 	}
 
@@ -328,11 +320,11 @@ function guildCreate(guildID, locale) {
 }
 
 function guildDelete(guildID) {
-    ['data', 'backups'].forEach(fileSet => {
-        if (fs.existsSync(`./${fileSet}/${guildID}`)) {
-            fs.rmdirSync(`./${fileSet}/${guildID}`, { recursive: true });
-        }
-    })
+	['data', 'backups'].forEach(fileSet => {
+		if (fs.existsSync(`./${fileSet}/${guildID}`)) {
+			fs.rmdirSync(`./${fileSet}/${guildID}`, { recursive: true });
+		}
+	})
 
 	delete helpers.guildLocales[guildID];
 	saveGuildLocales();

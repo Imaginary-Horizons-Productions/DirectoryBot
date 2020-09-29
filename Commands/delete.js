@@ -1,7 +1,7 @@
 const Command = require('./../Classes/Command.js');
 const { getString } = require('./../Localizations/localization.js');
 const FriendCode = require('./../Classes/FriendCode.js');
-const { saveObject } = require('./../helpers.js');
+const { directories, saveObject } = require('./../helpers.js');
 const { MessageMentions } = require('discord.js');
 
 var command = new Command("delete", false, false, false);
@@ -15,43 +15,43 @@ command.execute = (receivedMessage, state, locale) => {
 		var msgList = state.messageArray.slice(1);
 		var reason = msgList.join(" ");
 
-		if (Object.keys(state.platformsList).includes(platform)) {
+		if (Object.keys(directories[receivedMessage.guild.id].platformsList).includes(platform)) {
 			if (mentionedGuildMembers.length == 1) {
 				if (mentionedGuildMembers[0]) {
 					if (state.botManager) {
 						var target = mentionedGuildMembers[0];
 
-						if (state.userDictionary[target.id] && state.userDictionary[target.id][platform].value) {
-							state.userDictionary[target.id][platform] = new FriendCode();
-							if (state.platformsList[platform].roleID) {
-								target.roles.remove(state.platformsList[platform].roleID);
+						if (directories[receivedMessage.guild.id].userDictionary[target.id] && directories[receivedMessage.guild.id].userDictionary[target.id][platform].value) {
+							directories[receivedMessage.guild.id].userDictionary[target.id][platform] = new FriendCode();
+							if (directories[receivedMessage.guild.id].platformsList[platform].roleID) {
+								target.roles.remove(directories[receivedMessage.guild.id].platformsList[platform].roleID);
 							}
 							target.send(getString(locale, command.module, "deleteNotice").addVariables({
 								"target": target,
 								"platform": platform,
-								"term": state.platformsList[platform].term,
+								"term": directories[receivedMessage.guild.id].platformsList[platform].term,
 								"server": receivedMessage.guild.toString(),
 								"reason": reason ? ` because ${reason}` : ""
 							})).catch(console.error);
-							saveObject(receivedMessage.guild.id, state.userDictionary, 'userDictionary.txt');
+							saveObject(receivedMessage.guild.id, directories[receivedMessage.guild.id].userDictionary, 'userDictionary.txt');
 							receivedMessage.channel.send(getString(locale, command.module, "successOther").addVariables({
 								"target": target,
 								"platform": platform,
-								"term": state.platformsList[platform].term
+								"term": directories[receivedMessage.guild.id].platformsList[platform].term
 							})).catch(console.error);
 						} else {
 							// Error Message
 							receivedMessage.author.send(getString(locale, command.module, "errorNoDataOther").addVariables({
 								"target": target,
 								"platform": platform,
-								"term": state.platformsList[platform].term,
+								"term": directories[receivedMessage.guild.id].platformsList[platform].term,
 								"server": receivedMessage.guild
 							})).catch(console.error);
 						}
 					} else {
 						// Error Message
 						receivedMessage.author.send(getString(locale, "delete", "errorNotManager").addVariables({
-							"role": state.managerRoleID ? ` or the role @${receivedMessage.guild.roles.resolve(cachedGuild.managerRoleID).name}` : ""
+							"role": directories[receivedMessage.guild.id].managerRoleID ? ` or the role @${receivedMessage.guild.roles.resolve(directories[receivedMessage.guild.id].managerRoleID).name}` : ""
 						})).catch(console.error);
 					}
 				} else {
@@ -61,22 +61,22 @@ command.execute = (receivedMessage, state, locale) => {
 					})).catch(console.error);
 				}
 			} else {
-				if (state.userDictionary[receivedMessage.author.id][platform] && state.userDictionary[receivedMessage.author.id][platform].value) {
-					state.userDictionary[receivedMessage.author.id][platform] = new FriendCode();
-					if (state.platformsList[platform].roleID) {
-						receivedMessage.member.roles.remove(state.platformsList[platform].roleID);
+				if (directories[receivedMessage.guild.id].userDictionary[receivedMessage.author.id][platform] && directories[receivedMessage.guild.id].userDictionary[receivedMessage.author.id][platform].value) {
+					directories[receivedMessage.guild.id].userDictionary[receivedMessage.author.id][platform] = new FriendCode();
+					if (directories[receivedMessage.guild.id].platformsList[platform].roleID) {
+						receivedMessage.member.roles.remove(directories[receivedMessage.guild.id].platformsList[platform].roleID);
 					}
 					receivedMessage.author.send(getString(locale, "delete", "successSelf").addVariables({
 						"platform": platform,
-						"term": state.platformsList[platform].term,
+						"term": directories[receivedMessage.guild.id].platformsList[platform].term,
 						"server": receivedMessage.guild
 					})).catch(console.error);
-					saveObject(receivedMessage.guild.id, state.userDictionary, 'userDictionary.txt');
+					saveObject(receivedMessage.guild.id, directories[receivedMessage.guild.id].userDictionary, 'userDictionary.txt');
 				} else {
 					// Error Message
 					receivedMessage.author.send(getString(locale, "delete", "errorNoDataSelf").addVariables({
 						"platform": platform,
-						"term": state.platformsList[platform].term,
+						"term": directories[receivedMessage.guild.id].platformsList[platform].term,
 						"server": receivedMessage.guild
 					})).catch(console.error);
 				}

@@ -1,5 +1,6 @@
 const Command = require('./../Classes/Command.js');
 const { getString } = require('./../Localizations/localization.js');
+const { directories } = require('./../helpers.js');
 const { DateTime, IANAZone, LocalZone } = require("luxon");
 var chrono = require('chrono-node');
 
@@ -13,8 +14,8 @@ command.execute = (receivedMessage, state, locale) => {
 
 	if (mentionedGuildMembers.length > 0) {
 		var targetGuildMember = mentionedGuildMembers[0];
-		if (Object.keys(state.platformsList).includes("timezone")) {
-			if (state.userDictionary[targetGuildMember.id] && state.userDictionary[targetGuildMember.id].timezone && state.userDictionary[targetGuildMember.id].timezone.value) {
+		if (Object.keys(directories[receivedMessage.guild.id].platformsList).includes("timezone")) {
+			if (directories[receivedMessage.guild.id].userDictionary[targetGuildMember.id] && directories[receivedMessage.guild.id].userDictionary[targetGuildMember.id].timezone && directories[receivedMessage.guild.id].userDictionary[targetGuildMember.id].timezone.value) {
 				for (var i = 0; i < state.messageArray.length; i++) {
 					if (state.messageArray[i] == getString(locale, command.module, "in")) {
 						startTimezone = state.messageArray[i + 1]
@@ -25,7 +26,7 @@ command.execute = (receivedMessage, state, locale) => {
 						timeText += state.messageArray[i] + " ";
 					}
 				}
-				resultTimezone = state.userDictionary[targetGuildMember.id].timezone.value;
+				resultTimezone = directories[receivedMessage.guild.id].userDictionary[targetGuildMember.id].timezone.value;
 			} else {
 				// Error Message
 				receivedMessage.author.send(getString(locale, command.module, "errorUserZoneMissing").addVariables({
@@ -56,8 +57,8 @@ command.execute = (receivedMessage, state, locale) => {
 	}
 
 	if (startTimezone == "") {
-		if (state.userDictionary[receivedMessage.author.id].timezone.value) {
-			startTimezone = state.userDictionary[receivedMessage.author.id].timezone.value;
+		if (directories[receivedMessage.guild.id].userDictionary[receivedMessage.author.id].timezone.value) {
+			startTimezone = directories[receivedMessage.guild.id].userDictionary[receivedMessage.author.id].timezone.value;
 		} else {
 			startTimezone = LocalZone.instance.name;
 		}

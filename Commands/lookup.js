@@ -1,7 +1,7 @@
 const Command = require('./../Classes/Command.js');
 const { getString } = require('./../Localizations/localization.js');
 const { MessageEmbed, MessageMentions } = require('discord.js');
-const { millisecondsToHours, platformsBuilder } = require('./../helpers.js');
+const { directories, millisecondsToHours, platformsBuilder } = require('./../helpers.js');
 
 var command = new Command("lookup", false, false, false);
 
@@ -18,7 +18,7 @@ command.help = (avatarURL, state, locale, guildName, module) => {
 		embed.addField(headers[i], texts[i]);
 	}
 
-	return embed.addField('\u200B', platformsBuilder(guildName, state.platformsList, locale));
+	return embed.addField('\u200B', platformsBuilder(guildName, directories[receivedMessage.guild.id].platformsList, locale));
 }
 
 command.execute = (receivedMessage, state, locale) => {
@@ -26,19 +26,19 @@ command.execute = (receivedMessage, state, locale) => {
 	var platform = state.messageArray.filter(word => !word.match(MessageMentions.USERS_PATTERN))[0];
 	if (platform) {
 		platform = platform.toLowerCase();
-		if (Object.keys(state.platformsList).includes(platform)) {
-			var text = `${state.platformsList[platform].description}\n\n`;
+		if (Object.keys(directories[receivedMessage.guild.id].platformsList).includes(platform)) {
+			var text = `${directories[receivedMessage.guild.id].platformsList[platform].description}\n\n`;
 			let userIDs = receivedMessage.mentions.members.keyArray().filter(id => id != receivedMessage.client.user.id);
 
 			if (userIDs.length == 0) {
-				userIDs = Object.keys(state.userDictionary);
+				userIDs = Object.keys(directories[receivedMessage.guild.id].userDictionary);
 			}
 
 			userIDs.forEach(id => {
-				if (!(state.blockDictionary[id] && state.blockDictionary[id].includes(receivedMessage.author.id))) {
-					if (state.userDictionary[id] && state.userDictionary[id][platform]) {
-						if (state.userDictionary[id][platform].value) {
-							text += `${receivedMessage.guild.members.resolve(id).displayName}: ${state.userDictionary[id][platform].value}\n`;
+				if (!(directories[receivedMessage.guild.id].blockDictionary[id] && directories[receivedMessage.guild.id].blockDictionary[id].includes(receivedMessage.author.id))) {
+					if (directories[receivedMessage.guild.id].userDictionary[id] && directories[receivedMessage.guild.id].userDictionary[id][platform]) {
+						if (directories[receivedMessage.guild.id].userDictionary[id][platform].value) {
+							text += `${receivedMessage.guild.members.resolve(id).displayName}: ${directories[receivedMessage.guild.id].userDictionary[id][platform].value}\n`;
 						}
 					}
 				}
@@ -52,10 +52,10 @@ command.execute = (receivedMessage, state, locale) => {
 					.setFooter(getString(locale, "DirectoryBot", "expirationWarning").addVariables({ "time": millisecondsToHours(locale, state.infoLifetime)}), receivedMessage.client.user.avatarURL())
 					.setTimestamp();
 
-					if (state.platformsList[platform].roleName) {
+					if (directories[receivedMessage.guild.id].platformsList[platform].roleName) {
 						embed.addField(getString(locale, command.module, "platformRoleTitle"), getString(locale, command.module, "platformRoleText").addVariables({
-							"term": state.platformsList[platform].term,
-							"role": state.platformsList[platform].roleName
+							"term": directories[receivedMessage.guild.id].platformsList[platform].term,
+							"role": directories[receivedMessage.guild.id].platformsList[platform].roleName
 						}))
 					}
 		
@@ -63,7 +63,7 @@ command.execute = (receivedMessage, state, locale) => {
 					sentMessage.setToExpire(state, receivedMessage.guild.id, getString(locale, command.module, "expiredMessage").addVariables({
 						"server": receivedMessage.guild.name,
 						"platform": platform,
-						"term": state.platformsList[platform].term
+						"term": directories[receivedMessage.guild.id].platformsList[platform].term
 					}));
 				}).catch(console.error);
 			} else {
@@ -71,7 +71,7 @@ command.execute = (receivedMessage, state, locale) => {
 				receivedMessage.author.send(getString(locale, command.module, "errorMessageOverflow").addVariables({
 					"server": receivedMessage.guild.name,
 					"platform": platform,
-					"term": state.platformsList[platform].term
+					"term": directories[receivedMessage.guild.id].platformsList[platform].term
 				})).catch(console.error);
 			}
 		} else {

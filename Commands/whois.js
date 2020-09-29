@@ -1,5 +1,5 @@
 const Command = require('./../Classes/Command.js');
-const { getString } = require('./../Localizations/localization.js');
+const { directories, getString } = require('./../Localizations/localization.js');
 
 var command = new Command("whois", false, false, false);
 
@@ -11,9 +11,9 @@ command.execute = (receivedMessage, state, locale) => {
 			"searchTerm": searchTerm,
 			"server": receivedMessage.guild.name
 		});
-		Object.keys(state.userDictionary).forEach(userID => {
-			for (var platform in state.userDictionary[userID]) {
-				if (state.userDictionary[userID][platform].value == searchTerm) {
+		Object.keys(directories[receivedMessage.guild.id].userDictionary).forEach(userID => {
+			for (var platform in directories[receivedMessage.guild.id].userDictionary[userID]) {
+				if (directories[receivedMessage.guild.id].userDictionary[userID][platform].value == searchTerm) {
 					reply += `\n**${receivedMessage.guild.members.resolve(userID).displayName}**: *${platform}*`;
 				}
 			}

@@ -1,11 +1,12 @@
 const Command = require('./../Classes/Command.js');
 const { getString } = require('./../Localizations/localization.js');
+const { directories } = require('../helpers.js');
 
 var command = new Command("multistream", false, false, false);
 
 command.execute = (receivedMessage, state, metrics) => {
 	// Generates a url for viewing multiple streams simultaneously (Supported: Twitch)
-	if (Object.keys(state.platformsList).includes("stream")) {
+	if (Object.keys(directories[receivedMessage.guild.id].platformsList).includes("stream")) {
 		var url = "https://multistre.am/";
 		let mentionedGuildMembers = receivedMessage.mentions.members.array().filter(member => member.id != receivedMessage.client.user.id);
 
@@ -13,8 +14,8 @@ command.execute = (receivedMessage, state, metrics) => {
 			let returnText = "";
 			var missingUsers = [];
 			for (var i = 0; i < mentionedGuildMembers.length; i++) {
-				if (mentionedGuildMembers[i] && state.userDictionary[mentionedGuildMembers[i].id] && state.userDictionary[mentionedGuildMembers[i].id].stream.value) {
-					url += state.userDictionary[mentionedGuildMembers[i].id].stream.value + "/";
+				if (mentionedGuildMembers[i] && directories[receivedMessage.guild.id].userDictionary[mentionedGuildMembers[i].id] && directories[receivedMessage.guild.id].userDictionary[mentionedGuildMembers[i].id].stream.value) {
+					url += directories[receivedMessage.guild.id].userDictionary[mentionedGuildMembers[i].id].stream.value + "/";
 				} else {
 					missingUsers.push(mentionedGuildMembers[i].user);
 				}

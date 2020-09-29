@@ -1,6 +1,6 @@
 const Command = require('./../Classes/Command.js');
 const { getString } = require('./../Localizations/localization.js');
-const { saveObject } = require('./../helpers.js');
+const { directories, saveObject } = require('./../helpers.js');
 
 var command = new Command("datalifetime", true, false, false);
 
@@ -15,11 +15,11 @@ command.execute = (receivedMessage, state, locale) => {
 	}
 
 	if (mentionedNumber) {
-		state.infoLifetime = mentionedNumber * 60 * 60 * 1000;
+		directories[receivedMessage.guild.id].infoLifetime = mentionedNumber * 60 * 60 * 1000;
 		receivedMessage.channel.send(getString(locale, command.module, "successMessage").addVariables({
 			"mentionedNumber": mentionedNumber
 		})).catch(console.error);
-		saveObject(receivedMessage.guild.id, state.infoLifetime, 'infoLifetime.txt');
+		saveObject(receivedMessage.guild.id, directories[receivedMessage.guild.id].infoLifetime, 'infoLifetime.txt');
 	} else {
 		// Error Message
 		receivedMessage.author.send(getString(locale, command.module, "errorBadNumber").addVariables({

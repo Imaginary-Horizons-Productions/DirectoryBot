@@ -5,7 +5,7 @@ const { saveObject, directories } = require('./../helpers.js');
 
 var command = new Command("import", false, false, false);
 
-command.execute = (receivedMessage, state, metrics) => {
+command.execute = (receivedMessage, state, locale) => {
 	// Copy information from the given guild to the current guild for any platforms with matching names
 	let sourceGuildID;
 
@@ -27,14 +27,14 @@ command.execute = (receivedMessage, state, metrics) => {
 				if (sourceDictionary) {
 					let feedbackText = getString(locale, command.module, "successHeader");
 					Object.keys(sourceDictionary).forEach(platform => {
-						if (Object.keys(state.platformsList).includes(platform) && !state.userDictionary[receivedMessage.author.id][platform].value && sourceDictionary[platform] && sourceDictionary[platform].value) {
-							state.userDictionary[receivedMessage.author.id][platform].value = sourceDictionary[platform].value;
+						if (Object.keys(directories[receivedMessage.guild.id].platformsList).includes(platform) && !directories[receivedMessage.guild.id].userDictionary[receivedMessage.author.id][platform].value && sourceDictionary[platform] && sourceDictionary[platform].value) {
+							directories[receivedMessage.guild.id].userDictionary[receivedMessage.author.id][platform].value = sourceDictionary[platform].value;
 							feedbackText += `\n${platform}: ${sourceDictionary[platform].value}`
 						}
 					})
-					receivedMessage.member.addPlatformRoles(state);
+					receivedMessage.member.addPlatformRoles(directories[receivedMessage.guild.id]);
 
-					saveObject(receivedMessage.guild.id, state.userDictionary, 'userDictionary.txt');
+					saveObject(receivedMessage.guild.id, directories[receivedMessage.guild.id].userDictionary, 'userDictionary.txt');
 					receivedMessage.author.send(feedbackText)
 						.catch(console.error);
 				} else {

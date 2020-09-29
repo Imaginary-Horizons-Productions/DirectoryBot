@@ -1,7 +1,7 @@
 const Command = require('./../Classes/Command.js');
 const { getString } = require('./../Localizations/localization.js');
 const FriendCode = require('./../Classes/FriendCode.js');
-const { saveObject } = require('./../helpers.js');
+const { directories, saveObject } = require('./../helpers.js');
 
 var command = new Command("record", false, false, false);
 
@@ -15,20 +15,20 @@ command.execute = (receivedMessage, state, locale) => {
 			let spoilerMarkdown = /\|\|/g;
 			let friendcode = codeArray.join(" ").replace(spoilerMarkdown, '');
 
-			if (Object.keys(state.platformsList).includes(platform)) { // Early out if platform is not being tracked
-				if (!state.userDictionary[receivedMessage.author.id][platform]) {
-					state.userDictionary[receivedMessage.author.id][platform] = new FriendCode();
+			if (Object.keys(directories[receivedMessage.guild.id].platformsList).includes(platform)) { // Early out if platform is not being tracked
+				if (!directories[receivedMessage.guild.id].userDictionary[receivedMessage.author.id][platform]) {
+					directories[receivedMessage.guild.id].userDictionary[receivedMessage.author.id][platform] = new FriendCode();
 				}
 
-				state.userDictionary[receivedMessage.author.id][platform].value = friendcode;
+				directories[receivedMessage.guild.id].userDictionary[receivedMessage.author.id][platform].value = friendcode;
 				receivedMessage.member.addPlatformRoles(state);
 				receivedMessage.delete().then(message => message.channel.send(getString(locale, command.module, "successMessage").addVariables({
 					"author": message.author,
 					"platform": platform,
-					"term": state.platformsList[platform].term,
+					"term": directories[receivedMessage.guild.id].platformsList[platform].term,
 					"botNickname": message.client.user
 				})).catch(console.error));
-				saveObject(receivedMessage.guild.id, state.userDictionary, 'userDictionary.txt');
+				saveObject(receivedMessage.guild.id, directories[receivedMessage.guild.id].userDictionary, 'userDictionary.txt');
 			} else {
 				// Error Message
 				receivedMessage.author.send(getString(locale, command.module, "errorBadPlatform").addVariables({

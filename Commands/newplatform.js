@@ -3,7 +3,7 @@ const { getString } = require('./../Localizations/localization.js');
 const { MessageMentions } = require('discord.js');
 const Platform = require('./../Classes/Platform.js');
 const FriendCode = require('./../Classes/FriendCode.js');
-const { saveObject } = require('./../helpers.js');
+const { directories, saveObject } = require('./../helpers.js');
 
 var command = new Command("newplatform", true, false, false);
 
@@ -16,16 +16,16 @@ command.execute = (receivedMessage, state, locale) => {
 		let description = messageArray.join(' ');
 
 		if (!platform.match(MessageMentions.USERS_PATTERN)) {
-			if (!state.platformsList[platform]) {
-				state.platformsList[platform] = new Platform(term, description);
-				Object.keys(state.userDictionary).forEach(userID => {
-					state.userDictionary[userID][platform] = new FriendCode();
+			if (!directories[receivedMessage.guild.id].platformsList[platform]) {
+				directories[receivedMessage.guild.id].platformsList[platform] = new Platform(term, description);
+				Object.keys(directories[receivedMessage.guild.id].userDictionary).forEach(userID => {
+					directories[receivedMessage.guild.id].userDictionary[userID][platform] = new FriendCode();
 				})
 				receivedMessage.channel.send(getString(locale, command.module, "successMessage").addVariables({
 					"platform": platform,
-					"term": state.platformsList[platform].term
+					"term": directories[receivedMessage.guild.id].platformsList[platform].term
 				})).catch(console.error);
-				saveObject(receivedMessage.guild.id, state.platformsList, 'platformsList.txt');
+				saveObject(receivedMessage.guild.id, directories[receivedMessage.guild.id].platformsList, 'platformsList.txt');
 			} else {
 				// Error Message
 				receivedMessage.author.send(getString(locale, command.module, "errorDupePlatform").addVariables({

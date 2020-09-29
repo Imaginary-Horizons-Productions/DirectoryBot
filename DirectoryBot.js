@@ -158,8 +158,8 @@ client.on('message', (receivedMessage) => {
 			}
 
 			var command = messageArray.shift();
+			let directory = helpers.directories[receivedMessage.guild.id];
 			if (commandDictionary[command]) {
-				let directory = helpers.directories[receivedMessage.guild.id];
 				let locale = commandDictionary[command].locale || directory.locale;
 
 				var recentInteractions = 0;

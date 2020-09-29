@@ -69,22 +69,22 @@ GuildMember.prototype.addPlatformRoles = function (directory) {
 exports.millisecondsToHours = function (locale, milliseconds, showMinutes = false, showSeconds = false) {
 	var text = getString(locale, "DirectoryBot", "lessThanAnHour");
 	if (milliseconds >= 3600000) {
-		text = `${Math.floor(milliseconds / 3600000)} ` +  getString(locale, "DirectoryBot", "hours");
+		text = `${Math.floor(milliseconds / 3600000)} ` + getString(locale, "DirectoryBot", "hours");
 	}
 
 	if (showMinutes && Math.floor(milliseconds % 3600000 / 60000) > 0) {
-		if (text ==  getString(locale, "DirectoryBot", "lessThanAnHour")) {
-			text = `${Math.floor(milliseconds % 3600000 / 60000)} ` +  getString(locale, "DirectoryBot", "minutes");
+		if (text == getString(locale, "DirectoryBot", "lessThanAnHour")) {
+			text = `${Math.floor(milliseconds % 3600000 / 60000)} ` + getString(locale, "DirectoryBot", "minutes");
 		} else {
-			text += ` ${ getString(locale, "DirectoryBot", "and")} ${Math.floor(milliseconds % 3600000 / 60000)} ` +  getString(locale, "DirectoryBot", "minutes");
+			text += ` ${getString(locale, "DirectoryBot", "and")} ${Math.floor(milliseconds % 3600000 / 60000)} ` + getString(locale, "DirectoryBot", "minutes");
 		}
 	}
 
 	if (showSeconds && Math.floor(milliseconds % 60000 / 1000) > 0) {
-		if (text ==  getString(locale, "DirectoryBot", "lessThanAnHour")) {
-			text = `${Math.floor(milliseconds % 60000 / 1000)} ` +  getString(locale, "DirectoryBot", "seconds");
+		if (text == getString(locale, "DirectoryBot", "lessThanAnHour")) {
+			text = `${Math.floor(milliseconds % 60000 / 1000)} ` + getString(locale, "DirectoryBot", "seconds");
 		} else {
-			text += ` ${ getString(locale, "DirectoryBot", "and")} ${Math.floor(milliseconds % 60000 / 1000)} ` +  getString(locale, "DirectoryBot", "seconds");
+			text += ` ${getString(locale, "DirectoryBot", "and")} ${Math.floor(milliseconds % 60000 / 1000)} ` + getString(locale, "DirectoryBot", "seconds");
 		}
 	}
 
@@ -128,7 +128,14 @@ exports.saveObject = function (guildID, object, fileName, backup = false) {
 					fs.mkdirSync('./data/' + guildID);
 				}
 			}
-			fs.writeFile(filePath, encrypter.AES.encrypt(JSON.stringify(object), keyInput).toString(), 'utf8', (error) => {
+			let textToSave = '';
+			if (typeof object == 'object' || typeof object == 'number') {
+				textToSave = JSON.stringify(object);
+			} else {
+				textToSave = object;
+			}
+
+			fs.writeFile(filePath, encrypter.AES.encrypt(textToSave, keyInput).toString(), 'utf8', (error) => {
 				if (error) {
 					console.log(error);
 				}

@@ -17,7 +17,7 @@ command.execute = (receivedMessage, state, locale) => {
 	} else {
 		state.managerRoleID = null;
 		receivedMessage.channel.send(getString(locale, command.module, "clearMessage").addVariables({
-			"bothNickname": receivedMessage.client.user
+			"botNickname": receivedMessage.client.user
 		})).catch(console.error);
 		saveObject(receivedMessage.guild.id, state.managerRoleID, 'managerRole.txt');
 	}

@@ -9,7 +9,7 @@ command.execute = (receivedMessage, state, locale) => {
 	let roleMentions = receivedMessage.mentions.roles.array();
 	if (roleMentions.length > 0) {
 		directories[receivedMessage.guild.id].permissionsRoleID = roleMentions[0].id;
-		receivedMessage.channel.send(getString(locale, command.module, "successMesage").addVariables({
+		receivedMessage.channel.send(getString(locale, command.module, "successMessage").addVariables({
 			"role": roleMentions[0]
 		})).catch(console.error);
 		saveObject(receivedMessage.guild.id, directories[receivedMessage.guild.id].permissionsRoleID, 'permissionsRole.txt');

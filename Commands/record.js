@@ -10,12 +10,12 @@ command.execute = (receivedMessage, state, locale) => {
 	var platform = state.messageArray[0];
 	if (platform) {
 		platform = platform.toLowerCase();
-		if (state.messageArray.length > 1) {
-			var codeArray = state.messageArray.slice(1);
-			let spoilerMarkdown = /\|\|/g;
-			let friendcode = codeArray.join(" ").replace(spoilerMarkdown, '');
+		if (Object.keys(directories[receivedMessage.guild.id].platformsList).includes(platform)) { // Early out if platform is not being tracked
+			if (state.messageArray.length > 1) {
+				var codeArray = state.messageArray.slice(1);
+				let spoilerMarkdown = /\|\|/g;
+				let friendcode = codeArray.join(" ").replace(spoilerMarkdown, '');
 
-			if (Object.keys(directories[receivedMessage.guild.id].platformsList).includes(platform)) { // Early out if platform is not being tracked
 				if (!directories[receivedMessage.guild.id].userDictionary[receivedMessage.author.id][platform]) {
 					directories[receivedMessage.guild.id].userDictionary[receivedMessage.author.id][platform] = new FriendCode();
 				}
@@ -31,15 +31,15 @@ command.execute = (receivedMessage, state, locale) => {
 				saveObject(receivedMessage.guild.id, directories[receivedMessage.guild.id].userDictionary, 'userDictionary.txt');
 			} else {
 				// Error Message
-				receivedMessage.author.send(getString(locale, command.module, "errorBadPlatform").addVariables({
-					"platform": platform,
-					"server": receivedMessage.guild
-				})).catch(console.error);
+				receivedMessage.author.send(getString(locale, command.module, "errorNoData"))
+					.catch(console.error);
 			}
 		} else {
 			// Error Message
-			receivedMessage.author.send(getString(locale, command.module, "errorNoData"))
-				.catch(console.error);
+			receivedMessage.author.send(getString(locale, command.module, "errorBadPlatform").addVariables({
+				"platform": platform,
+				"server": receivedMessage.guild
+			})).catch(console.error);
 		}
 	} else {
 		// Error Message

@@ -12,13 +12,12 @@ command.execute = (receivedMessage, state, locale) => {
 		receivedMessage.channel.send(getString(locale, command.module, "successMessage").addVariables({
 			"role": roleMentions[0]
 		})).catch(console.error);
-		saveObject(receivedMessage.guild.id, directories[receivedMessage.guild.id].permissionsRoleID, 'permissionsRole.txt');
 	} else {
 		directories[receivedMessage.guild.id].permissionsRoleID = null;
 		receivedMessage.channel.send(getString(locale, command.module, "clearMessage"))
 			.catch(console.error);
-		saveObject(receivedMessage.guild.id, directories[receivedMessage.guild.id].permissionsRoleID, 'permissionsRole.txt');
 	}
+	saveObject(receivedMessage.guild.id, directories[receivedMessage.guild.id].permissionsRoleID, 'permissionsRole.txt');
 }
 
 module.exports = command;

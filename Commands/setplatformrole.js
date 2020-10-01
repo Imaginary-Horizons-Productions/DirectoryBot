@@ -15,7 +15,7 @@ command.execute = (receivedMessage, state, locale) => {
 				directories[receivedMessage.guild.id].platformsList[platform].roleID = role.id;
 				directories[receivedMessage.guild.id].platformsList[platform].roleName = role.name;
 				Object.keys(directories[receivedMessage.guild.id].userDictionary).forEach(userID => {
-					receivedMessage.guild.members.resolve(userID).addPlatformRoles(state);
+					receivedMessage.guild.members.resolve(userID).addPlatformRoles(directories[receivedMessage.guild.id]);
 				})
 				receivedMessage.channel.send(getString(locale, command.module, "successMessage").addVariables({
 					"platform": platform,

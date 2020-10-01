@@ -14,7 +14,7 @@ command.execute = (receivedMessage, state, locale) => {
 		if (nonMentions.length > 0) {
 			var platform = nonMentions[0].toLowerCase();
 			if (Object.keys(directories[receivedMessage.guild.id].platformsList).includes(platform)) {
-				if (directories[receivedMessage.guild.id].userDictionary[receivedMessage.author.id] && directories[receivedMessage.guild.id].userDictionary[receivedMessage.author.id][platform].value) {
+				if (directories[receivedMessage.guild.id].userDictionary[receivedMessage.author.id]&& directories[receivedMessage.guild.id].userDictionary[receivedMessage.author.id][platform] && directories[receivedMessage.guild.id].userDictionary[receivedMessage.author.id][platform].value) {
 					let sender = receivedMessage.author;
 					var senderInfo = getString(locale, command.module, "successMessageRecipient").addVariables({
 						"sender": sender,
@@ -27,7 +27,7 @@ command.execute = (receivedMessage, state, locale) => {
 					mentionedGuildMembers.forEach(recipient => {
 						if (!recipient.bot) {
 							recipient.send(senderInfo + getString(locale, command.module, "dataMessage").addVariables({ "value": directories[receivedMessage.guild.id].userDictionary[receivedMessage.author.id][platform].value }) + getString(locale, "DirectoryBot", "expirationWarning").addVariables({ "time": millisecondsToHours(locale, directories[receivedMessage.guild.id].infoLifetime) })).then(sentMessage => {
-								sentMessage.setToExpire(state, receivedMessage.guild.id, senderInfo + getString(locale, command.module, "expiredMessage").addVariables({
+								sentMessage.setToExpire(directories[receivedMessage.guild.id], receivedMessage.guild.id, senderInfo + getString(locale, command.module, "expiredMessage").addVariables({
 									"botNickname": receivedMessage.client.user,
 									"sender": sender,
 									"platform": platform

@@ -1,5 +1,6 @@
 const Command = require('./../Classes/Command.js');
-const { directories, getString } = require('./../Localizations/localization.js');
+const { getString } = require('./../Localizations/localization.js');
+const { directories } = require('../helpers.js');
 
 var command = new Command("whois", false, false, false);
 

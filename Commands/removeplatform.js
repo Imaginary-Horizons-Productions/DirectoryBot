@@ -1,42 +1,38 @@
 const Command = require('./../Classes/Command.js');
-const { savePlatformsList } = require('./../helpers.js');
+const { getString } = require('./../Localizations/localization.js');
+const { directories, saveObject } = require('./../helpers.js');
 
-var removeplatform = new Command();
-removeplatform.names = ["removeplatform"];
-removeplatform.summary = `Stop recording and distributing user information for a game/service`;
-removeplatform.managerCommand = true;
+var command = new Command("removeplatform", true, false, false);
 
-removeplatform.help = (clientUser, state) => {
-    return `The *${state.messageArray[0]}* command specifies a platform for ${clientUser} to stop recording and distributing information for. Note: this command does not remove roles associated with platforms in case someone has that role but wasn't given it by ${client.user}.
-Syntax: ${clientUser} \`${state.messageArray[0]} (platform to remove)\``;
+command.execute = (receivedMessage, state, locale) => {
+	// Removes the given platform
+	if (state.messageArray.length > 0) {
+		let platform = state.messageArray[0].toLowerCase();
+
+		if (directories[receivedMessage.guild.id].platformsList[platform]) {
+			Object.keys(directories[receivedMessage.guild.id].userDictionary).forEach(userID => {
+				if (directories[receivedMessage.guild.id].platformsList[platform].roleID) {
+					receivedMessage.guild.members.resolve(userID).roles.remove(directories[receivedMessage.guild.id].platformsList[platform].roleID);
+				}
+				delete directories[receivedMessage.guild.id].userDictionary[userID][platform];
+			})
+			delete directories[receivedMessage.guild.id].platformsList[platform];
+			receivedMessage.channel.send(getString(locale, command.module, "successMessage").addVariables({
+				"platform": platform
+			})).catch(console.error);
+			saveObject(receivedMessage.guild.id, directories[receivedMessage.guild.id].platformsList, 'platformsList.txt');
+		} else {
+			// Error Message
+			receivedMessage.author.send(getString(locale, command.module, "errorBadPlatform").addVariables({
+				"platform": platform,
+				"server": receivedMessage.guild.name
+			})).catch(console.error);
+		}
+	} else {
+		// Error Message
+		receivedMessage.author.send(getString(locale, command.module, "errorNoPlatform"))
+			.catch(console.error);
+	}
 }
 
-removeplatform.execute = (receivedMessage, state, metrics) => {
-    // Removes the given platform
-    if (state.messageArray.length > 0) {
-        let platform = state.messageArray[0].toLowerCase();
-
-        if (state.cachedGuild.platformsList[platform]) {
-            Object.keys(state.cachedGuild.userDictionary).forEach(userID => {
-                if (state.cachedGuild.platformsList[platform].roleID) {
-                    receivedMessage.guild.members.resolve(userID).roles.remove(state.cachedGuild.platformsList[platform].roleID);
-                }
-                delete state.cachedGuild.userDictionary[userID][platform];
-            })
-            delete state.cachedGuild.platformsList[platform];
-            receivedMessage.channel.send(`${platform} information will no longer be recorded.`)
-                .catch(console.error);
-            savePlatformsList(receivedMessage.guild.id, state.cachedGuild.platformsList);
-        } else {
-            // Error Message
-            receivedMessage.author.send(`${platform} is not currently being recorded in ${receivedMessage.guild}.`)
-                .catch(console.error);
-        }
-    } else {
-        // Error Message
-        receivedMessage.author.send(`Please provide a platform to remove.`)
-            .catch(console.error);
-    }
-}
-
-module.exports = removeplatform;
+module.exports = command;

@@ -1,11 +1,28 @@
+const { MessageEmbed } = require('discord.js');
+const { getString } = require('./../Localizations/localization.js');
+
 module.exports = class Command {
-    constructor(namesInput, summaryInput, managerCommandInput) {
-        this.names = namesInput;
-        this.summary = summaryInput;
-        this.managerCommand = managerCommandInput;
-    }
+	constructor(moduleInput, managerCommandInput, premiumCommandInput, dmCommandInput) {
+		this.module = moduleInput;
+		this.managerCommand = managerCommandInput;
+		this.premiumCommand = premiumCommandInput;
+		this.dmCommand = dmCommandInput;
+	}
 
-    help(clientUser, state) { }
+	help(avatarURL, guildID, locale, guildName, module) {
+		let embed = new MessageEmbed().setAuthor("Imaginary Horizons Productions", `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `, `https://discord.gg/bcE3Syu `)
+			.setTitle(getString(locale, "DirectoryBot", "directoryBotCommand") + getString(locale, module, "names").join(', '))
+			.setDescription(getString(locale, module, "description"))
+			.setFooter(getString(locale, "DirectoryBot", "footerText"), avatarURL);
 
-    execute(receivedMessage, state, metrics) { }
+		let headers = getString(locale, module, "headers");
+		let texts = getString(locale, module, "texts");
+		for (var i = 0; i < headers.length; i++) {
+			embed.addField(headers[i], texts[i]);
+		}
+
+		return embed;
+	}
+
+	execute(receivedMessage, state, locale) { }
 }

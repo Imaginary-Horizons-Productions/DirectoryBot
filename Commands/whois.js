@@ -1,35 +1,32 @@
 const Command = require('./../Classes/Command.js');
+const { getString } = require('./../Localizations/localization.js');
+const { directories } = require('../helpers.js');
 
-var whois = new Command();
-whois.names = ["whois"];
-whois.summary = `Ask DirectoryBot who a certain username belongs to`;
-whois.managerCommand = false;
+var command = new Command("whois", false, false, false);
 
-whois.help = (clientUser, state) => {
-    return `The *${state.messageArray[0]}* command checks if anyone uses the given username and private messages you the result.
-Syntax: ${clientUser} \`${state.messageArray[0]} (username)\``;
+command.execute = (receivedMessage, state, locale) => {
+	// Finds the platform and user associated with a given username
+	if (state.messageArray.length > 0) {
+		var searchTerm = state.messageArray[0];
+		var reply = getString(locale, command.module, "successMessage").addVariables({
+			"searchTerm": searchTerm,
+			"server": receivedMessage.guild.name
+		});
+		Object.keys(directories[receivedMessage.guild.id].userDictionary).forEach(userID => {
+			for (var platform in directories[receivedMessage.guild.id].userDictionary[userID]) {
+				if (directories[receivedMessage.guild.id].userDictionary[userID][platform].value == searchTerm) {
+					reply += `\n**${receivedMessage.guild.members.resolve(userID).displayName}**: *${platform}*`;
+				}
+			}
+		})
+
+		receivedMessage.author.send(reply)
+			.catch(console.error);
+	} else {
+		// Error Message
+		receivedMessage.author.send(getString(locale, command.module, "errorNoUsername"))
+			.catch(console.error);
+	}
 }
 
-whois.execute = (receivedMessage, state, metrics) => {
-    // Finds the platform and user associated with a given username
-    if (state.messageArray.length > 0) {
-        var searchTerm = state.messageArray[0];
-        var reply = `The following people have recorded ${searchTerm} in ${receivedMessage.guild.name}:`;
-        Object.keys(state.cachedGuild.userDictionary).forEach(userID => {
-            for (var platform in state.cachedGuild.userDictionary[userID]) {
-                if (state.cachedGuild.userDictionary[userID][platform].value == searchTerm) {
-                    reply += `\n${receivedMessage.guild.members.resolve(userID).displayName} for ${platform}`;
-                }
-            }
-        })
-
-        receivedMessage.author.send(reply)
-            .catch(console.error);
-    } else {
-        // Error Message
-        receivedMessage.author.send(`Please specify a username to check for.`)
-            .catch(console.error);
-    }
-}
-
-module.exports = whois;
+module.exports = command;

@@ -1,30 +1,23 @@
 const Command = require('./../Classes/Command.js');
-const { savePermissionsRole } = require('./../helpers.js');
+const { getString } = require('./../Localizations/localization.js');
+const { directories, saveObject } = require('./../helpers.js');
 
-var permissionsrole = new Command();
-permissionsrole.names = ['permissionsrole', 'setpermissionsrole'];
-permissionsrole.summary = `Sets the bot permissions role; not mentioning a role clears the setting`;
-permissionsrole.managerCommand = true;
+var command = new Command("permissionsrole", true, false, false);
 
-permissionsrole.help = (clientUser, state) => {
-    return `The *${state.messageArray[0]}* command updates the permissions role. This allows ${clientUser} to interpret accidental mentions of that role as command messages.
-Syntax: ${clientUser} \`${state.messageArray[0]} (role)\``;
-}
-
-permissionsrole.execute = (receivedMessage, state, metrics) => {
+command.execute = (receivedMessage, state, locale) => {
 	// Stores are clears the permissions role ID for accidental role mention recovery
-    let roleMentions = receivedMessage.mentions.roles.array();
-    if (roleMentions.length > 0) {
-        state.cachedGuild.permissionsRoleID = roleMentions[0].id;
-        receivedMessage.channel.send(`The ${receivedMessage.client.user} permissions role has been stored as @${roleMentions[0].name}.`)
-            .catch(console.error);
-        savePermissionsRole(receivedMessage.guild.id, state.cachedGuild.permissionsRoleID);
-    } else {
-        state.cachedGuild.permissionsRoleID = null;
-        receivedMessage.channel.send(`The ${receivedMessage.client.user} permissions role has been cleared.`)
-            .catch(console.error);
-        savePermissionsRole(receivedMessage.guild.id, state.cachedGuild.permissionsRoleID);
-    }
+	let roleMentions = receivedMessage.mentions.roles.array();
+	if (roleMentions.length > 0) {
+		directories[receivedMessage.guild.id].permissionsRoleID = roleMentions[0].id;
+		receivedMessage.channel.send(getString(locale, command.module, "successMessage").addVariables({
+			"role": roleMentions[0]
+		})).catch(console.error);
+	} else {
+		directories[receivedMessage.guild.id].permissionsRoleID = null;
+		receivedMessage.channel.send(getString(locale, command.module, "clearMessage"))
+			.catch(console.error);
+	}
+	saveObject(receivedMessage.guild.id, directories[receivedMessage.guild.id].permissionsRoleID, 'permissionsRole.txt');
 }
 
-module.exports = permissionsrole;
+module.exports = command;

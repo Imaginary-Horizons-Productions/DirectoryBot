@@ -1,121 +1,113 @@
 const Command = require('./../Classes/Command.js');
+const { getString } = require('./../Localizations/localization.js');
+const { directories } = require('./../helpers.js');
 const { DateTime, IANAZone, LocalZone } = require("luxon");
 var chrono = require('chrono-node');
 
-var convert = new Command();
-convert.names = ["convert"];
-convert.summary = `Convert a time to someone else's timezone or a given timezone`;
-convert.managerCommand = false;
+var command = new Command("convert", false, false, true);
+command.execute = (receivedMessage, state, locale) => {
+	// Calculates the time for a user or time zone, given an inital time zone
+	let mentionedGuildMembers = receivedMessage.mentions.members.array().filter(member => member.id != receivedMessage.client.user.id);
+	var timeText = "";
+	var startTimezone = "";
+	var resultTimezone;
 
-convert.help = (clientUser, state) => {
-    return `The *${state.messageArray[0]}* command calculates a time for a given user. ${clientUser} uses IANA specified timezones.
-Syntax: ${clientUser} \`${state.messageArray[0]} (time) in (starting timezone) for (user)\`
+	if (mentionedGuildMembers.length > 0) {
+		var targetGuildMember = mentionedGuildMembers[0];
+		if (Object.keys(directories[receivedMessage.guild.id].platformsList).includes("timezone")) {
+			if (directories[receivedMessage.guild.id].userDictionary[targetGuildMember.id] && directories[receivedMessage.guild.id].userDictionary[targetGuildMember.id].timezone && directories[receivedMessage.guild.id].userDictionary[targetGuildMember.id].timezone.value) {
+				for (var i = 0; i < state.messageArray.length; i++) {
+					if (state.messageArray[i] == getString(locale, command.module, "in")) {
+						startTimezone = state.messageArray[i + 1]
+						i++;
+					} else if (state.messageArray[i] == getString(locale, command.module, "for")) {
+						break;
+					} else {
+						timeText += state.messageArray[i] + " ";
+					}
+				}
+				resultTimezone = directories[receivedMessage.guild.id].userDictionary[targetGuildMember.id].timezone.value;
+			} else {
+				// Error Message
+				receivedMessage.author.send(getString(locale, command.module, "errorUserZoneMissing").addVariables({
+					"targetGuildMember": targetGuildMember
+				})).catch(console.error);
+				return;
+			}
+		} else {
+			// Error Message
+			receivedMessage.author.send(getString(locale, command.module, "errorNoPlatform").addVariables({
+				"targetGuildMember": targetGuildMember,
+				"server": receivedMessage.guild.toString()
+			})).catch(console.error);
+			return;
+		}
+	} else {
+		for (var i = 0; i < state.messageArray.length; i++) {
+			if (state.messageArray[i] == "in") {
+				startTimezone = state.messageArray[i + 1]
+				i++;
+			} else if (state.messageArray[i] == "to") {
+				resultTimezone = state.messageArray[i + 1];
+				break;
+			} else {
+				timeText += state.messageArray[i] + " ";
+			}
+		}
+	}
 
-The command can also be used to switch a time to a given timezone.
-Syntax: ${clientUser} \`${state.messageArray[0]} (time) in (starting timezone) to (resulting timezone)\`
+	if (startTimezone == "") {
+		if (directories[receivedMessage.guild.id].userDictionary[receivedMessage.author.id].timezone.value) {
+			startTimezone = directories[receivedMessage.guild.id].userDictionary[receivedMessage.author.id].timezone.value;
+		} else {
+			startTimezone = LocalZone.instance.name;
+		}
+	}
 
-If you omit the starting timezone, the bot will assume you mean the timezone you've recorded for the \"timezone\" platform.`;
+	if (IANAZone.isValidZone(startTimezone)) {
+		if (resultTimezone) {
+			if (IANAZone.isValidZone(resultTimezone)) {
+				var inputTime = new chrono.parse(timeText);
+				if (inputTime.length > 0) {
+					inputTime[0].start.assign("timezoneOffset", IANAZone.create(startTimezone).offset(Date.now()));
+					var dateTimeObject = DateTime.fromJSDate(inputTime[0].start.date(), { zone: startTimezone });
+					var convertedDateTime = dateTimeObject.setZone(resultTimezone);
+
+					if (targetGuildMember) {
+						receivedMessage.author.send(getString(locale, command.module, "successUser").addVariables({
+							"originalTime": timeText,
+							"originalTimeZone": startTimezone,
+							"destinationTime": convertedDateTime.toLocaleString(DateTime.TIME_24_SIMPLE),
+							"targetGuildMember": targetGuildMember
+						})).catch(console.error);
+					} else {
+						receivedMessage.author.send(getString(locale, command.module, "successZone").addVariables({
+							"originalTime": timeText,
+							"originalTimeZone": startTimezone,
+							"destinationTime": convertedDateTime.toLocaleString(DateTime.TIME_24_SIMPLE),
+							"destinationTimeZone": resultTimezone
+						})).catch(console.error);
+					}
+				} else {
+					// Error Message
+					receivedMessage.author.send(getString(locale, command.module, "errorBadTime"))
+						.catch(console.error);
+				}
+			} else {
+				// Error Message
+				receivedMessage.author.send(getString(locale, command.module, "errorBadResultZone"))
+					.catch(console.error);
+			}
+		} else {
+			// Error Message
+			receivedMessage.author.send(getString(locale, command.module, "errorNoResultZone"))
+				.catch(console.error);
+		}
+	} else {
+		// Error Message
+		receivedMessage.author.send(getString(locale, command.module, "errorBadStartZone"))
+			.catch(console.error);
+	}
 }
 
-convert.execute = (receivedMessage, state, metrics) => {
-    // Calculates the time for a user or time zone, given an inital time zone
-    let mentionedGuildMembers = receivedMessage.mentions.members.array().filter(member => member.id != receivedMessage.client.user.id);
-    var timeText = "";
-    var startTimezone = "";
-    var resultTimezone;
-
-    if (mentionedGuildMembers.length == 1) {
-        let targetGuildMember = mentionedGuildMembers[0];
-        if (Object.keys(state.cachedGuild.platformsList).includes("timezone")) {
-            if (targetGuildMember) {
-                if (state.cachedGuild.userDictionary[targetGuildMember.id] && state.cachedGuild.userDictionary[targetGuildMember.id].timezone) {
-                    for (var i = 0; i < state.messageArray.length; i++) {
-                        if (state.messageArray[i] == "in") {
-                            startTimezone = state.messageArray[i + 1]
-                            i++;
-                        } else if (state.messageArray[i] == "for") {
-                            break;
-                        } else {
-                            timeText += state.messageArray[i] + " ";
-                        }
-                    }
-                    resultTimezone = state.cachedGuild.userDictionary[targetGuildMember.id].timezone.value;
-                } else {
-                    // Error Message
-                    receivedMessage.author.send(`Your time could not be converted to ${targetGuildMember}'s time zone. ${targetGuildMember} does not have a time zone recorded.`)
-                        .catch(console.error);
-                    return;
-                }
-            } else {
-                // Error Message
-                receivedMessage.author.send(`Your time could not be converted to ${targetGuildMember}'s time zone. ${targetGuildMember} isn't a member of ${receivedMessage.guild}.`)
-                    .catch(console.eror);
-                return;
-            }
-        } else {
-            // Error Message
-            receivedMessage.author.send(`Your time could not be converted. ${receivedMessage.guild} does not seem to be tracking time zones.`)
-                .catch(console.error);
-            return;
-        }
-    } else {
-        for (var i = 0; i < state.messageArray.length; i++) {
-            if (state.messageArray[i] == "in") {
-                startTimezone = state.messageArray[i + 1]
-                i++;
-            } else if (state.messageArray[i] == "to") {
-                resultTimezone = state.messageArray[i + 1];
-                break;
-            } else {
-                timeText += state.messageArray[i] + " ";
-            }
-        }
-    }
-
-    if (startTimezone == "") {
-        if (state.cachedGuild.userDictionary[receivedMessage.author.id].timezone.value) {
-            startTimezone = state.cachedGuild.userDictionary[receivedMessage.author.id].timezone.value;
-        } else {
-            startTimezone = LocalZone.instance.name;
-        }
-    }
-
-    if (IANAZone.isValidZone(startTimezone)) {
-        if (resultTimezone) {
-            if (IANAZone.isValidZone(resultTimezone)) {
-                var inputTime = new chrono.parse(timeText);
-                if (inputTime.length > 0) {
-                    inputTime[0].start.assign("timezoneOffset", IANAZone.create(startTimezone).offset(Date.now()));
-                    var dateTimeObject = DateTime.fromJSDate(inputTime[0].start.date(), { zone: startTimezone });
-                    var convertedDateTime = dateTimeObject.setZone(resultTimezone);
-
-                    if (mentionedGuildMembers.length == 1) {
-                        receivedMessage.author.send(`*${timeText}in ${startTimezone}* is **${convertedDateTime.toLocaleString(DateTime.TIME_24_SIMPLE)}** for ${mentionedGuildMembers[0]}.`)
-                            .catch(console.error);
-                    } else {
-                        receivedMessage.author.send(`*${timeText}in ${startTimezone}* is **${convertedDateTime.toLocaleString(DateTime.TIME_24_SIMPLE)} in ${resultTimezone}**.`)
-                            .catch(console.error);
-                    }
-                } else {
-                    // Error Message
-                    receivedMessage.author.send(`The time you provided could not be parsed (Remember to specify AM or PM).`)
-                        .catch(console.error);
-                }
-            } else {
-                // Error Message
-                receivedMessage.author.send(`Please use the IANA timezone format for the **result timezone**. You can look up timezones here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones `)
-                    .catch(console.error);
-            }
-        } else {
-            // Error Message
-            receivedMessage.author.send(`Please specify a result timezone for your convert command.`)
-                .catch(console.error);
-        }
-    } else {
-        // Error Message
-        receivedMessage.author.send(`Please use the IANA timezone format for the **starting timezone**. You can look up timezones here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones `)
-            .catch(console.error);
-    }
-}
-
-module.exports = convert;
+module.exports = command;

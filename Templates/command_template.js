@@ -1,16 +1,12 @@
 const Command = require('./../Classes/Command.js');
+const { getString } = require('./../Localization/localization.js');
 
-var command = new Command();
-command.names = [/* list of overloads goes here*/];
-command.summary = ``; // help summary text
-command.managerCommand = false; // bool for if manager-only command
+let commandLocale = '';
+var command = new Command(commandLocale, [/* list of overloads goes here*/], getString('', commandLocale), false, false, false)
+	.addDescription(getString('', commandLocale))
+	.addSection(getString('', commandLocale), getString('', commandLocale));
 
-command.help = (clientUser, state) => { // function for constructing examples with used overloads
-	return ``; // help string
-	// REMINDER! update readme
-}
-
-command.execute = (receivedMessage, state, metrics) => {
+command.execute = (receivedMessage, state, locale) => {
 	// Command specifications go here
 }
 

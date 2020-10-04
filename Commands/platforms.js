@@ -1,19 +1,17 @@
 const Command = require('./../Classes/Command.js');
-const { platformsBuilder } = require('./../helpers.js');
+const { directories, platformsBuilder } = require('./../helpers.js');
 
-var platforms = new Command();
-platforms.names = ["platforms"];
-platforms.summary = `List the games/services DirectoryBot can be used to record or retrieve information for (using help on this command uses the command)`;
-platforms.managerCommand = false;
+var command = new Command("platforms", false, false, false);
 
-platforms.help = (clientUser, state) => {
-    return platformsBuilder(state.cachedGuild.platformsList);
+// Overwrite detailed help description with executing the command
+command.help = (avatarURL, guildID, locale, guildName, module) => {
+	return platformsBuilder(guildName, directories[guildID].platformsList, locale);
 }
 
-platforms.execute = (receivedMessage, state, metrics) => {
-    // List the platforms being tracked in the guild
-    receivedMessage.channel.send(platformsBuilder(state.cachedGuild.platformsList))
-        .catch(console.error);
+command.execute = (receivedMessage, state, locale) => {
+	// List the platforms being tracked in the guild
+	receivedMessage.channel.send(platformsBuilder(receivedMessage.guild.name, directories[receivedMessage.guild.id].platformsList, locale))
+		.catch(console.error);
 }
 
-module.exports = platforms;
+module.exports = command;

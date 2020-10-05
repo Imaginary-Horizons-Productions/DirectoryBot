@@ -22,7 +22,7 @@ client.on('ready', () => {
 		if (error) {
 			console.log(error);
 		} else {
-			Object.keys(helpers.platformsList).forEach(guildID => {
+			Object.keys(helpers.guildLocales).forEach(guildID => {
 				var guild = client.guilds.resolve(guildID);
 				if (guild) {
 					helpers.directories[guildID] = new Directory();

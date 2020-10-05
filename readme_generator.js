@@ -3,7 +3,7 @@ const { getString } = require('./Localizations/localization.js');
 const { commandSets } = require('./Commands/CommandsList.js');
 
 let text = `# DirectoryBot
-DirectoryBot is a Discord bot that stores friend codes and converts timezones.
+DirectoryBot is a configurable, multi-language bot that stores friend codes and converts timezones.
 
 ## Set-Up
 1. Add DirectoryBot to your server from this link: https://discord.com/api/oauth2/authorize?client_id=585336216262803456&permissions=27648&scope=bot
@@ -24,13 +24,14 @@ If you leave a server, DirectoryBot will delete all of your data. If you kick Di
 commandSets.forEach(commandSet => {
 	text += `## ${getString("en-US", commandSet.module, "title")}\n${getString("en-US", commandSet.module, "description")}\n`;
 	commandSet.fileNames.forEach(filename => {
-		const command = filename.slice(0, -5);
+		const command = filename.slice(0, -3);
 		text += `### ${getString("en-US", command, "names").join(', ')}\n${getString("en-US", command, "description")}\n`;
 		let headers = getString("en-US", command, "headers");
 		let texts = getString("en-US", command, "texts");
 		for (var i = 0; i < headers.length; i++) {
 			text += `#### ${headers[i]}\n${texts[i]}\n`;
 		}
+		text += '\n';
 	})
 })
 

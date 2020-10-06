@@ -80,7 +80,7 @@ client.on('ready', () => {
 												client.channels.fetch(channelID).then(DMChannel => {
 													expiringMessages[channelID].forEach(messageID => {
 														DMChannel.messages.fetch(messageID).then(message => {
-															message.edit(`This message has expired.`);
+															message.edit(getString(helpers.directories[guildID].locale, "DirectoryBot", "expiredMessage"));
 															message.suppressEmbeds(true);
 														})
 													})
@@ -222,8 +222,8 @@ client.on('guildDelete', (guild) => {
 
 client.on('guildMemberRemove', (member) => {
 	var guildID = member.guild.id;
-	var cachedGuild = helpers.directories[guildID];
 	var memberID = member.id;
+	var cachedGuild = helpers.directories[guildID];
 
 	if (cachedGuild) {
 		if (cachedGuild.userDictionary[memberID]) {
@@ -253,11 +253,15 @@ client.on('error', (error) => {
 
 
 client.on('roleUpdate', (oldRole, newRole) => {
-	Object.values(helpers.platformsList).forEach(platform => {
-		if (platform.roleID == newRole.id) {
-			platform.roleName = newRole.name;
-		}
-	})
+	if (helpers.directories[newRole.guild.id]) {
+		Object.values(helpers.directories[newRole.guild.id].platformsList).forEach(platform => {
+			if (platform.roleID == newRole.id) {
+				platform.roleName = newRole.name;
+			}
+		})	
+	} else {
+		guildCreate(newRole.guild.id, newRole.guild.preferredLocale);
+	}
 })
 
 

@@ -5,6 +5,7 @@
 		"errorNotManager": "",
 		"errorTooManyCommands": "",
 		"expirationWarning": "",
+		"expiredMessage": "",
 		"lessThanAnHour": "",
 		"and": "",
 		"hours": "",
@@ -105,7 +106,7 @@
 		"names": [],
 		"summary": "",
 		"description": "",
-		"headers": [ "" ],
+		"headers": [ ],
 		"texts": [],
 		"successMessage": "",
 		"errorBadNumber": ""

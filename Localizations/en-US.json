@@ -85,7 +85,7 @@
 		"errorBadTime": "The time you provided could not be parsed (remember to specify AM or PM)."
 	},
 	"credits": {
-		"names": [ "Credits", "Creditz", "About" ],
+		"names": [ "Credits", "Creditz", "About", "Version" ],
 		"summary": "Version info and contributors (using `help` on this command uses the command)",
 		"description": "This command presents version info and contributors. Using `help` on this command uses the command.",
 		"headers": [ "Usage" ],

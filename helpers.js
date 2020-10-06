@@ -105,6 +105,36 @@ exports.platformsBuilder = function (guildName, platformsList, locale) {
 	}) + listedPlatforms;
 }
 
+exports.versionBuilder = function (avatarURL = '') {
+	let data = fs.readFileSync('./ChangeLog.md', 'utf8')
+	var dividerRegEx = /####/g;
+	var changesStartRegEx = /\.\d+:/g;
+	var knownIssuesStartRegEx = /### Known Issues/g;
+	var titleStart = dividerRegEx.exec(data).index;
+	changesStartRegEx.exec(data);
+	var knownIssuesStart = knownIssuesStartRegEx.exec(data).index;
+	var knownIssuesEnd = dividerRegEx.exec(data).index;
+
+	var embed = new MessageEmbed().setColor('6b81eb')
+		.setAuthor(`Imaginary Horizons Productions`, `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `, `https://github.com/Imaginary-Horizons-Productions `)
+		.setTitle(data.slice(titleStart + 5, changesStartRegEx.lastIndex))
+		//.setURL(`https://github.com/Imaginary-Horizons-Productions/BountyBot `)
+		.setThumbnail('https://cdn.discordapp.com/attachments/545684759276421120/734099622846398565/newspaper.png')
+		.setFooter(getString("en-US", "DirectoryBot", "footerText"), avatarURL)
+		.setTimestamp();
+
+	if (knownIssuesStart < knownIssuesEnd) {
+		// Known Issues section found
+		embed.setDescription(data.slice(changesStartRegEx.lastIndex, knownIssuesStart))
+			.addField(`Known Issues`, data.slice(knownIssuesStart + 16, knownIssuesEnd))
+	} else {
+		// Known Issues section not found
+		embed.setDescription(data.slice(changesStartRegEx.lastIndex, knownIssuesEnd));
+	}
+
+	return embed.addField(`Become a Patron`, `Chip in for server costs at the [Imaginary Horizons Productions Patreon](https://www.patreon.com/imaginaryhorizonsproductions)`);
+}
+
 exports.saveObject = function (guildID, object, fileName, backup = false) {
 	fs.readFile("encryptionKey.txt", 'utf8', (error, keyInput) => {
 		if (error) {

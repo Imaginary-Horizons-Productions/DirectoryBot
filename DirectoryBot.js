@@ -136,72 +136,128 @@ client.on('ready', () => {
 })
 
 client.on('message', (receivedMessage) => {
-	if (receivedMessage.author == client.user || !receivedMessage.guild) {
+	if (receivedMessage.author == client.user) {
 		return;
 	}
 
-	if (!(helpers.directories[receivedMessage.guild.id] && Object.keys(helpers.guildLocales).includes(receivedMessage.guild.id))) {
-		guildCreate(receivedMessage.guild.id, receivedMessage.guild.preferredLocale);
-	}
+	if (receivedMessage.guild) {
+		// Guild Message Command
+		if (!(helpers.directories[receivedMessage.guild.id] && Object.keys(helpers.guildLocales).includes(receivedMessage.guild.id))) {
+			guildCreate(receivedMessage.guild.id, receivedMessage.guild.preferredLocale);
+		}
 
-	if (receivedMessage.mentions.users.has(client.user.id) || receivedMessage.mentions.roles.has(helpers.directories[receivedMessage.guild.id].permissionsRoleID)) {
-		var messageArray = receivedMessage.content.split(" ").filter(element => {
-			return element != "";
-		});
-		let firstWord = messageArray.shift().replace(/\D/g, "");
-		if (messageArray.length > 0 && (firstWord == client.user.id || firstWord != '' && firstWord == helpers.directories[receivedMessage.guild.id].permissionsRoleID)) {
-			if (!helpers.directories[receivedMessage.guild.id].userDictionary[receivedMessage.author.id]) {
-				helpers.directories[receivedMessage.guild.id].userDictionary[receivedMessage.author.id] = {};
-				Object.keys(helpers.directories[receivedMessage.guild.id].platformsList).forEach((platformInList) => {
-					helpers.directories[receivedMessage.guild.id].userDictionary[receivedMessage.author.id][platformInList] = new FriendCode();
-				});
-			}
+		if (receivedMessage.mentions.users.has(client.user.id) || receivedMessage.mentions.roles.has(helpers.directories[receivedMessage.guild.id].permissionsRoleID)) {
+			var messageArray = receivedMessage.content.split(" ").filter(element => {
+				return element != "";
+			});
+			let firstWord = messageArray.shift().replace(/\D/g, "");
+			if (messageArray.length > 0 && (firstWord == client.user.id || firstWord != '' && firstWord == helpers.directories[receivedMessage.guild.id].permissionsRoleID)) {
+				if (!helpers.directories[receivedMessage.guild.id].userDictionary[receivedMessage.author.id]) {
+					helpers.directories[receivedMessage.guild.id].userDictionary[receivedMessage.author.id] = {};
+					Object.keys(helpers.directories[receivedMessage.guild.id].platformsList).forEach((platformInList) => {
+						helpers.directories[receivedMessage.guild.id].userDictionary[receivedMessage.author.id][platformInList] = new FriendCode();
+					});
+				}
 
-			var command = messageArray.shift();
-			let directory = helpers.directories[receivedMessage.guild.id];
-			if (commandDictionary[command]) {
-				let locale = commandDictionary[command].locale || directory.locale;
+				var command = messageArray.shift();
+				let directory = helpers.directories[receivedMessage.guild.id];
+				if (commandDictionary[command]) {
+					let locale = commandDictionary[command].locale || directory.locale;
 
-				var recentInteractions = 0;
+					var recentInteractions = 0;
 
-				antiSpam.forEach(user => {
-					if (user == receivedMessage.author.id) {
-						recentInteractions++;
-					}
-				})
+					antiSpam.forEach(user => {
+						if (user == receivedMessage.author.id) {
+							recentInteractions++;
+						}
+					})
 
-				if (recentInteractions < commandLimit) {
-					var state = {
-						"command": command, // The command alias used
-						"messageArray": messageArray,
-						"botManager": receivedMessage.member.hasPermission(Discord.Permissions.FLAGS.ADMINISTRATOR) || receivedMessage.member.roles.cache.has(helpers.directories[receivedMessage.guild.id].managerRoleID),
-					};
+					if (recentInteractions < commandLimit) {
+						var state = {
+							"command": command, // The command alias used
+							"messageArray": messageArray,
+							"botManager": receivedMessage.member.hasPermission(Discord.Permissions.FLAGS.ADMINISTRATOR) || receivedMessage.member.roles.cache.has(helpers.directories[receivedMessage.guild.id].managerRoleID),
+						};
 
-					if (state.botManager || !commandDictionary[command].managerCommand) {
-						commandDictionary[command].execute(receivedMessage, state, locale);
+						if (state.botManager || !commandDictionary[command].managerCommand) {
+							commandDictionary[command].execute(receivedMessage, state, locale);
+						} else {
+							receivedMessage.author.send(getString(locale, "DirectoryBot", "errorNotManager").addVariables({
+								"role": directory.managerRoleID ? ` or the @${receivedMessage.guild.roles.resolve(directory.managerRoleID).name} role` : ``,
+								"alias": command
+							})).catch(console.error);
+						}
+
+						antiSpam.push(receivedMessage.author.id);
+						setTimeout(function () {
+							antiSpam.shift();
+						}, antiSpamInterval);
 					} else {
-						receivedMessage.author.send(getString(locale, "DirectoryBot", "errorNotManager").addVariables({
-							"role": directory.managerRoleID ? ` or the @${receivedMessage.guild.roles.resolve(directory.managerRoleID).name} role` : ``,
-							"alias": command
+						receivedMessage.author.send(getString(locale, "DirectoryBot", "errorTooManyCommands").addVariables({
+							"commandLimit": commandLimit,
+							"duration": helpers.millisecondsToHours(locale, antiSpamInterval, true, true),
+							"botNickname": client.user
 						})).catch(console.error);
 					}
-
-					antiSpam.push(receivedMessage.author.id);
-					setTimeout(function () {
-						antiSpam.shift();
-					}, antiSpamInterval);
 				} else {
-					receivedMessage.author.send(getString(locale, "DirectoryBot", "errorTooManyCommands").addVariables({
-						"commandLimit": commandLimit,
-						"duration": helpers.millisecondsToHours(locale, antiSpamInterval, true, true),
+					receivedMessage.author.send(getString(directory.locale, "DirectoryBot", "errorBadCommand").addVariables({
+						"commandName": command,
 						"botNickname": client.user
 					})).catch(console.error);
 				}
-			} else {
-				receivedMessage.author.send(getString(directory.locale, "DirectoryBot", "errorBadCommand").addVariables({
-					"commandName": command,
-					"botNickname": client.user
-				})).catch(console.error);
+			}
+		}
+	} else {
+		// Direct Message Command
+		if (receivedMessage.mentions.users.has(client.user.id)) {
+			var messageArray = receivedMessage.content.split(" ").filter(element => {
+				return element != "";
+			});
+			let firstWord = messageArray.shift().replace(/\D/g, "");
+			if (messageArray.length > 0 && firstWord == client.user.id) {
+				var command = messageArray.shift();
+				if (commandDictionary[command]) {
+					let locale = commandDictionary[command].locale || receivedMessage.author.locale;
+
+					var recentInteractions = 0;
+
+					antiSpam.forEach(user => {
+						if (user == receivedMessage.author.id) {
+							recentInteractions++;
+						}
+					})
+
+					if (recentInteractions < commandLimit) {
+						var state = {
+							"command": command, // The command alias used
+							"messageArray": messageArray,
+						};
+
+						if (commandDictionary[command].dmCommand) {
+							commandDictionary[command].execute(receivedMessage, state, locale);
+						} else {
+							receivedMessage.author.send('Please use the `${command}` command from within a server.'.addVariables({
+								"command":state.command
+							})).catch(console.error);
+						}
+
+						antiSpam.push(receivedMessage.author.id);
+						setTimeout(function () {
+							antiSpam.shift();
+						}, antiSpamInterval);
+					} else {
+						receivedMessage.author.send(getString(locale, "DirectoryBot", "errorTooManyCommands").addVariables({
+							"commandLimit": commandLimit,
+							"duration": helpers.millisecondsToHours(locale, antiSpamInterval, true, true),
+							"botNickname": client.user
+						})).catch(console.error);
+					}
+				} else {
+					receivedMessage.author.send(getString(receivedMessage.user.locale, "DirectoryBot", "errorBadCommand").addVariables({
+						"commandName": command,
+						"botNickname": client.user
+					})).catch(console.error);
+				}
 			}
 		}
 	}
@@ -258,7 +314,7 @@ client.on('roleUpdate', (oldRole, newRole) => {
 			if (platform.roleID == newRole.id) {
 				platform.roleName = newRole.name;
 			}
-		})	
+		})
 	} else {
 		guildCreate(newRole.guild.id, newRole.guild.preferredLocale);
 	}

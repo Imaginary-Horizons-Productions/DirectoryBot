@@ -2,7 +2,7 @@ const Command = require('./../Classes/Command.js');
 const { getString } = require('./../Localizations/localization.js');
 const { MessageEmbed } = require('discord.js');
 
-var command = new Command("support", false, false, false);
+var command = new Command("support", false, false, true);
 
 // Overwrite detailed help description with executing the command
 command.help = (avatarURL, guildID, locale, guildName, module) => {

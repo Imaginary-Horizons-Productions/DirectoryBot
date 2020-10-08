@@ -13,7 +13,10 @@
 		"minutes": "",
 		"seconds": "",
 		"platformsMessage": "",
-		"directoryBotCommand": ""
+		"directoryBotCommand": "",
+		"commandProperties": "",
+		"propertiesText": ""
+
 	},
 	"platformPossessivePronoun": {
 		"token": "",

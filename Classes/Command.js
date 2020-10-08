@@ -15,6 +15,11 @@ module.exports = class Command {
 			.setDescription(getString(locale, module, "description"))
 			.setFooter(getString(locale, "DirectoryBot", "footerText"), avatarURL);
 
+		embed.addField(getString(locale, "DirectoryBot", "commandProperties"), getString(locale, "DirectoryBot", "propertiesText").addVariables({
+			"premium": this.premiumCommand ? ":white_check_mark:" : ":no_entry_sign:",
+			"manager": this.managerCommand ? ":no_entry_sign:" : ":white_check_mark:",
+			"dmCommand": this.dmCommand ? ":white_check_mark:" : ":no_entry_sign:",
+		}));
 		let headers = getString(locale, module, "headers");
 		let texts = getString(locale, module, "texts");
 		for (var i = 0; i < headers.length; i++) {

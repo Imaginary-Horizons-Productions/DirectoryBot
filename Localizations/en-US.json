@@ -14,7 +14,9 @@
 		"seconds": "second(s)",
 		"platformsMessage": "${guild}'s platforms are: ",
 		"platformRole": "(role: @${role})",
-		"directoryBotCommand": "DirectoryBot Command: "
+		"directoryBotCommand": "DirectoryBot Command: ",
+		"commandProperties": "Command Properties",
+		"propertiesText": "Premium: ${premium}\nUsable by Non-Managers: ${manager}\nUsable in Private Messages: ${dmCommand}"
 	},
 	"platformPossessivePronoun": {
 		"token": "PossessivePronoun",
@@ -62,7 +64,7 @@
 		"summary": "Convert a time to someone else's time zone or a given time zone",
 		"description": "This command calculates a time for a given user or time zone. DirectoryBot uses [tz database format](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) for time zones.",
 		"headers": [ "Convert a time to a user's time zone", "Convert a time to a specified time zone", "\u200B" ],
-		"texts": [ "`@DirectoryBot convert (time) in (start time zone) for (user)`", "`@DirectoryBot convert (time) in (start time zone) to (result time zone)`", "If the starting timezone is omitted, the conversion will be attempted with the time zone you've recorded for the \"timezone\" platform." ],
+		"texts": [ "`@DirectoryBot convert (time) in (start time zone) for (user)`\nConverting time zones for users is not available via private messages.", "`@DirectoryBot convert (time) in (start time zone) to (result time zone)`", "If the starting timezone is omitted, the conversion will be attempted with the time zone you've recorded for the \"timezone\" platform." ],
 		"in": "in",
 		"for": "for",
 		"errorUserZoneMissing": "Your time could not be converted. ${targetGuildMember} does not have a time zone recorded.",

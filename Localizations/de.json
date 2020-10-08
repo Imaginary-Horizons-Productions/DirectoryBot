@@ -13,7 +13,9 @@
 		"minutes": "Minute(n)",
 		"seconds": "Sekunde(n)",
 		"platformsMessage": "${guild} Platformen sind: ",
-		"directoryBotCommand": "DirectoryBot Befehl: "
+		"directoryBotCommand": "DirectoryBot Befehl: ",
+		"commandProperties": "",
+		"propertiesText": ""
 	},
 	"platformPossessivePronoun": {
 		"token": "Possessivpronomen",

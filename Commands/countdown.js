@@ -21,7 +21,7 @@ command.execute = (receivedMessage, state, locale) => {
 
 	var inputTime = new chrono.parse(timeText);
 	if (inputTime.length > 0) {
-		if (startTimezone == "") {
+		if (startTimezone == "" && receivedMessage.guild) {
 			if (directories[receivedMessage.guild.id].userDictionary[receivedMessage.author.id].timezone.value) {
 				startTimezone = directories[receivedMessage.guild.id].userDictionary[receivedMessage.author.id].timezone.value;
 			} else {

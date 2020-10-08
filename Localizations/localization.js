@@ -34,12 +34,12 @@ exports.getString = function (locale, module, property) {
 			}
 		} else {
 			// If module is missing, error
-			console.error(`Localization module ${module} is missing from ${locale}.`);
+			console.error(`Localization module ${module} is missing from ${locale}. (${property})`);
 			return `Localization for **${locale} ${module}** is missing. You can contribute it here: https://github.com/Imaginary-Horizons-Productions/DirectoryBot `
 		}
 	} else {
 		// If locale is not supported, assume property exists for en-US
-		console.error(`Locale ${locale} is missing.`);
+		console.error(`Locale ${locale} is missing. (module: ${module}, property: ${property})`);
 		return exports.dictionary["en-US"][module][property];
 	}
 }

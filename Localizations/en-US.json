@@ -4,6 +4,7 @@
 		"errorBadCommand": "**${commandName}** isn't a command. Please check for typos or use ${botNickname}` help`.",
 		"errorNotManager": "You need a role with the administrator flag${role} to use the **${alias}** command.",
 		"errorTooManyCommands": "To prevent excessive messaging, users are unable to enter more than ${commandLimit} commands in ${duration}. You can use ${botNickname}` lookup (platform)` to look up everyone's information for the given platform at once.",
+		"errorNotPMCommand": "Please use the `${command}` command from within a server.",
 		"expirationWarning": "This message will expire in about ${time}.",
 		"expiredMessage": "This message has expired.",
 		"lessThanAnHour": "less than an hour",

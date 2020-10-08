@@ -18,7 +18,11 @@ command.help = (avatarURL, guildID, locale, guildName, module) => {
 		embed.addField(headers[i], texts[i]);
 	}
 
-	return embed.addField('\u200B', platformsBuilder(guildName, directories[guildID].platformsList, locale));
+	if (guildID) {
+		embed.addField('\u200B', platformsBuilder(guildName, directories[guildID].platformsList, locale));
+	}
+
+	return embed;
 }
 
 command.execute = (receivedMessage, state, locale) => {

@@ -4,6 +4,7 @@
 		"errorBadCommand": "**${commandName}** ist kein bekannter Befehl. Bitte überprüfen sie auf Rechtschreibfehler oder benutzen sie ${botNickname}` Hilfe`.",
 		"errorNotManager": "Sie benötigen eine Rolle mit dem Administrator flag${role} um den **${alias}** Befehl zu benutzen.",
 		"errorTooManyCommands": "Um ein Übermaß and Nachrichten zu verhindern, sind Benutzer/innen nicht in der Lage mehr als ${commandLimit} Befehle innerhalb von ${duration} einzugeben. Sie können ${botNickname}` lookup (platform)` nutzen um die Informationen aller für eine gegebene Platform einzusehen.",
+		"errorNotPMCommand": "",
 		"expirationWarning": "Diese Nachricht wird in ungefähr ${time} ungültig werden.",
 		"expiredMessage": "",
 		"lessThanAnHour": "Weniger als eine Stunde",

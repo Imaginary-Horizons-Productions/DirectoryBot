@@ -13,15 +13,19 @@ command.execute = (receivedMessage, state, locale) => {
 	if (state.messageArray.length > 0) {
 		let commandName = state.messageArray[0].toLowerCase();
 		var lookedUpCommand = commandDictionary[commandName];
+		if (receivedMessage.guild) {
+			var { id: guildID, name: guildName } = receivedMessage.guild;
+		}
+
 		if (lookedUpCommand) {
 			let commandLocale = lookedUpCommand.locale || locale;
 			if (state.botManager || !lookedUpCommand.managerCommand) {
-				receivedMessage.author.send(lookedUpCommand.help(receivedMessage.client.user.displayAvatarURL(), receivedMessage.guild.id, commandLocale, receivedMessage.guild.name, lookedUpCommand.module))
+				receivedMessage.author.send(lookedUpCommand.help(receivedMessage.client.user.displayAvatarURL(), guildID, commandLocale, guildName, lookedUpCommand.module))
 					.catch(console.error);
 			} else {
 				// Error Message
 				receivedMessage.author.send(getString(commandLocale, command.module, "errorNotManager").addVariables({
-					"role": directories[receivedMessage.guild.id].managerRoleID ? ` or the @${receivedMessage.guild.roles.resolve(directories[receivedMessage.guild.id].managerRoleID).name} role` : ``
+					"role": guildID && directories[guildID].managerRoleID ? ` or the @${receivedMessage.guild.roles.resolve(directories[guildID].managerRoleID).name} role` : ``
 				})).catch(console.error);
 			}
 		} else {

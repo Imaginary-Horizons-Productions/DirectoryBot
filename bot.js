@@ -250,7 +250,7 @@ client.on('message', (receivedMessage) => {
 						if (commandDictionary[command].dmCommand) {
 							commandDictionary[command].execute(receivedMessage, state, locale);
 						} else {
-							receivedMessage.author.send('Please use the `${command}` command from within a server.'.addVariables({
+							receivedMessage.author.send(getString(locale, "DirectoryBot", "errorNotPMCommand").addVariables({
 								"command": state.command
 							})).catch(console.error);
 						}

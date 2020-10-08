@@ -4,6 +4,7 @@
 		"errorBadCommand": "",
 		"errorNotManager": "",
 		"errorTooManyCommands": "",
+		"errorNotPMCommand": "",
 		"expirationWarning": "",
 		"expiredMessage": "",
 		"lessThanAnHour": "",

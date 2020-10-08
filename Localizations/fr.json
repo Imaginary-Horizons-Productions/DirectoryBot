@@ -4,6 +4,7 @@
 		"errorBadCommand": "**${commandName}$$ n'est pas une commande. Veuillez vérifier les fautes de frappe ou utiliser $[botNickname}` help`",
 		"errorNotManager": "",
 		"errorTooManyCommands": "",
+		"errorNotPMCommand": "",
 		"expirationWarning": "",
 		"expiredMessage": "",
 		"lessThanAnHour": "",

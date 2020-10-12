@@ -50,7 +50,7 @@ command.execute = (receivedMessage, state, locale) => {
 		// Select winner
 		if (userIDsPool.length > 0) {
 			receivedMessage.channel.send(getString(locale, command.module, "successMessage").addVariables({
-				"winner": `<@${userIDsPool[Math.floor(Math.random() * userIDsPool.length)]}>`
+				"winner": receivedMessage.guild.members.resolve(userIDsPool[Math.floor(Math.random() * userIDsPool.length)]).displayName
 			}))
 		} else {
 			// Error Message

@@ -52,6 +52,7 @@ command.execute = (receivedMessage, state, locale) => {
 				let embed = new MessageEmbed().setColor(`6b81eb`)
 					.setAuthor(receivedMessage.guild.name, receivedMessage.guild.iconURL())
 					.setTitle(`${state.command}: ${platform}`)
+					.setThumbnail('https://cdn.discordapp.com/attachments/545684759276421120/765064127793725450/bookmark.png')
 					.setDescription(text)
 					.setFooter(getString(locale, "DirectoryBot", "expirationWarning").addVariables({ "time": millisecondsToHours(locale, state.infoLifetime)}), receivedMessage.client.user.avatarURL())
 					.setTimestamp();

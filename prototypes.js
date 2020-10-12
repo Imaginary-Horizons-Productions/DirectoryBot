@@ -1,4 +1,6 @@
 const { MessageEmbed, Message, GuildMember } = require('discord.js');
+const fs = require('fs');
+const encrypter = require('crypto-js');
 
 String.prototype.addVariables = function (variables) {
 	var buffer = this;

@@ -1,7 +1,7 @@
-const { MessageEmbed, Message, GuildMember } = require('discord.js');
+const { MessageEmbed } = require('discord.js');
 const fs = require('fs');
 const { getString } = require('./Localizations/localization.js');
-var encrypter = require('crypto-js');
+const encrypter = require('crypto-js');
 
 // guildID: locale
 exports.guildLocales = {};

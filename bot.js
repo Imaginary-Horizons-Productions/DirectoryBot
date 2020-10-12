@@ -2,6 +2,7 @@ const Discord = require('discord.js');
 const fs = require('fs');
 var encrypter = require('crypto-js');
 
+require('./prototypes.js');
 var helpers = require('./helpers.js');
 const { getString } = require('./Localizations/localization.js');
 const commandDictionary = require(`./Commands/CommandsList.js`).commandDictionary;
@@ -24,7 +25,7 @@ client.on('ready', () => {
 	if (versionMetadata.showVersion) {
 		client.guilds.resolve(versionMetadata.versionGuildID).channels.resolve(versionMetadata.versionChannelID).send(helpers.versionBuilder(client.user.displayAvatarURL()))
 			.catch(console.error);
-			versionMetadata.showVersion = false;
+		versionMetadata.showVersion = false;
 		fs.writeFile('versionMetaData.json', JSON.stringify(versionMetadata), 'utf8', error => {
 			if (error) {
 				console.error(error)

@@ -24,6 +24,7 @@ function creditsBuilder(footerURL, locale) {
 	return new MessageEmbed().setColor(`6b81eb`)
 		.setAuthor("Imaginary Horizons Productions", `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `, `https://discord.gg/bcE3Syu `)
 		.setTitle(getString(locale, command.module, "creditsTitle").addVariables({ "versionNumber": "2.1.0" }))
+		.setThumbnail('https://cdn.discordapp.com/attachments/545684759276421120/734097014974971924/theater-curtains.png')
 		.setURL(`https://github.com/Imaginary-Horizons-Productions/DirectoryBot `)
 		.addField(getString(locale, command.module, "designAndEngineering"), `Nathaniel Tseng ( <@106122478715150336> | [Twitter](https://twitter.com/Archainis) )`)
 		.addField(getString(locale, command.module, "engineering"), `Lucas Ensign ( <@112785244733628416> | [Twitter](https://twitter.com/SillySalamndr) )`)

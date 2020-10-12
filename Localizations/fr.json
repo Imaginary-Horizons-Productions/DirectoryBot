@@ -220,6 +220,16 @@
 		"headers": [],
 		"texts": []
 	},
+	"raffle": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"successMessage": "",
+		"errorNoUsers": "",
+		"errorNoMentions": ""
+	},
 	"record": {
 		"names": [],
 		"summary": "",

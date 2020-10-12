@@ -220,6 +220,16 @@
 		"headers": [ "Usage" ],
 		"texts": [ "`@DirectoryBot platforms`" ]
 	},
+	"raffle": {
+		"names": [ "Raffle" ],
+		"summary": "Randomly select a user from a given list of users, roles, or platforms",
+		"description": "This command generates a list of users including the mentioned users, users with any of the mentioned roles, and users who've recorded data for the mentioned platforms. Then it randomly selects one of those users.",
+		"headers": [ "Select a user randomly" ],
+		"texts": [ "`@DirectoryBot raffle (list of users, roles, or platforms)`" ],
+		"successMessage": "The winner of the raffle is:\n\t${winner}",
+		"errorNoUsers": "Your raffle could not be completed. No users met the given conditions.",
+		"errorNoMentions": "Please mention a set of users, a role held by the users, and/or platform to select a winner from."
+	},
 	"record": {
 		"names": [ "Record", "Log", "Add" ],
 		"summary": "Record your information for a platform",

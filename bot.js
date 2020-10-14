@@ -151,7 +151,7 @@ client.on('ready', () => {
 })
 
 client.on('message', (receivedMessage) => {
-	if (receivedMessage.author == client.user) {
+	if (receivedMessage.author.bot) {
 		return;
 	}
 
@@ -224,56 +224,58 @@ client.on('message', (receivedMessage) => {
 		}
 	} else {
 		// Direct Message Command
-		if (receivedMessage.mentions.users.has(client.user.id)) {
-			var messageArray = receivedMessage.content.split(" ").filter(element => {
-				return element != "";
-			});
-			let firstWord = messageArray.shift().replace(/\D/g, "");
-			if (messageArray.length > 0 && firstWord == client.user.id) {
-				var command = messageArray.shift();
-				if (commandDictionary[command]) {
-					let locale = commandDictionary[command].locale || receivedMessage.author.locale;
+		var messageArray = receivedMessage.content.split(" ").filter(element => {
+			return element != "";
+		});
+		let firstWord = messageArray.shift();
+		let command = '';
+		if (firstWord.replace(/\D/g, "") == client.user.id) {
+			command = messageArray.shift();
+		} else {
+			command = firstWord;
+		}
 
-					var recentInteractions = 0;
+		if (commandDictionary[command]) {
+			let locale = commandDictionary[command].locale || receivedMessage.author.locale;
 
-					antiSpam.forEach(user => {
-						if (user == receivedMessage.author.id) {
-							recentInteractions++;
-						}
-					})
+			var recentInteractions = 0;
 
-					if (recentInteractions < commandLimit) {
-						var state = {
-							"command": command, // The command alias used
-							"messageArray": messageArray,
-						};
+			antiSpam.forEach(user => {
+				if (user == receivedMessage.author.id) {
+					recentInteractions++;
+				}
+			})
 
-						if (commandDictionary[command].dmCommand) {
-							commandDictionary[command].execute(receivedMessage, state, locale);
-						} else {
-							receivedMessage.author.send(getString(locale, "DirectoryBot", "errorNotPMCommand").addVariables({
-								"command": state.command
-							})).catch(console.error);
-						}
+			if (recentInteractions < commandLimit) {
+				var state = {
+					"command": command, // The command alias used
+					"messageArray": messageArray,
+				};
 
-						antiSpam.push(receivedMessage.author.id);
-						setTimeout(function () {
-							antiSpam.shift();
-						}, antiSpamInterval);
-					} else {
-						receivedMessage.author.send(getString(locale, "DirectoryBot", "errorTooManyCommands").addVariables({
-							"commandLimit": commandLimit,
-							"duration": helpers.millisecondsToHours(locale, antiSpamInterval, true, true),
-							"botNickname": client.user
-						})).catch(console.error);
-					}
+				if (commandDictionary[command].dmCommand) {
+					commandDictionary[command].execute(receivedMessage, state, locale);
 				} else {
-					receivedMessage.author.send(getString(receivedMessage.user.locale, "DirectoryBot", "errorBadCommand").addVariables({
-						"commandName": command,
-						"botNickname": client.user
+					receivedMessage.author.send(getString(locale, "DirectoryBot", "errorNotPMCommand").addVariables({
+						"command": state.command
 					})).catch(console.error);
 				}
+
+				antiSpam.push(receivedMessage.author.id);
+				setTimeout(function () {
+					antiSpam.shift();
+				}, antiSpamInterval);
+			} else {
+				receivedMessage.author.send(getString(locale, "DirectoryBot", "errorTooManyCommands").addVariables({
+					"commandLimit": commandLimit,
+					"duration": helpers.millisecondsToHours(locale, antiSpamInterval, true, true),
+					"botNickname": client.user
+				})).catch(console.error);
 			}
+		} else if (command) {
+			receivedMessage.author.send(getString(receivedMessage.author.locale, "DirectoryBot", "errorBadCommand").addVariables({
+				"commandName": command,
+				"botNickname": client.user
+			})).catch(console.error);
 		}
 	}
 })

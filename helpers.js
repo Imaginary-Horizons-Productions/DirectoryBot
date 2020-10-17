@@ -85,7 +85,7 @@ exports.saveObject = function (guildID, object, fileName, backup = false) {
 		} else {
 			var filePath = `./`;
 			if (backup) {
-				filePath += 'backups/' + guildID + '/' + fileName;
+				filePath += 'backups/' + guildID + '/' + Date.now() + '_' + fileName;
 				if (!fs.existsSync('./backups')) {
 					fs.mkdirSync('./backups');
 				}

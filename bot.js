@@ -22,7 +22,7 @@ client.on('ready', () => {
 	console.log("Connected as " + client.user.tag + "\n");
 
 	// Post version notes
-	if (versionMetadata.showVersion) {
+	if (versionMetadata.showVersion && versionMetadata.versionGuildID) {
 		client.guilds.resolve(versionMetadata.versionGuildID).channels.resolve(versionMetadata.versionChannelID).send(helpers.versionBuilder(client.user.displayAvatarURL()))
 			.catch(console.error);
 		versionMetadata.showVersion = false;
@@ -282,13 +282,13 @@ client.on('message', (receivedMessage) => {
 
 
 client.on('guildCreate', (guild) => {
-	console.log(`Added to server (${client.guilds.length} total): ${guild.name}`);
+	console.log(`Added to server (${Object.keys(client.guilds).length} total): ${guild.name}`);
 	guildCreate(guild.id, guild.preferredLocale);
 })
 
 
 client.on('guildDelete', (guild) => {
-	console.log(`Removed from server (${client.guilds.length} total)`);
+	console.log(`Removed from server (${Object.keys(client.guilds).length} total)`);
 	guildDelete(guild.id);
 })
 

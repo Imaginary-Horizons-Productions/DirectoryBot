@@ -1,6 +1,10 @@
 const fs = require('fs');
 const { exec } = require('child_process');
+var encrypter = require('crypto-js');
 var consoleArgs = process.argv.slice(2);
+
+// Usage
+// `node update.js (migration version number)`
 
 // Backup server data
 fs.readFile(`encryptionKey.txt`, `utf8`, (error, keyInput) => {

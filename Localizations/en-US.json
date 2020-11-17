@@ -237,6 +237,7 @@
 		"headers": [ "Recording data" ],
 		"texts": [ "`@DirectoryBot record (platform) (data)`\nThe message containing the command will be deleted for security purposes. Discord's spoilers markdown (|| on both sides) is removed from code entry to allow hiding entry from mobile via spoilers markdown." ],
 		"successMessage": "${author} has recorded a ${platform} ${term}. Check it with:\n\t${botNickname}` lookup `${author}` ${platform}`.",
+		"errorPlaceholder": "A `record` command encountered an error.",
 		"errorBadPlatform": "${platform} is not currently being tracked in ${server}.",
 		"errorNoData": "Please provide the information you would like to record.",
 		"errorNoPlatform": "Please provide a platform for which to record your information for."

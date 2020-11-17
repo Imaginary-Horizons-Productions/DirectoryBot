@@ -11,7 +11,7 @@ const FriendCode = require('./Classes/FriendCode.js');
 
 const client = new Discord.Client();
 
-var versionMetadata = require('./versionMetadata.json');
+var versionData = require('./versionData.json');
 var antiSpam = [];
 var commandLimit = 3;
 var antiSpamInterval = 5000;
@@ -22,11 +22,11 @@ client.on('ready', () => {
 	console.log("Connected as " + client.user.tag + "\n");
 
 	// Post version notes
-	if (versionMetadata.showVersion && versionMetadata.versionGuildID) {
-		client.guilds.resolve(versionMetadata.versionGuildID).channels.resolve(versionMetadata.versionChannelID).send(helpers.versionBuilder(client.user.displayAvatarURL()))
+	if (versionData.showNotes && versionData.guildID) {
+		client.guilds.resolve(versionData.guildID).channels.resolve(versionData.channelID).send(helpers.versionBuilder(client.user.displayAvatarURL()))
 			.catch(console.error);
-		versionMetadata.showVersion = false;
-		fs.writeFile('versionMetaData.json', JSON.stringify(versionMetadata), 'utf8', error => {
+		versionData.showNotes = false;
+		fs.writeFile('versionData.json', JSON.stringify(versionData), 'utf8', error => {
 			if (error) {
 				console.error(error)
 			}

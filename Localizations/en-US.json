@@ -62,7 +62,7 @@
 	"convert": {
 		"names": [ "Convert" ],
 		"summary": "Convert a time to someone else's time zone or a given time zone",
-		"description": "This command calculates a time for a given user or time zone. DirectoryBot uses [tz database format](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) for time zones.",
+		"description": "This command calculates a time for a given user or time zone. DirectoryBot uses [tz database format](https://kevinnovak.github.io/Time-Zone-Picker/) for time zones.",
 		"headers": [ "Convert a time to a user's time zone", "Convert a time to a specified time zone", "\u200B" ],
 		"texts": [ "`@DirectoryBot convert (time) in (start time zone) for (user)`\nConverting time zones for users is not available via private messages.", "`@DirectoryBot convert (time) in (start time zone) to (result time zone)`", "If the starting timezone is omitted, the conversion will be attempted with the time zone you've recorded for the \"timezone\" platform." ],
 		"in": "in",
@@ -72,19 +72,19 @@
 		"successUser": "*${originalTime}in ${originalTimeZone}* is **${destinationTime} for ${targetGuildMember}**.",
 		"successZone": "*${originalTime}in ${originalTimeZone}* is **${destinationTime} in ${destinationTimeZone}**.",
 		"errorBadTime": "The time you provided could not be parsed (remember to specify AM or PM).",
-		"errorBadResultZone": "Please use the tz database format for the **result timezone**. You can look up time zones here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones",
+		"errorBadResultZone": "Please use the tz database format for the **result timezone**. You can look up time zones here: https://kevinnovak.github.io/Time-Zone-Picker/",
 		"errorNoResultZone": "Please specify a result timezone for your `convert` command.",
-		"errorBadStartZone": "Please use the tz database format for the **starting timezone**. You can look up time zones here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones"
+		"errorBadStartZone": "Please use the tz database format for the **starting timezone**. You can look up time zones here: https://kevinnovak.github.io/Time-Zone-Picker/"
 	},
 	"countdown": {
 		"names": [ "Countdown" ],
 		"summary": "How long until the given time",
-		"description": "This command calculates the amount of time until a given time. DirectoryBot uses [tz database format](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) for time zones.",
+		"description": "This command calculates the amount of time until a given time. DirectoryBot uses [tz database format](https://kevinnovak.github.io/Time-Zone-Picker/) for time zones.",
 		"headers": [ "Count down to a time" ],
 		"texts": [ "`@DirectoryBot countdown (time) in (time zone)`\nIf the time zone is omitted, the countdown will be attempted with the time zone you've recorded for the \"timezone\" platform, then the server's local time zone failing that." ],
 		"in": "in",
 		"successMessage": "*${startTime} in ${startTimezone}* is about **${time}** from now.",
-		"errorBadZone": "The time zone you entered could not be parsed. Remember to use the tz database format for time zones: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones",
+		"errorBadZone": "The time zone you entered could not be parsed. Remember to use the tz database format for time zones: https://kevinnovak.github.io/Time-Zone-Picker/",
 		"errorBadTime": "The time you provided could not be parsed (remember to specify AM or PM)."
 	},
 	"credits": {

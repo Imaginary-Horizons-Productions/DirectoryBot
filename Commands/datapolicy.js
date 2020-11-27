@@ -18,12 +18,13 @@ module.exports = command;
 
 function dataPolicyBuilder(locale, footerURL) {
 	return new MessageEmbed().setColor(`6b81eb`)
-	.setAuthor("Imaginary Horizons Productions", `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `, `https://discord.gg/bcE3Syu `)
-	.setURL(`https://github.com/Imaginary-Horizons-Productions/DirectoryBot `)
-	.setTitle(getString(locale, command.module, "embedTitle"))
-	.setDescription(getString(locale, command.module, "embedDescription"))
-	.addField(getString(locale, command.module, "collectionHeader"), getString(locale, command.module, "collectionText"))
-	.addField(getString(locale, command.module, "usageHeader"), getString(locale, command.module, "usageText"))
-	.setFooter(getString(locale, "DirectoryBot", "footerText"), footerURL)
-	.setTimestamp();
+		.setAuthor("Imaginary Horizons Productions", `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `, `https://discord.gg/bcE3Syu `)
+		.setURL(`https://github.com/Imaginary-Horizons-Productions/DirectoryBot `)
+		.setTitle(getString(locale, command.module, "embedTitle"))
+		.setThumbnail('https://cdn.discordapp.com/attachments/545684759276421120/782019073562378298/shaking-hands.png')
+		.setDescription(getString(locale, command.module, "embedDescription"))
+		.addField(getString(locale, command.module, "collectionHeader"), getString(locale, command.module, "collectionText"))
+		.addField(getString(locale, command.module, "usageHeader"), getString(locale, command.module, "usageText"))
+		.setFooter(getString(locale, "DirectoryBot", "footerText"), footerURL)
+		.setTimestamp();
 }

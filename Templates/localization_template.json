@@ -115,6 +115,19 @@
 		"successMessage": "",
 		"errorBadNumber": ""
 	},
+	"datapolicy": {
+		"names": [""],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"embedTitle": "",
+		"embedDescription": "",
+		"collectionHeader": "",
+		"collectionText": "",
+		"usageHeader": "",
+		"usageText": ""
+	},
 	"delete": {
 		"names": [],
 		"summary": "",
@@ -200,6 +213,7 @@
 		"headers": [],
 		"texts": [],
 		"successMessage": "",
+		"roleAddendum": "",
 		"errorDupePlatform": "",
 		"errorNoUserNamedPlatforms": "",
 		"errorNoName": ""

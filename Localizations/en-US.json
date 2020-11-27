@@ -198,8 +198,9 @@
 		"summary": "Setup a new game/service for users to record or retrieve information for",
 		"description": "This command sets up a new game/service for users to record and retrieve information.",
 		"headers": [ "Create a new platform" ],
-		"texts": [ "`@DirectoryBot newplatform (platform name) (information term) (description)`\nOptionally, you can set a term to call the information that is being stored (default is \"username\"). Additionally, you can set an optional description to be displayed when the lookup command is used on the platform." ],
-		"successMessage": "${platform} ${term}s can now be recorded and retrieved.",
+		"texts": [ "`@DirectoryBot newplatform (platform name) (information term) (description)`\nInformation term and description are optional, though providing a description without a information term will result in the first word of the description being interpreted as the information term. Information term defaults to \"username\". The role mentioned in the command will be set as the platform's role." ],
+		"successMessage": "${platform} ${term}s can now be recorded and retrieved${role}.",
+		"roleAddendum": " (platform role: ${role})",
 		"errorDupePlatform": "${server} already has a platform named *${platform}*.",
 		"errorNoUserNamedPlatforms": "Please select a platform name that is not a user mention.",
 		"errorNoName": "Please provide a name for the new platform."

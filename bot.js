@@ -23,8 +23,9 @@ client.on('ready', () => {
 
 	// Post version notes
 	if (versionData.showNotes && versionData.guildID) {
-		client.guilds.resolve(versionData.guildID).channels.resolve(versionData.channelID).send(helpers.versionBuilder(client.user.displayAvatarURL()))
-			.catch(console.error);
+		client.guilds.resolve(versionData.guildID).channels.resolve(versionData.channelID).send(helpers.versionBuilder(client.user.displayAvatarURL())).then(message => {
+			message.crosspost();
+		}).catch(console.error);
 		versionData.showNotes = false;
 		fs.writeFile('versionData.json', JSON.stringify(versionData), 'utf8', error => {
 			if (error) {

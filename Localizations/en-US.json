@@ -116,13 +116,13 @@
 		"errorBadNumber": "The number for your `${alias}` command could not be parsed."
 	},
 	"datapolicy": {
-		"names": ["DataPolicy"],
+		"names": ["DataPolicy", "PrivacyPolicy"],
 		"summary": "Lists types of data DirectoryBot collects and how it's used (detailed help on the command uses it)",
 		"description": "This command tells you the types of information DirectoryBot collects and how it uses it.",
 		"headers": ["Usage"],
 		"texts": ["`@DirectoryBot DataPolicy"],
 		"embedTitle": "DirectoryBot Data Policy",
-		"embedDescription": "If you leave a server with DirectoryBot, your data will be deleted. If you kick DirectoryBot from a server, all user data from that server will be deleted.",
+		"embedDescription": "All user data is encrypted. If you leave a server with DirectoryBot, your data will be deleted. If you kick DirectoryBot from a server, all user data from that server will be deleted.",
 		"collectionHeader": "Data Collected (version 2.1.0)",
 		"collectionText": "This bot collects the following user data:\n\t- **User provided data** from the `record` command\n\t- **User Discord IDs** for organizing collected data",
 		"usageHeader": "Data Usage (version 2.1.0)",

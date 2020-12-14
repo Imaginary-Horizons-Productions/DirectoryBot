@@ -37,6 +37,10 @@
 		"title": "General Commands",
 		"description": "To interact with DirectoryBot, mention the bot then type one of these commands:"
 	},
+	"infoCommands":{
+		"title": "Informational Commands",
+		"description": "Use these commands to look up information about DirectoryBot."
+	},
 	"timeZoneCommands": {
 		"title": "Time Zone Commands",
 		"description": "The time module contains commands for converting time zones, which users can store in the default platform \"timezone\"."
@@ -48,6 +52,25 @@
 	"configCommands": {
 		"title": "Configuration Commands",
 		"description": "The following commands can only be used by server members who have Discord administrator privledges or the role determined by `setmanagerrole`."
+	},
+	"about": {
+		"names": [ "About", "Credits", "Creditz" ],
+		"summary": "Version info and contributors (using `help` on this command uses the command)",
+		"description": "This command presents version info and contributors. Using `help` on this command uses the command.",
+		"headers": [ "Usage" ],
+		"texts": [ "`@DirectoryBot creditz`" ],
+		"creditsTitle": "DirectoryBot Credits",
+		"designAndEngineering": "Design & Engineering",
+		"engineering": "Engineering",
+		"art": "Art",
+		"localization": "Localization",
+		"patronsDescription": "**__Patrons__**\nImaginary Horizons Productions is supported on [Patreon](https://www.patreon.com/imaginaryhorizonsproductions) by generous users like you, credited below.",
+		"observerTier": "Observer Tier",
+		"dreamerTier": "Dreamer Tier",
+		"explorerTier": "Explorer Tier",
+		"cartographerTier": "Cartographer Tier",
+		"archivistTier": "Archivist Tier",
+		"grandArchivistTier": "Grand Archivist Tier"
 	},
 	"block": {
 		"names": [ "Block" ],
@@ -87,25 +110,6 @@
 		"errorBadZone": "The time zone you entered could not be parsed. Remember to use the tz database format for time zones: https://kevinnovak.github.io/Time-Zone-Picker/",
 		"errorBadTime": "The time you provided could not be parsed (remember to specify AM or PM)."
 	},
-	"credits": {
-		"names": [ "Credits", "Creditz", "About", "Version" ],
-		"summary": "Version info and contributors (using `help` on this command uses the command)",
-		"description": "This command presents version info and contributors. Using `help` on this command uses the command.",
-		"headers": [ "Usage" ],
-		"texts": [ "`@DirectoryBot creditz`" ],
-		"creditsTitle": "DirectoryBot Credits (Version ${versionNumber})",
-		"designAndEngineering": "Design & Engineering",
-		"engineering": "Engineering",
-		"art": "Art",
-		"localization": "Localization",
-		"patronsDescription": "**__Patrons__**\nImaginary Horizons Productions is supported on [Patreon](https://www.patreon.com/imaginaryhorizonsproductions) by generous users like you, credited below.",
-		"observerTier": "Observer Tier",
-		"dreamerTier": "Dreamer Tier",
-		"explorerTier": "Explorer Tier",
-		"cartographerTier": "Cartographer Tier",
-		"archivistTier": "Archivist Tier",
-		"grandArchivistTier": "Grand Archivist Tier"
-	},
 	"datalifetime": {
 		"names": [ "DataLifetime", "InfoLifetime" ],
 		"summary": "Sets the lifetime (in hours) for expiring messages",
@@ -143,6 +147,29 @@
 		"errorNoDataSelf": "You do not currently have a ${platform} ${term} recorded in ${server}.",
 		"errorBadPlatform": "${platform} is not currently being tracked in ${server}.",
 		"errorNoPlatform": "Please provide the platform of the information to delete."
+	},
+	"getstarted": {
+		"names": ["GetStarted"],
+		"summary": "Get steps for getting started with DirectoryBot",
+		"description": "This command provides steps for getting started with DirectoryBot.",
+		"headers": ["Usage"],
+		"texts": ["`@DirectoryBot GetStarted`"],
+		"embedTitle": "Getting Started",
+		"managerDescription": "Here are some suggested set-up steps for managers of the bot:",
+		"nonmanagerDescription": "Here are some steps for getting started with using DirectoryBot:",
+		"managerDivider": "**__User Set-Up__**",
+		"permissionsRole": "Set the Permissions Role",
+		"permissionsRoleText": "Bots get a role to give them their permissions. This role is named after the bot, and it can look like DirectoryBot isn't responding if its permissions role gets mentioned instead of the bot. Inputting DirectoryBot's permissions role with the `permissionsrole` command allows DirectoryBot to respond to role mentions as well. To do this, type: `@DirectoryBot permissionsrole (role)`",
+		"managerRole": "Set the Manager Role",
+		"managerRoleText": "Some commands can only be used by bot managers. Bot managers either have Discord ADMINISTRATOR permission or the role set with the `managerrole` command. To do this, type: `@DirectoryBot managerrole (role)`.",
+		"roles": "Optional: Set-Up Automatic Roles",
+		"rolesText": "DirectoryBot can automatically grant roles to users who record data for certain platforms. Make sure DirectoryBot's permissions role is above those roles in the server settings (so it has permission to give the roles) and set a role for a platform with: `@DirectoryBot SetPlatformRole (platform) (role)`",
+		"record": "Set Your Time Zone",
+		"recordText": "Setting your time zone allows DirectoryBot to do time zone calculations for you. Use [this link](https://kevinnovak.github.io/Time-Zone-Picker/) to find your time zone in tz database format, then record it with: `@DirectoryBot record timezone (time zone)`",
+		"platforms": "Find the Other Platforms on the Server",
+		"platformsText": "To see what other types of information your server's DirectoryBot records, use: `@DirectoryBot Platforms`",
+		"help": "Other Commands",
+		"helpText": "To check out other commands or get additional details, use the `help` command. Type:`@DirectoryBot help`"
 	},
 	"help": {
 		"names": [ "Help", "Commands" ],
@@ -343,6 +370,13 @@
 		"errorBadPlatform": "${platform} is not currently being tracked in ${server}.",
 		"errorNoPlatform": "Please provide the platform of the information to send.",
 		"errorNoRecipient": "Please mention someone in ${server} to send your information to."
+	},
+	"version": {
+		"names": ["Version"],
+		"summary": "Provides the version notes",
+		"description": "This command private messages the user with the version notes.",
+		"headers": ["Get the Last Patch Notes", "Get the Full Patch Notes"],
+		"texts": ["`@DirectoryBot version`", "`@DirectoryBot version full`"]
 	},
 	"whois": {
 		"names": [ "WhoIs" ],

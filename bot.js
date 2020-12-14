@@ -148,7 +148,7 @@ client.on('ready', () => {
 		}
 	})
 
-	client.user.setActivity(`@DirectoryBot help`, { type: "LISTENING" }).catch(console.error);
+	client.user.setActivity(`"@DirectoryBot getstarted"`, { type: "LISTENING" }).catch(console.error);
 })
 
 client.on('message', (receivedMessage) => {

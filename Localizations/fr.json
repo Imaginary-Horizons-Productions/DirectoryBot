@@ -37,6 +37,10 @@
 		"title": "",
 		"description": ""
 	},
+	"infoCommands":{
+		"title": "",
+		"description": ""
+	},
 	"timeZoneCommands": {
 		"title": "",
 		"description": ""
@@ -48,6 +52,25 @@
 	"configCommands": {
 		"title": "",
 		"description": ""
+	},
+	"about": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"creditsTitle": "",
+		"designAndEngineering": "",
+		"engineering": "",
+		"art": "",
+		"localization": "",
+		"patronsDescription": "",
+		"observerTier": "",
+		"dreamerTier": "",
+		"explorerTier": "",
+		"cartographerTier": "",
+		"archivistTier": "",
+		"grandArchivistTier": ""
 	},
 	"block": {
 		"names": [],
@@ -87,25 +110,6 @@
 		"errorBadZone": "",
 		"errorBadTime": ""
 	},
-	"credits": {
-		"names": [],
-		"summary": "",
-		"description": "",
-		"headers": [],
-		"texts": [],
-		"creditsTitle": "",
-		"designAndEngineering": "",
-		"engineering": "",
-		"art": "",
-		"localization": "",
-		"patronsDescription": "",
-		"observerTier": "",
-		"dreamerTier": "",
-		"explorerTier": "",
-		"cartographerTier": "",
-		"archivistTier": "",
-		"grandArchivistTier": ""
-	},
 	"datalifetime": {
 		"names": [],
 		"summary": "",
@@ -143,6 +147,29 @@
 		"errorNoDataSelf": "",
 		"errorBadPlatform": "",
 		"errorNoPlatform": ""
+	},
+	"getstarted": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"embedTitle": "",
+		"managerDescription": "",
+		"nonmanagerDescription": "",
+		"managerDivider": "",
+		"roles": "",
+		"rolesText": "",
+		"permissionsRole": "",
+		"permissionsRoleText": "",
+		"managerRole": "",
+		"managerRoleText": "",
+		"record": "",
+		"recordText": "",
+		"platforms": "",
+		"platformsText": "",
+		"help": "",
+		"helpText": ""
 	},
 	"help": {
 		"names": [],
@@ -343,6 +370,13 @@
 		"errorBadPlatform": "",
 		"errorNoPlatform": "",
 		"errorNoRecipient": ""
+	},
+	"version": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": []
 	},
 	"whois": {
 		"names": [],

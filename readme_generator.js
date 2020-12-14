@@ -12,7 +12,6 @@ DirectoryBot is a configurable, multi-language bot that stores friend codes and 
 ### Optional
 * Use "@DirectoryBot setpermissionsrole (role)" to store the permissions role. This allows the bot to interpret accidental mentions of the role as command messages.
 * Use "@DirectoryBot setmanagerrole (role)" to set up a manager role. Bot managers are allowed to use manager-only commands without Discord administrator permissions.
-* Use "@DirectoryBot welcomemessage (welcome message)" to set a message to send to new server members.
 * Record your information for DirectoryBot's default platforms: time zone, possessive pronoun, and stream.
 * Check out the Imaginary Horizons Productions Patreon: https://www.patreon.com/imaginaryhorizonsproductions
 

@@ -6,6 +6,8 @@
  - New command: `raffle` picks a random user from a role, platform, and/or set of users
  - Mentioning a role in a `newplatform` command sets that role as the platform role
  - New command: `datapolicy` tells what kinds of data DirectoryBot collects and how it's used
+ - New command: `version` tells recent changes
+ - New command: `getstarted` tells how to get started with DirectoryBot
 #### Example Version 1.0.0:
  - Change A
  - Change B

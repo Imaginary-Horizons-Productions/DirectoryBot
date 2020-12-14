@@ -36,6 +36,10 @@
 		"title": "Allgemeine Befehle",
 		"description": "Um mit DirectoryBot zu interagieren, erwähnen Sie den Bot und geben dann einen dieser Befehle ein:"
 	},
+	"infoCommands":{
+		"title": "",
+		"description": ""
+	},
 	"timeZoneCommands": {
 		"title": "Zeitzonen Befehle",
 		"description": "Das Zeit Modul beinhaltet Befehle zum konvertieren von Zeitangaben für verschiedene Zeitzonen, welche vom Nutzer in der \"timezone\" Plattform gespeichert werden kann."
@@ -47,6 +51,25 @@
 	"configCommands": {
 		"title": "Konfigurations Befehle",
 		"description": "Die folgenden Befehle können nur von Mitgliedern genutzt werden die in Discord Administrator Privilegien haben oder die Rolle haben die durch `setmanagerrole` festgelegt wurde."
+	},
+	"about": {
+		"names": ["überuns", "Credits"],
+		"summary": "Version informationen und Mitwirkende (die Nutzung von `help` bei diesem Befehl benutz den Befehl)t",
+		"description": "Version informationen und Mitwirkende. Die Nutzung von `help` bei diesem Befehl benutzt den Befehl.",
+		"headers": ["Verwendung"],
+		"texts": [],
+		"creditsTitle": "",
+		"designAndEngineering": "Design & Entwicklung",
+		"engineering": "Entwicklung",
+		"art": "Kunst",
+		"localization": "Lokalisierung",
+		"patronsDescription": "",
+		"observerTier": "",
+		"dreamerTier": "",
+		"explorerTier": "",
+		"cartographerTier": "",
+		"archivistTier": "",
+		"grandArchivistTier": ""
 	},
 	"block": {
 		"names": ["Blockieren"],
@@ -86,25 +109,6 @@
 		"errorBadZone": "",
 		"errorBadTime": ""
 	},
-	"credits": {
-		"names": ["Credits", "überuns"],
-		"summary": "Version informationen und Mitwirkende (die Nutzung von `help` bei diesem Befehl benutz den Befehl)t",
-		"description": "Version informationen und Mitwirkende. Die Nutzung von `help` bei diesem Befehl benutzt den Befehl.",
-		"headers": ["Verwendung"],
-		"texts": [],
-		"creditsTitle": "",
-		"designAndEngineering": "Design & Entwicklung",
-		"engineering": "Entwicklung",
-		"art": "Kunst",
-		"localization": "Lokalisierung",
-		"patronsDescription": "",
-		"observerTier": "",
-		"dreamerTier": "",
-		"explorerTier": "",
-		"cartographerTier": "",
-		"archivistTier": "",
-		"grandArchivistTier": ""
-	},
 	"datalifetime": {
 		"names": [],
 		"summary": "",
@@ -142,6 +146,29 @@
 		"errorNoDataSelf": "",
 		"errorBadPlatform": "",
 		"errorNoPlatform": ""
+	},
+	"getstarted": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"embedTitle": "",
+		"managerDescription": "",
+		"nonmanagerDescription": "",
+		"managerDivider": "",
+		"roles": "",
+		"rolesText": "",
+		"permissionsRole": "",
+		"permissionsRoleText": "",
+		"managerRole": "",
+		"managerRoleText": "",
+		"record": "",
+		"recordText": "",
+		"platforms": "",
+		"platformsText": "",
+		"help": "",
+		"helpText": ""
 	},
 	"help": {
 		"names": ["Hilfe", "Befehle"],
@@ -342,6 +369,13 @@
 		"errorBadPlatform": "",
 		"errorNoPlatform": "",
 		"errorNoRecipient": ""
+	},
+	"version": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": []
 	},
 	"whois": {
 		"names": [],

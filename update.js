@@ -1,6 +1,7 @@
 const fs = require('fs');
 const { exec } = require('child_process');
 var encrypter = require('crypto-js');
+const { time } = require('console');
 var consoleArgs = process.argv.slice(2);
 
 // Usage
@@ -17,8 +18,17 @@ fs.readFile(`encryptionKey.txt`, `utf8`, (error, keyInput) => {
             }
             const guildIDs = Object.keys(JSON.parse(encrypter.AES.decrypt(guildsListInput, keyInput).toString(encrypter.enc.Utf8)));
             guildIDs.forEach(guildID => {
+                if (!fs.existsSync(`./backups/${guildID}`)) {
+                    fs.mkdirSync(`./backups/${guildID}`);
+                }
+                let timestamp = Date.now();
                 ['managerRole.txt', 'permissionsRole.txt', 'platformsList.txt', 'blockDictionary.txt', 'infoLifetime.txt'].forEach(fileName => {
-                    fs.copyFile(`./data/${guildID}/${fileName}`, `./backups/${guildID}/${Date.now()}_${fileName}`, error => {
+                    fs.writeFile(`./backups/${guildID}/${timestamp}_${fileName}`, "placeholder", "utf8", (error) => {
+                        if (error) {
+                            console.error(error);
+                        }
+                    })
+                    fs.copyFile(`./data/${guildID}/${fileName}`, `./backups/${guildID}/${timestamp}_${fileName}`, error => {
                         if (error) {
                             console.error(error);
                         }
@@ -58,7 +68,7 @@ if (consoleArgs[0]) {
 }
 
 // Enable verison notes announcement
-let versionNotesPath = `./versionMetadata.json`;
+let versionNotesPath = `./versionData.json`;
 fs.readFile(versionNotesPath, 'utf8', (error, data) => {
     if (error) {
         console.log(error);
@@ -76,17 +86,17 @@ fs.readFile(versionNotesPath, 'utf8', (error, data) => {
 })
 
 function runMigration(migrationName, guilds) {
-	var path = `./Migrations/${migrationName}`;
-	return exec(`node fixer.js ${guilds.join(' ')}`, { cwd: path }, (error, stdout, stderr) => {
-		if (error) {
-			console.log(`Error on ${migrationName}:\n${error.message}`);
-		}
-		if (stderr) {
-			console.log(`Console stderr on ${migrationName}:\n${stderr}`);
-		}
-		if (error || stderr) {
-			return;
-		}
-		console.log(`Migration ${migrationName} output:\n${stdout}`);
-	});
+    var path = `./Migrations/${migrationName}`;
+    return exec(`node fixer.js ${guilds.join(' ')}`, { cwd: path }, (error, stdout, stderr) => {
+        if (error) {
+            console.log(`Error on ${migrationName}:\n${error.message}`);
+        }
+        if (stderr) {
+            console.log(`Console stderr on ${migrationName}:\n${stderr}`);
+        }
+        if (error || stderr) {
+            return;
+        }
+        console.log(`Migration ${migrationName} output:\n${stdout}`);
+    });
 }

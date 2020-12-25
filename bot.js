@@ -179,7 +179,7 @@ client.on('message', (receivedMessage) => {
 			var command = messageArray.shift();
 			let directory = helpers.directories[receivedMessage.guild.id];
 			if (commandDictionary[command]) {
-				let locale = commandDictionary[command].locale || directory.locale;
+				let locale = commandDictionary[command].locale || directory.locale || receivedMessage.author.locale || receivedMessage.guild.preferredLocale;
 
 				var recentInteractions = 0;
 

@@ -88,7 +88,7 @@ fs.readFile(versionNotesPath, 'utf8', (error, data) => {
     } else {
         let versionMetadata = {};
         Object.assign(versionMetadata, JSON.parse(data));
-        versionMetadata.showVersion = true;
+        versionMetadata.showNotes = true;
         fs.writeFile(versionNotesPath, JSON.stringify(versionMetadata), 'utf8', (error) => {
             if (error) {
                 console.log(error);

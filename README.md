@@ -8,7 +8,6 @@ DirectoryBot is a configurable, multi-language bot that stores friend codes and 
 ### Optional
 * Use "@DirectoryBot setpermissionsrole (role)" to store the permissions role. This allows the bot to interpret accidental mentions of the role as command messages.
 * Use "@DirectoryBot setmanagerrole (role)" to set up a manager role. Bot managers are allowed to use manager-only commands without Discord administrator permissions.
-* Use "@DirectoryBot welcomemessage (welcome message)" to set a message to send to new server members.
 * Record your information for DirectoryBot's default platforms: time zone, possessive pronoun, and stream.
 * Check out the Imaginary Horizons Productions Patreon: https://www.patreon.com/imaginaryhorizonsproductions
 
@@ -17,13 +16,6 @@ If you leave a server, DirectoryBot will delete all of your data. If you kick Di
 
 ## General Commands
 To interact with DirectoryBot, mention the bot then type one of these commands:
-### Help, Commands
-This command provides details on DirectoryBot commands by either listing all commands available to you, or providing details on a specific command.
-#### List all commands
-`@DirectoryBot help`
-#### Get details on a specific command
-`@DirectoryBot help (command)`
-
 ### Record, Log, Add
 This command adds your information for given platform so people can ask the bot for it.
 #### Recording data
@@ -81,29 +73,61 @@ This command lists the games/services DirectoryBot can be used to record or retr
 #### Usage
 `@DirectoryBot platforms`
 
+### Raffle
+This command generates a list of users including the mentioned users, users with any of the mentioned roles, and users who've recorded data for the mentioned platforms. Then it randomly selects one of those users.
+#### Select a user randomly
+`@DirectoryBot raffle (list of users, roles, or platforms)`
+
+## Informational Commands
+Use these commands to look up information about DirectoryBot.
+### GetStarted
+This command provides steps for getting started with DirectoryBot.
+#### Usage
+`@DirectoryBot GetStarted`
+
+### About, Credits, Creditz
+This command presents version info and contributors. Using `help` on this command uses the command.
+#### Usage
+`@DirectoryBot creditz`
+
+### Help, Commands
+This command provides details on DirectoryBot commands by either listing all commands available to you, or providing details on a specific command.
+#### List all commands
+`@DirectoryBot help`
+#### Get details on a specific command
+`@DirectoryBot help (command)`
+
 ### Support
 This command lists easy ways to support DirectoryBot development. Using `help` on this command uses the command.
 #### Usage
 `@DirectoryBot support`
 
-### Credits, Creditz, About
-This command presents version info and contributors. Using `help` on this command uses the command.
+### DataPolicy, PrivacyPolicy
+This command tells you the types of information DirectoryBot collects and how it uses it.
 #### Usage
-`@DirectoryBot creditz`
+`@DirectoryBot DataPolicy
+
+### Version
+This command private messages the user with the version notes.
+#### Get the Last Patch Notes
+`@DirectoryBot version`
+#### Get the Full Patch Notes
+`@DirectoryBot version full`
 
 ## Time Zone Commands
 The time module contains commands for converting time zones, which users can store in the default platform "timezone".
 ### Convert
-This command calculates a time for a given user or time zone. DirectoryBot uses [tz database format](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) for time zones.
+This command calculates a time for a given user or time zone. DirectoryBot uses [tz database format](https://kevinnovak.github.io/Time-Zone-Picker/) for time zones.
 #### Convert a time to a user's time zone
 `@DirectoryBot convert (time) in (start time zone) for (user)`
+Converting time zones for users is not available via private messages.
 #### Convert a time to a specified time zone
 `@DirectoryBot convert (time) in (start time zone) to (result time zone)`
 #### ​
 If the starting timezone is omitted, the conversion will be attempted with the time zone you've recorded for the "timezone" platform.
 
 ### Countdown
-This command calculates the amount of time until a given time. DirectoryBot uses [tz database format](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) for time zones.
+This command calculates the amount of time until a given time. DirectoryBot uses [tz database format](https://kevinnovak.github.io/Time-Zone-Picker/) for time zones.
 #### Count down to a time
 `@DirectoryBot countdown (time) in (time zone)`
 If the time zone is omitted, the countdown will be attempted with the time zone you've recorded for the "timezone" platform, then the server's local time zone failing that.
@@ -152,7 +176,7 @@ This command sets the number of hours before responses from the `lookup` and `se
 This command sets up a new game/service for users to record and retrieve information.
 #### Create a new platform
 `@DirectoryBot newplatform (platform name) (information term) (description)`
-Optionally, you can set a term to call the information that is being stored (default is "username"). Additionally, you can set an optional description to be displayed when the lookup command is used on the platform.
+Information term and description are optional, though providing a description without a information term will result in the first word of the description being interpreted as the information term. Information term defaults to "username". The role mentioned in the command will be set as the platform's role.
 
 ### SetPlatformTerm, ChangePlatformTerm
 This command changes what DirectoryBot calls data for the given platform (default is "username").

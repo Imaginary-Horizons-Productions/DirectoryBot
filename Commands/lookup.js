@@ -7,7 +7,7 @@ var command = new Command("lookup", false, false, false);
 
 // Generate embed on call to add up-to-date list of platforms
 command.help = (avatarURL, guildID, locale, guildName, module) => {
-	let embed = new MessageEmbed().setAuthor("Imaginary Horizons Productions", `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `, `https://discord.gg/bcE3Syu `)
+	let embed = new MessageEmbed().setAuthor("Imaginary Horizons Productions", `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `, `https://discord.gg/FJ8JGq2`)
 		.setTitle(getString(locale, "DirectoryBot", "directoryBotCommand") + getString(locale, module, "names").join(', '))
 		.setDescription(getString(locale, module, "description"))
 		.setFooter(getString(locale, "DirectoryBot", "footerText"), avatarURL);
@@ -18,7 +18,11 @@ command.help = (avatarURL, guildID, locale, guildName, module) => {
 		embed.addField(headers[i], texts[i]);
 	}
 
-	return embed.addField('\u200B', platformsBuilder(guildName, directories[guildID].platformsList, locale));
+	if (guildID) {
+		embed.addField('\u200B', platformsBuilder(guildName, directories[guildID].platformsList, locale));
+	}
+
+	return embed;
 }
 
 command.execute = (receivedMessage, state, locale) => {
@@ -48,6 +52,7 @@ command.execute = (receivedMessage, state, locale) => {
 				let embed = new MessageEmbed().setColor(`6b81eb`)
 					.setAuthor(receivedMessage.guild.name, receivedMessage.guild.iconURL())
 					.setTitle(`${state.command}: ${platform}`)
+					.setThumbnail('https://cdn.discordapp.com/attachments/545684759276421120/765064127793725450/bookmark.png')
 					.setDescription(text)
 					.setFooter(getString(locale, "DirectoryBot", "expirationWarning").addVariables({ "time": millisecondsToHours(locale, state.infoLifetime)}), receivedMessage.client.user.avatarURL())
 					.setTimestamp();

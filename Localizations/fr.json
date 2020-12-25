@@ -4,6 +4,7 @@
 		"errorBadCommand": "**${commandName}$$ n'est pas une commande. Veuillez vérifier les fautes de frappe ou utiliser $[botNickname}` help`",
 		"errorNotManager": "",
 		"errorTooManyCommands": "",
+		"errorNotPMCommand": "",
 		"expirationWarning": "",
 		"expiredMessage": "",
 		"lessThanAnHour": "",
@@ -12,7 +13,10 @@
 		"minutes": "",
 		"seconds": "",
 		"platformsMessage": "",
-		"directoryBotCommand": ""
+		"directoryBotCommand": "",
+		"commandProperties": "",
+		"propertiesText": ""
+
 	},
 	"platformPossessivePronoun": {
 		"token": "",
@@ -33,6 +37,10 @@
 		"title": "",
 		"description": ""
 	},
+	"infoCommands":{
+		"title": "",
+		"description": ""
+	},
 	"timeZoneCommands": {
 		"title": "",
 		"description": ""
@@ -44,6 +52,25 @@
 	"configCommands": {
 		"title": "",
 		"description": ""
+	},
+	"about": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"creditsTitle": "",
+		"designAndEngineering": "",
+		"engineering": "",
+		"art": "",
+		"localization": "",
+		"patronsDescription": "",
+		"observerTier": "",
+		"dreamerTier": "",
+		"explorerTier": "",
+		"cartographerTier": "",
+		"archivistTier": "",
+		"grandArchivistTier": ""
 	},
 	"block": {
 		"names": [],
@@ -83,25 +110,6 @@
 		"errorBadZone": "",
 		"errorBadTime": ""
 	},
-	"credits": {
-		"names": [],
-		"summary": "",
-		"description": "",
-		"headers": [],
-		"texts": [],
-		"creditsTitle": "",
-		"designAndEngineering": "",
-		"engineering": "",
-		"art": "",
-		"localization": "",
-		"patronsDescription": "",
-		"observerTier": "",
-		"dreamerTier": "",
-		"explorerTier": "",
-		"cartographerTier": "",
-		"archivistTier": "",
-		"grandArchivistTier": ""
-	},
 	"datalifetime": {
 		"names": [],
 		"summary": "",
@@ -110,6 +118,19 @@
 		"texts": [],
 		"successMessage": "",
 		"errorBadNumber": ""
+	},
+	"datapolicy": {
+		"names": [""],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"embedTitle": "",
+		"embedDescription": "",
+		"collectionHeader": "",
+		"collectionText": "",
+		"usageHeader": "",
+		"usageText": ""
 	},
 	"delete": {
 		"names": [],
@@ -126,6 +147,29 @@
 		"errorNoDataSelf": "",
 		"errorBadPlatform": "",
 		"errorNoPlatform": ""
+	},
+	"getstarted": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"embedTitle": "",
+		"managerDescription": "",
+		"nonmanagerDescription": "",
+		"managerDivider": "",
+		"roles": "",
+		"rolesText": "",
+		"permissionsRole": "",
+		"permissionsRoleText": "",
+		"managerRole": "",
+		"managerRoleText": "",
+		"record": "",
+		"recordText": "",
+		"platforms": "",
+		"platformsText": "",
+		"help": "",
+		"helpText": ""
 	},
 	"help": {
 		"names": [],
@@ -196,6 +240,7 @@
 		"headers": [],
 		"texts": [],
 		"successMessage": "",
+		"roleAddendum": "",
 		"errorDupePlatform": "",
 		"errorNoUserNamedPlatforms": "",
 		"errorNoName": ""
@@ -216,6 +261,16 @@
 		"headers": [],
 		"texts": []
 	},
+	"raffle": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"successMessage": "",
+		"errorNoUsers": "",
+		"errorNoMentions": ""
+	},
 	"record": {
 		"names": [],
 		"summary": "",
@@ -223,6 +278,7 @@
 		"headers": [],
 		"texts": [],
 		"successMessage": "",
+		"errorPlaceholder": "",
 		"errorBadPlatform": "",
 		"errorNoData": "",
 		"errorNoPlatform": ""
@@ -314,6 +370,13 @@
 		"errorBadPlatform": "",
 		"errorNoPlatform": "",
 		"errorNoRecipient": ""
+	},
+	"version": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": []
 	},
 	"whois": {
 		"names": [],

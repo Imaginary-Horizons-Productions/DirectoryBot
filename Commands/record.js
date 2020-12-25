@@ -31,20 +31,32 @@ command.execute = (receivedMessage, state, locale) => {
 				saveObject(receivedMessage.guild.id, directories[receivedMessage.guild.id].userDictionary, 'userDictionary.txt');
 			} else {
 				// Error Message
-				receivedMessage.author.send(getString(locale, command.module, "errorNoData"))
-					.catch(console.error);
+				receivedMessage.delete().then(message => {
+					message.channel.send(getString(locale, command.module, "errorPlaceholder"))
+						.catch(console.error);
+					message.author.send(getString(locale, command.module, "errorNoData"))
+						.catch(console.error);
+				})
 			}
 		} else {
 			// Error Message
-			receivedMessage.author.send(getString(locale, command.module, "errorBadPlatform").addVariables({
-				"platform": platform,
-				"server": receivedMessage.guild
-			})).catch(console.error);
+			receivedMessage.delete().then(message => {
+				message.channel.send(getString(locale, command.module, "errorPlaceholder"))
+					.catch(console.error);
+				message.author.send(getString(locale, command.module, "errorBadPlatform").addVariables({
+					"platform": platform,
+					"server": receivedMessage.guild
+				})).catch(console.error);
+			})
 		}
 	} else {
 		// Error Message
-		receivedMessage.author.send(getString(locale, command.module, "errorNoPlatform"))
-			.catch(console.error);
+		receivedMessage.delete().then(message => {
+			message.channel.send(getString(locale, command.module, "errorPlaceholder"))
+				.catch(console.error);
+			message.author.send(getString(locale, command.module, "errorNoPlatform"))
+				.catch(console.error);
+		})
 	}
 }
 

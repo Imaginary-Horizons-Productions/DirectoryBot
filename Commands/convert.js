@@ -7,15 +7,15 @@ var chrono = require('chrono-node');
 var command = new Command("convert", false, false, true);
 command.execute = (receivedMessage, state, locale) => {
 	// Calculates the time for a user or time zone, given an inital time zone
-	let mentionedGuildMembers = receivedMessage.mentions.members.array().filter(member => member.id != receivedMessage.client.user.id);
+	let mentionedUsers = receivedMessage.mentions.users.array().filter(member => member.id != receivedMessage.client.user.id);
 	var timeText = "";
 	var startTimezone = "";
 	var resultTimezone;
 
-	if (mentionedGuildMembers.length > 0) {
-		var targetGuildMember = mentionedGuildMembers[0];
+	if (receivedMessage.guild && mentionedUsers.length > 0) {
+		var targetUser = mentionedUsers[0];
 		if (Object.keys(directories[receivedMessage.guild.id].platformsList).includes("timezone")) {
-			if (directories[receivedMessage.guild.id].userDictionary[targetGuildMember.id] && directories[receivedMessage.guild.id].userDictionary[targetGuildMember.id].timezone && directories[receivedMessage.guild.id].userDictionary[targetGuildMember.id].timezone.value) {
+			if (directories[receivedMessage.guild.id].userDictionary[targetUser.id] && directories[receivedMessage.guild.id].userDictionary[targetUser.id].timezone && directories[receivedMessage.guild.id].userDictionary[targetUser.id].timezone.value) {
 				for (var i = 0; i < state.messageArray.length; i++) {
 					if (state.messageArray[i] == getString(locale, command.module, "in")) {
 						startTimezone = state.messageArray[i + 1]
@@ -26,18 +26,18 @@ command.execute = (receivedMessage, state, locale) => {
 						timeText += state.messageArray[i] + " ";
 					}
 				}
-				resultTimezone = directories[receivedMessage.guild.id].userDictionary[targetGuildMember.id].timezone.value;
+				resultTimezone = directories[receivedMessage.guild.id].userDictionary[targetUser.id].timezone.value;
 			} else {
 				// Error Message
 				receivedMessage.author.send(getString(locale, command.module, "errorUserZoneMissing").addVariables({
-					"targetGuildMember": targetGuildMember
+					"targetGuildMember": targetUser
 				})).catch(console.error);
 				return;
 			}
 		} else {
 			// Error Message
 			receivedMessage.author.send(getString(locale, command.module, "errorNoPlatform").addVariables({
-				"targetGuildMember": targetGuildMember,
+				"targetGuildMember": targetUser,
 				"server": receivedMessage.guild.toString()
 			})).catch(console.error);
 			return;
@@ -73,12 +73,12 @@ command.execute = (receivedMessage, state, locale) => {
 					var dateTimeObject = DateTime.fromJSDate(inputTime[0].start.date(), { zone: startTimezone });
 					var convertedDateTime = dateTimeObject.setZone(resultTimezone);
 
-					if (targetGuildMember) {
+					if (targetUser) {
 						receivedMessage.author.send(getString(locale, command.module, "successUser").addVariables({
 							"originalTime": timeText,
 							"originalTimeZone": startTimezone,
 							"destinationTime": convertedDateTime.toLocaleString(DateTime.TIME_24_SIMPLE),
-							"targetGuildMember": targetGuildMember
+							"targetGuildMember": targetUser
 						})).catch(console.error);
 					} else {
 						receivedMessage.author.send(getString(locale, command.module, "successZone").addVariables({

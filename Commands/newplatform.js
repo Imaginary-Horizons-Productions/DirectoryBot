@@ -13,17 +13,25 @@ command.execute = (receivedMessage, state, locale) => {
 		let messageArray = state.messageArray;
 		let platform = messageArray.shift().toLowerCase();
 		let term = messageArray.shift();
+		let role = receivedMessage.mentions.roles.array()[0];
 		let description = messageArray.join(' ');
 
 		if (!platform.match(MessageMentions.USERS_PATTERN)) {
 			if (!directories[receivedMessage.guild.id].platformsList[platform]) {
 				directories[receivedMessage.guild.id].platformsList[platform] = new Platform(term, description);
+				if (role) {
+					directories[receivedMessage.guild.id].platformsList[platform].roleID = role.id;
+					directories[receivedMessage.guild.id].platformsList[platform].roleName = role.name;
+				}
 				Object.keys(directories[receivedMessage.guild.id].userDictionary).forEach(userID => {
 					directories[receivedMessage.guild.id].userDictionary[userID][platform] = new FriendCode();
 				})
 				receivedMessage.channel.send(getString(locale, command.module, "successMessage").addVariables({
 					"platform": platform,
-					"term": directories[receivedMessage.guild.id].platformsList[platform].term
+					"term": directories[receivedMessage.guild.id].platformsList[platform].term,
+					"role": role ? getString(locale, command.module, "roleAddendum").addVariables({
+						"role": role
+					}) : ""
 				})).catch(console.error);
 				saveObject(receivedMessage.guild.id, directories[receivedMessage.guild.id].platformsList, 'platformsList.txt');
 			} else {

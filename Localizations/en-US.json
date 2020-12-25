@@ -4,6 +4,7 @@
 		"errorBadCommand": "**${commandName}** isn't a command. Please check for typos or use ${botNickname}` help`.",
 		"errorNotManager": "You need a role with the administrator flag${role} to use the **${alias}** command.",
 		"errorTooManyCommands": "To prevent excessive messaging, users are unable to enter more than ${commandLimit} commands in ${duration}. You can use ${botNickname}` lookup (platform)` to look up everyone's information for the given platform at once.",
+		"errorNotPMCommand": "Please use the `${command}` command from within a server.",
 		"expirationWarning": "This message will expire in about ${time}.",
 		"expiredMessage": "This message has expired.",
 		"lessThanAnHour": "less than an hour",
@@ -13,7 +14,9 @@
 		"seconds": "second(s)",
 		"platformsMessage": "${guild}'s platforms are: ",
 		"platformRole": "(role: @${role})",
-		"directoryBotCommand": "DirectoryBot Command: "
+		"directoryBotCommand": "DirectoryBot Command: ",
+		"commandProperties": "Command Properties",
+		"propertiesText": "Premium: ${premium}\nUsable by Non-Managers: ${manager}\nUsable in Private Messages: ${dmCommand}"
 	},
 	"platformPossessivePronoun": {
 		"token": "PossessivePronoun",
@@ -34,6 +37,10 @@
 		"title": "General Commands",
 		"description": "To interact with DirectoryBot, mention the bot then type one of these commands:"
 	},
+	"infoCommands":{
+		"title": "Informational Commands",
+		"description": "Use these commands to look up information about DirectoryBot."
+	},
 	"timeZoneCommands": {
 		"title": "Time Zone Commands",
 		"description": "The time module contains commands for converting time zones, which users can store in the default platform \"timezone\"."
@@ -45,6 +52,25 @@
 	"configCommands": {
 		"title": "Configuration Commands",
 		"description": "The following commands can only be used by server members who have Discord administrator privledges or the role determined by `setmanagerrole`."
+	},
+	"about": {
+		"names": [ "About", "Credits", "Creditz" ],
+		"summary": "Version info and contributors (using `help` on this command uses the command)",
+		"description": "This command presents version info and contributors. Using `help` on this command uses the command.",
+		"headers": [ "Usage" ],
+		"texts": [ "`@DirectoryBot creditz`" ],
+		"creditsTitle": "DirectoryBot Credits",
+		"designAndEngineering": "Design & Engineering",
+		"engineering": "Engineering",
+		"art": "Art",
+		"localization": "Localization",
+		"patronsDescription": "**__Patrons__**\nImaginary Horizons Productions is supported on [Patreon](https://www.patreon.com/imaginaryhorizonsproductions) by generous users like you, credited below.",
+		"observerTier": "Observer Tier",
+		"dreamerTier": "Dreamer Tier",
+		"explorerTier": "Explorer Tier",
+		"cartographerTier": "Cartographer Tier",
+		"archivistTier": "Archivist Tier",
+		"grandArchivistTier": "Grand Archivist Tier"
 	},
 	"block": {
 		"names": [ "Block" ],
@@ -59,9 +85,9 @@
 	"convert": {
 		"names": [ "Convert" ],
 		"summary": "Convert a time to someone else's time zone or a given time zone",
-		"description": "This command calculates a time for a given user or time zone. DirectoryBot uses [tz database format](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) for time zones.",
+		"description": "This command calculates a time for a given user or time zone. DirectoryBot uses [tz database format](https://kevinnovak.github.io/Time-Zone-Picker/) for time zones.",
 		"headers": [ "Convert a time to a user's time zone", "Convert a time to a specified time zone", "\u200B" ],
-		"texts": [ "`@DirectoryBot convert (time) in (start time zone) for (user)`", "`@DirectoryBot convert (time) in (start time zone) to (result time zone)`", "If the starting timezone is omitted, the conversion will be attempted with the time zone you've recorded for the \"timezone\" platform." ],
+		"texts": [ "`@DirectoryBot convert (time) in (start time zone) for (user)`\nConverting time zones for users is not available via private messages.", "`@DirectoryBot convert (time) in (start time zone) to (result time zone)`", "If the starting timezone is omitted, the conversion will be attempted with the time zone you've recorded for the \"timezone\" platform." ],
 		"in": "in",
 		"for": "for",
 		"errorUserZoneMissing": "Your time could not be converted. ${targetGuildMember} does not have a time zone recorded.",
@@ -69,39 +95,20 @@
 		"successUser": "*${originalTime}in ${originalTimeZone}* is **${destinationTime} for ${targetGuildMember}**.",
 		"successZone": "*${originalTime}in ${originalTimeZone}* is **${destinationTime} in ${destinationTimeZone}**.",
 		"errorBadTime": "The time you provided could not be parsed (remember to specify AM or PM).",
-		"errorBadResultZone": "Please use the tz database format for the **result timezone**. You can look up time zones here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones",
+		"errorBadResultZone": "Please use the tz database format for the **result timezone**. You can look up time zones here: https://kevinnovak.github.io/Time-Zone-Picker/",
 		"errorNoResultZone": "Please specify a result timezone for your `convert` command.",
-		"errorBadStartZone": "Please use the tz database format for the **starting timezone**. You can look up time zones here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones"
+		"errorBadStartZone": "Please use the tz database format for the **starting timezone**. You can look up time zones here: https://kevinnovak.github.io/Time-Zone-Picker/"
 	},
 	"countdown": {
 		"names": [ "Countdown" ],
 		"summary": "How long until the given time",
-		"description": "This command calculates the amount of time until a given time. DirectoryBot uses [tz database format](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) for time zones.",
+		"description": "This command calculates the amount of time until a given time. DirectoryBot uses [tz database format](https://kevinnovak.github.io/Time-Zone-Picker/) for time zones.",
 		"headers": [ "Count down to a time" ],
 		"texts": [ "`@DirectoryBot countdown (time) in (time zone)`\nIf the time zone is omitted, the countdown will be attempted with the time zone you've recorded for the \"timezone\" platform, then the server's local time zone failing that." ],
 		"in": "in",
 		"successMessage": "*${startTime} in ${startTimezone}* is about **${time}** from now.",
-		"errorBadZone": "The time zone you entered could not be parsed. Remember to use the tz database format for time zones: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones",
+		"errorBadZone": "The time zone you entered could not be parsed. Remember to use the tz database format for time zones: https://kevinnovak.github.io/Time-Zone-Picker/",
 		"errorBadTime": "The time you provided could not be parsed (remember to specify AM or PM)."
-	},
-	"credits": {
-		"names": [ "Credits", "Creditz", "About" ],
-		"summary": "Version info and contributors (using `help` on this command uses the command)",
-		"description": "This command presents version info and contributors. Using `help` on this command uses the command.",
-		"headers": [ "Usage" ],
-		"texts": [ "`@DirectoryBot creditz`" ],
-		"creditsTitle": "DirectoryBot Credits (Version ${versionNumber})",
-		"designAndEngineering": "Design & Engineering",
-		"engineering": "Engineering",
-		"art": "Art",
-		"localization": "Localization",
-		"patronsDescription": "**__Patrons__**\nImaginary Horizons Productions is supported on [Patreon](https://www.patreon.com/imaginaryhorizonsproductions) by generous users like you, credited below.",
-		"observerTier": "Observer Tier",
-		"dreamerTier": "Dreamer Tier",
-		"explorerTier": "Explorer Tier",
-		"cartographerTier": "Cartographer Tier",
-		"archivistTier": "Archivist Tier",
-		"grandArchivistTier": "Grand Archivist Tier"
 	},
 	"datalifetime": {
 		"names": [ "DataLifetime", "InfoLifetime" ],
@@ -111,6 +118,19 @@
 		"texts": [ "`@DirectoryBot datalifetime (number of hours)`" ],
 		"successMessage": "The expiring message lifetime has been set to ${mentionedNumber} hour(s).",
 		"errorBadNumber": "The number for your `${alias}` command could not be parsed."
+	},
+	"datapolicy": {
+		"names": ["DataPolicy", "PrivacyPolicy"],
+		"summary": "Lists types of data DirectoryBot collects and how it's used (detailed help on the command uses it)",
+		"description": "This command tells you the types of information DirectoryBot collects and how it uses it.",
+		"headers": ["Usage"],
+		"texts": ["`@DirectoryBot DataPolicy"],
+		"embedTitle": "DirectoryBot Data Policy",
+		"embedDescription": "All user data is encrypted. If you leave a server with DirectoryBot, your data will be deleted. If you kick DirectoryBot from a server, all user data from that server will be deleted.",
+		"collectionHeader": "Data Collected (version 2.1.0)",
+		"collectionText": "This bot collects the following user data:\n\t- **User provided data** from the `record` command\n\t- **User Discord IDs** for organizing collected data",
+		"usageHeader": "Data Usage (version 2.1.0)",
+		"usageText": "Imaginary Horizons Productions does not use the above user data for anything."
 	},
 	"delete": {
 		"names": [ "Delete", "Remove", "Clear" ],
@@ -127,6 +147,29 @@
 		"errorNoDataSelf": "You do not currently have a ${platform} ${term} recorded in ${server}.",
 		"errorBadPlatform": "${platform} is not currently being tracked in ${server}.",
 		"errorNoPlatform": "Please provide the platform of the information to delete."
+	},
+	"getstarted": {
+		"names": ["GetStarted"],
+		"summary": "Get steps for getting started with DirectoryBot",
+		"description": "This command provides steps for getting started with DirectoryBot.",
+		"headers": ["Usage"],
+		"texts": ["`@DirectoryBot GetStarted`"],
+		"embedTitle": "Getting Started",
+		"managerDescription": "Here are some suggested set-up steps for managers of the bot:",
+		"nonmanagerDescription": "Here are some steps for getting started with using DirectoryBot:",
+		"managerDivider": "**__User Set-Up__**",
+		"permissionsRole": "Set the Permissions Role",
+		"permissionsRoleText": "Bots get a role to give them their permissions. This role is named after the bot, and it can look like DirectoryBot isn't responding if its permissions role gets mentioned instead of the bot. Inputting DirectoryBot's permissions role with the `permissionsrole` command allows DirectoryBot to respond to role mentions as well. To do this, type: `@DirectoryBot permissionsrole (role)`",
+		"managerRole": "Set the Manager Role",
+		"managerRoleText": "Some commands can only be used by bot managers. Bot managers either have Discord ADMINISTRATOR permission or the role set with the `managerrole` command. To do this, type: `@DirectoryBot managerrole (role)`.",
+		"roles": "Optional: Set-Up Automatic Roles",
+		"rolesText": "DirectoryBot can automatically grant roles to users who record data for certain platforms. Make sure DirectoryBot's permissions role is above those roles in the server settings (so it has permission to give the roles) and set a role for a platform with: `@DirectoryBot SetPlatformRole (platform) (role)`",
+		"record": "Set Your Time Zone",
+		"recordText": "Setting your time zone allows DirectoryBot to do time zone calculations for you. Use [this link](https://kevinnovak.github.io/Time-Zone-Picker/) to find your time zone in tz database format, then record it with: `@DirectoryBot record timezone (time zone)`",
+		"platforms": "Find the Other Platforms on the Server",
+		"platformsText": "To see what other types of information your server's DirectoryBot records, use: `@DirectoryBot Platforms`",
+		"help": "Other Commands",
+		"helpText": "To check out other commands or get additional details, use the `help` command. Type:`@DirectoryBot help`"
 	},
 	"help": {
 		"names": [ "Help", "Commands" ],
@@ -195,8 +238,9 @@
 		"summary": "Setup a new game/service for users to record or retrieve information for",
 		"description": "This command sets up a new game/service for users to record and retrieve information.",
 		"headers": [ "Create a new platform" ],
-		"texts": [ "`@DirectoryBot newplatform (platform name) (information term) (description)`\nOptionally, you can set a term to call the information that is being stored (default is \"username\"). Additionally, you can set an optional description to be displayed when the lookup command is used on the platform." ],
-		"successMessage": "${platform} ${term}s can now be recorded and retrieved.",
+		"texts": [ "`@DirectoryBot newplatform (platform name) (information term) (description)`\nInformation term and description are optional, though providing a description without a information term will result in the first word of the description being interpreted as the information term. Information term defaults to \"username\". The role mentioned in the command will be set as the platform's role." ],
+		"successMessage": "${platform} ${term}s can now be recorded and retrieved${role}.",
+		"roleAddendum": " (platform role: ${role})",
 		"errorDupePlatform": "${server} already has a platform named *${platform}*.",
 		"errorNoUserNamedPlatforms": "Please select a platform name that is not a user mention.",
 		"errorNoName": "Please provide a name for the new platform."
@@ -217,6 +261,16 @@
 		"headers": [ "Usage" ],
 		"texts": [ "`@DirectoryBot platforms`" ]
 	},
+	"raffle": {
+		"names": [ "Raffle" ],
+		"summary": "Randomly select a user from a given list of users, roles, or platforms",
+		"description": "This command generates a list of users including the mentioned users, users with any of the mentioned roles, and users who've recorded data for the mentioned platforms. Then it randomly selects one of those users.",
+		"headers": [ "Select a user randomly" ],
+		"texts": [ "`@DirectoryBot raffle (list of users, roles, or platforms)`" ],
+		"successMessage": "The winner of the raffle is:\n\t${winner}",
+		"errorNoUsers": "Your raffle could not be completed. No users met the given conditions.",
+		"errorNoMentions": "Please mention a set of users, a role held by the users, and/or platform to select a winner from."
+	},
 	"record": {
 		"names": [ "Record", "Log", "Add" ],
 		"summary": "Record your information for a platform",
@@ -224,6 +278,7 @@
 		"headers": [ "Recording data" ],
 		"texts": [ "`@DirectoryBot record (platform) (data)`\nThe message containing the command will be deleted for security purposes. Discord's spoilers markdown (|| on both sides) is removed from code entry to allow hiding entry from mobile via spoilers markdown." ],
 		"successMessage": "${author} has recorded a ${platform} ${term}. Check it with:\n\t${botNickname}` lookup `${author}` ${platform}`.",
+		"errorPlaceholder": "A `record` command encountered an error.",
 		"errorBadPlatform": "${platform} is not currently being tracked in ${server}.",
 		"errorNoData": "Please provide the information you would like to record.",
 		"errorNoPlatform": "Please provide a platform for which to record your information for."
@@ -315,6 +370,13 @@
 		"errorBadPlatform": "${platform} is not currently being tracked in ${server}.",
 		"errorNoPlatform": "Please provide the platform of the information to send.",
 		"errorNoRecipient": "Please mention someone in ${server} to send your information to."
+	},
+	"version": {
+		"names": ["Version"],
+		"summary": "Provides the version notes",
+		"description": "This command private messages the user with the version notes.",
+		"headers": ["Get the Last Patch Notes", "Get the Full Patch Notes"],
+		"texts": ["`@DirectoryBot version`", "`@DirectoryBot version full`"]
 	},
 	"whois": {
 		"names": [ "WhoIs" ],

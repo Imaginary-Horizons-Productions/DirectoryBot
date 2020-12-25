@@ -4,6 +4,7 @@
 		"errorBadCommand": "**${commandName}** ist kein bekannter Befehl. Bitte überprüfen sie auf Rechtschreibfehler oder benutzen sie ${botNickname}` Hilfe`.",
 		"errorNotManager": "Sie benötigen eine Rolle mit dem Administrator flag${role} um den **${alias}** Befehl zu benutzen.",
 		"errorTooManyCommands": "Um ein Übermaß and Nachrichten zu verhindern, sind Benutzer/innen nicht in der Lage mehr als ${commandLimit} Befehle innerhalb von ${duration} einzugeben. Sie können ${botNickname}` lookup (platform)` nutzen um die Informationen aller für eine gegebene Platform einzusehen.",
+		"errorNotPMCommand": "",
 		"expirationWarning": "Diese Nachricht wird in ungefähr ${time} ungültig werden.",
 		"expiredMessage": "",
 		"lessThanAnHour": "Weniger als eine Stunde",
@@ -12,7 +13,9 @@
 		"minutes": "Minute(n)",
 		"seconds": "Sekunde(n)",
 		"platformsMessage": "${guild} Platformen sind: ",
-		"directoryBotCommand": "DirectoryBot Befehl: "
+		"directoryBotCommand": "DirectoryBot Befehl: ",
+		"commandProperties": "",
+		"propertiesText": ""
 	},
 	"platformPossessivePronoun": {
 		"token": "Possessivpronomen",
@@ -33,6 +36,10 @@
 		"title": "Allgemeine Befehle",
 		"description": "Um mit DirectoryBot zu interagieren, erwähnen Sie den Bot und geben dann einen dieser Befehle ein:"
 	},
+	"infoCommands":{
+		"title": "",
+		"description": ""
+	},
 	"timeZoneCommands": {
 		"title": "Zeitzonen Befehle",
 		"description": "Das Zeit Modul beinhaltet Befehle zum konvertieren von Zeitangaben für verschiedene Zeitzonen, welche vom Nutzer in der \"timezone\" Plattform gespeichert werden kann."
@@ -44,6 +51,25 @@
 	"configCommands": {
 		"title": "Konfigurations Befehle",
 		"description": "Die folgenden Befehle können nur von Mitgliedern genutzt werden die in Discord Administrator Privilegien haben oder die Rolle haben die durch `setmanagerrole` festgelegt wurde."
+	},
+	"about": {
+		"names": ["überuns", "Credits"],
+		"summary": "Version informationen und Mitwirkende (die Nutzung von `help` bei diesem Befehl benutz den Befehl)t",
+		"description": "Version informationen und Mitwirkende. Die Nutzung von `help` bei diesem Befehl benutzt den Befehl.",
+		"headers": ["Verwendung"],
+		"texts": [],
+		"creditsTitle": "",
+		"designAndEngineering": "Design & Entwicklung",
+		"engineering": "Entwicklung",
+		"art": "Kunst",
+		"localization": "Lokalisierung",
+		"patronsDescription": "",
+		"observerTier": "",
+		"dreamerTier": "",
+		"explorerTier": "",
+		"cartographerTier": "",
+		"archivistTier": "",
+		"grandArchivistTier": ""
 	},
 	"block": {
 		"names": ["Blockieren"],
@@ -83,25 +109,6 @@
 		"errorBadZone": "",
 		"errorBadTime": ""
 	},
-	"credits": {
-		"names": ["Credits", "überuns"],
-		"summary": "Version informationen und Mitwirkende (die Nutzung von `help` bei diesem Befehl benutz den Befehl)t",
-		"description": "Version informationen und Mitwirkende. Die Nutzung von `help` bei diesem Befehl benutzt den Befehl.",
-		"headers": ["Verwendung"],
-		"texts": [],
-		"creditsTitle": "",
-		"designAndEngineering": "Design & Entwicklung",
-		"engineering": "Entwicklung",
-		"art": "Kunst",
-		"localization": "Lokalisierung",
-		"patronsDescription": "",
-		"observerTier": "",
-		"dreamerTier": "",
-		"explorerTier": "",
-		"cartographerTier": "",
-		"archivistTier": "",
-		"grandArchivistTier": ""
-	},
 	"datalifetime": {
 		"names": [],
 		"summary": "",
@@ -110,6 +117,19 @@
 		"texts": [],
 		"successMessage": "",
 		"errorBadNumber": ""
+	},
+	"datapolicy": {
+		"names": [""],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"embedTitle": "",
+		"embedDescription": "",
+		"collectionHeader": "",
+		"collectionText": "",
+		"usageHeader": "",
+		"usageText": ""
 	},
 	"delete": {
 		"names": [],
@@ -126,6 +146,29 @@
 		"errorNoDataSelf": "",
 		"errorBadPlatform": "",
 		"errorNoPlatform": ""
+	},
+	"getstarted": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"embedTitle": "",
+		"managerDescription": "",
+		"nonmanagerDescription": "",
+		"managerDivider": "",
+		"roles": "",
+		"rolesText": "",
+		"permissionsRole": "",
+		"permissionsRoleText": "",
+		"managerRole": "",
+		"managerRoleText": "",
+		"record": "",
+		"recordText": "",
+		"platforms": "",
+		"platformsText": "",
+		"help": "",
+		"helpText": ""
 	},
 	"help": {
 		"names": ["Hilfe", "Befehle"],
@@ -196,6 +239,7 @@
 		"headers": [],
 		"texts": [],
 		"successMessage": "",
+		"roleAddendum": "",
 		"errorDupePlatform": "",
 		"errorNoUserNamedPlatforms": "",
 		"errorNoName": ""
@@ -216,6 +260,16 @@
 		"headers": [],
 		"texts": []
 	},
+	"raffle": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"successMessage": "",
+		"errorNoUsers": "",
+		"errorNoMentions": ""
+	},
 	"record": {
 		"names": [],
 		"summary": "",
@@ -223,6 +277,7 @@
 		"headers": [],
 		"texts": [],
 		"successMessage": "",
+		"errorPlaceholder": "",
 		"errorBadPlatform": "",
 		"errorNoData": "",
 		"errorNoPlatform": ""
@@ -314,6 +369,13 @@
 		"errorBadPlatform": "",
 		"errorNoPlatform": "",
 		"errorNoRecipient": ""
+	},
+	"version": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": []
 	},
 	"whois": {
 		"names": [],

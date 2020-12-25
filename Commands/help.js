@@ -13,15 +13,19 @@ command.execute = (receivedMessage, state, locale) => {
 	if (state.messageArray.length > 0) {
 		let commandName = state.messageArray[0].toLowerCase();
 		var lookedUpCommand = commandDictionary[commandName];
+		if (receivedMessage.guild) {
+			var { id: guildID, name: guildName } = receivedMessage.guild;
+		}
+
 		if (lookedUpCommand) {
 			let commandLocale = lookedUpCommand.locale || locale;
 			if (state.botManager || !lookedUpCommand.managerCommand) {
-				receivedMessage.author.send(lookedUpCommand.help(receivedMessage.client.user.displayAvatarURL(), receivedMessage.guild.id, commandLocale, receivedMessage.guild.name, lookedUpCommand.module))
+				receivedMessage.author.send(lookedUpCommand.help(receivedMessage.client.user.displayAvatarURL(), guildID, commandLocale, guildName, lookedUpCommand.module))
 					.catch(console.error);
 			} else {
 				// Error Message
 				receivedMessage.author.send(getString(commandLocale, command.module, "errorNotManager").addVariables({
-					"role": directories[receivedMessage.guild.id].managerRoleID ? ` or the @${receivedMessage.guild.roles.resolve(directories[receivedMessage.guild.id].managerRoleID).name} role` : ``
+					"role": guildID && directories[guildID].managerRoleID ? ` or the @${receivedMessage.guild.roles.resolve(directories[guildID].managerRoleID).name} role` : ``
 				})).catch(console.error);
 			}
 		} else {
@@ -35,8 +39,9 @@ command.execute = (receivedMessage, state, locale) => {
 		commandSets.forEach(commandSet => {
 			if (state.botManager || !commandSet.managerCommand) {
 				var embed = new MessageEmbed().setColor('6b81eb')
-					.setAuthor("Imaginary Horizons Productions", `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `, `https://discord.gg/bcE3Syu `)
+					.setAuthor("Imaginary Horizons Productions", `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `, `https://discord.gg/FJ8JGq2`)
 					.setTitle(getString(locale, commandSet.module, "title"))
+					.setThumbnail('https://cdn.discordapp.com/attachments/545684759276421120/765059662268727326/info.png')
 					.setDescription(getString(locale, commandSet.module, "description"))
 					.setFooter(getString(locale, "DirectoryBot", "footerText"), receivedMessage.client.user.displayAvatarURL())
 					.setTimestamp();

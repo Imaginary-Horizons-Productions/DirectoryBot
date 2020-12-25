@@ -8,6 +8,7 @@
  - New command: `datapolicy` tells what kinds of data DirectoryBot collects and how it's used
  - New command: `version` tells recent changes
  - New command: `getstarted` tells how to get started with DirectoryBot
+ - Click on the author line (Imaginary Horizons Productions) in the `about`, `datapolicy`, `getstarted`, `help`, `lookup`, `setlocale`, or `support` embeds to be invited to the DirectoryBot announcements channel, which you can follow!
 #### Example Version 1.0.0:
  - Change A
  - Change B

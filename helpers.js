@@ -61,7 +61,7 @@ exports.versionBuilder = function (avatarURL = '') {
 	var embed = new MessageEmbed().setColor('6b81eb')
 		.setAuthor(`Imaginary Horizons Productions`, `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `, `https://github.com/Imaginary-Horizons-Productions `)
 		.setTitle(data.slice(titleStart + 5, changesStartRegEx.lastIndex))
-		//.setURL(`https://github.com/Imaginary-Horizons-Productions/BountyBot `)
+		.setURL(`https://discord.gg/FJ8JGq2`)
 		.setThumbnail('https://cdn.discordapp.com/attachments/545684759276421120/734099622846398565/newspaper.png')
 		.setFooter(getString("en-US", "DirectoryBot", "footerText"), avatarURL)
 		.setTimestamp();

@@ -18,7 +18,7 @@ module.exports = command;
 
 function dataPolicyBuilder(locale, footerURL) {
 	return new MessageEmbed().setColor(`6b81eb`)
-		.setAuthor("Imaginary Horizons Productions", `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `, `https://discord.gg/bcE3Syu `)
+		.setAuthor("Imaginary Horizons Productions", `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `, `https://discord.gg/FJ8JGq2`)
 		.setURL(`https://github.com/Imaginary-Horizons-Productions/DirectoryBot `)
 		.setTitle(getString(locale, command.module, "embedTitle"))
 		.setThumbnail('https://cdn.discordapp.com/attachments/545684759276421120/782019073562378298/shaking-hands.png')

@@ -18,7 +18,7 @@ module.exports = command;
 
 function getStartedBuilder(footerURL, locale, botManager) {
 	let embed = new MessageEmbed().setColor('6b81eb')
-		.setAuthor("Imaginary Horizons Productions", `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `, `https://discord.gg/bcE3Syu `)
+		.setAuthor("Imaginary Horizons Productions", `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `, `https://discord.gg/FJ8JGq2`)
 		.setTitle(getString(locale, command.module, "embedTitle"))
 		.setThumbnail(footerURL)
 		.setFooter(getString(locale, "DirectoryBot", "footerText"), footerURL)

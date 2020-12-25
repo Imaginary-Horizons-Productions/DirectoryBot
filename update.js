@@ -1,11 +1,24 @@
 const fs = require('fs');
 const { exec } = require('child_process');
 var encrypter = require('crypto-js');
-const { time } = require('console');
 var consoleArgs = process.argv.slice(2);
 
 // Usage
 // `node update.js (migration version number)`
+
+// Update README
+exec(`node ./readme_generator.js`, { cwd: `./` }, (error, stdout, stderr) => {
+    if (error) {
+        console.log(`Error on readme generation:\n${error.message}`);
+    }
+    if (stderr) {
+        console.log(`Console stderr on readme generation:\n${stderr}`);
+    }
+    if (error || stderr) {
+        return;
+    }
+    console.log(`readme generation output:\n${stdout}`);
+})
 
 // Backup server data
 fs.readFile(`encryptionKey.txt`, `utf8`, (error, keyInput) => {

@@ -10,10 +10,16 @@ command.execute = (receivedMessage, state, locale) => {
 		let platform = state.messageArray[0].toLowerCase();
 
 		if (directories[receivedMessage.guild.id].platformsList[platform]) {
+			let roleID;
+			if (directories[receivedMessage.guild.id].platformsList[platform] && directories[receivedMessage.guild.id].platformsList[platform].roleID) {
+				roleID = directories[receivedMessage.guild.id].platformsList[platform].roleID;
+			}
 			Object.keys(directories[receivedMessage.guild.id].userDictionary).forEach(userID => {
-				if (directories[receivedMessage.guild.id].platformsList[platform].roleID) {
-					receivedMessage.guild.members.resolve(userID).roles.remove(directories[receivedMessage.guild.id].platformsList[platform].roleID);
-				}
+				receivedMessage.guild.members.fetch(userID).then(member => {
+					if (roleID) {
+						member.roles.remove(roleID);
+					}
+				})
 				delete directories[receivedMessage.guild.id].userDictionary[userID][platform];
 			})
 			delete directories[receivedMessage.guild.id].platformsList[platform];

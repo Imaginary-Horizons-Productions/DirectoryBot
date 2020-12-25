@@ -9,6 +9,7 @@
  - New command: `version` tells recent changes
  - New command: `getstarted` tells how to get started with DirectoryBot
  - Click on the author line (Imaginary Horizons Productions) in the `about`, `datapolicy`, `getstarted`, `help`, `lookup`, `setlocale`, or `support` embeds to be invited to the DirectoryBot announcements channel, which you can follow!
+ - Update Version 2.1.1: fix for the announcements system
 #### Example Version 1.0.0:
  - Change A
  - Change B

@@ -161,6 +161,10 @@ client.on('message', (receivedMessage) => {
 	});
 	let firstWord = messageArray.shift();
 
+	if (!firstWord) {
+		return;
+	}
+
 	if (receivedMessage.guild) {
 		// Guild Message Command
 		if (!(helpers.directories[receivedMessage.guild.id] && Object.keys(helpers.guildLocales).includes(receivedMessage.guild.id))) {

@@ -1,6 +1,6 @@
 {
   "name": "directorybot",
-  "version": "1.0.1",
+  "version": "2.1.0",
   "description": "A Discord bot for securely tracking usernames and converting time zones.",
   "main": "DirectoryBot.js",
   "dependencies": {

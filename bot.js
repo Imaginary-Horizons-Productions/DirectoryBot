@@ -283,14 +283,16 @@ client.on('message', (receivedMessage) => {
 
 
 client.on('guildCreate', (guild) => {
-	console.log(`Added to server (${Object.keys(client.guilds).length} total): ${guild.name}`);
-	guildCreate(guild.id, guild.preferredLocale);
+	guildCreate(guild.id, guild.preferredLocale).then(() => {
+		console.log(`Added to server (${Object.keys(helpers.directories).length} total): ${guild.name}`);
+	});
 })
 
 
 client.on('guildDelete', (guild) => {
-	console.log(`Removed from server (${Object.keys(client.guilds).length} total)`);
-	guildDelete(guild.id);
+	guildDelete(guild.id).then(() => {
+		console.log(`Removed from server (${Object.keys(helpers.directories).length} total)`);
+	});
 })
 
 
@@ -365,40 +367,47 @@ function login() {
 
 
 function guildCreate(guildID, locale) {
-	if (locale) {
-		if (!helpers.guildLocales[guildID]) {
-			helpers.guildLocales[guildID] = locale;
+	return new Promise ((resolve, reject) => {
+		if (locale) {
+			if (!helpers.guildLocales[guildID]) {
+				helpers.guildLocales[guildID] = locale;
+			}
+			if (!helpers.directories[guildID]) {
+				helpers.directories[guildID] = new Directory(locale);
+			}
+		} else {
+			if (!helpers.guildLocales[guildID]) {
+				helpers.guildLocales[guildID] = 'en-US';
+			}
+			if (!helpers.directories[guildID]) {
+				helpers.directories[guildID] = new Directory('en-US');
+			}
 		}
-		if (!helpers.directories[guildID]) {
-			helpers.directories[guildID] = new Directory(locale);
-		}
-	} else {
-		if (!helpers.guildLocales[guildID]) {
-			helpers.guildLocales[guildID] = 'en-US';
-		}
-		if (!helpers.directories[guildID]) {
-			helpers.directories[guildID] = new Directory('en-US');
-		}
-	}
-
-	helpers.saveObject(guildID, helpers.directories[guildID].managerRoleID, 'managerRole.txt');
-	helpers.saveObject(guildID, helpers.directories[guildID].permissionsRoleID, 'permissionsRole.txt');
-	helpers.saveObject(guildID, helpers.directories[guildID].platformsList, 'platformsList.txt');
-	helpers.saveObject(guildID, helpers.directories[guildID].userDictionary, 'userDictionary.txt');
-	helpers.saveObject(guildID, helpers.directories[guildID].blockDictionary, 'blockDictionary.txt');
-	helpers.saveObject(guildID, helpers.directories[guildID].infoLifetime, 'infoLifetime.txt');
-	saveGuildLocales();
+	
+		helpers.saveObject(guildID, helpers.directories[guildID].managerRoleID, 'managerRole.txt');
+		helpers.saveObject(guildID, helpers.directories[guildID].permissionsRoleID, 'permissionsRole.txt');
+		helpers.saveObject(guildID, helpers.directories[guildID].platformsList, 'platformsList.txt');
+		helpers.saveObject(guildID, helpers.directories[guildID].userDictionary, 'userDictionary.txt');
+		helpers.saveObject(guildID, helpers.directories[guildID].blockDictionary, 'blockDictionary.txt');
+		helpers.saveObject(guildID, helpers.directories[guildID].infoLifetime, 'infoLifetime.txt');
+		saveGuildLocales();
+		resolve();		
+	})
 }
 
 function guildDelete(guildID) {
-	['data', 'backups'].forEach(fileSet => {
-		if (fs.existsSync(`./${fileSet}/${guildID}`)) {
-			fs.rmdirSync(`./${fileSet}/${guildID}`, { recursive: true });
-		}
+	return new Promise ((resolve, reject) => {
+		['data', 'backups'].forEach(fileSet => {
+			if (fs.existsSync(`./${fileSet}/${guildID}`)) {
+				fs.rmdirSync(`./${fileSet}/${guildID}`, { recursive: true });
+			}
+		})
+	
+		delete helpers.directories[guildID];
+		delete helpers.guildLocales[guildID];
+		saveGuildLocales();
+		resolve();	
 	})
-
-	delete helpers.guildLocales[guildID];
-	saveGuildLocales();
 }
 
 function saveGuildLocales(backup = false) {

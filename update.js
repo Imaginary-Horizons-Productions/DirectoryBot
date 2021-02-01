@@ -81,21 +81,13 @@ if (consoleArgs[0]) {
 }
 
 // Enable verison notes announcement
-let versionNotesPath = `./versionData.json`;
-fs.readFile(versionNotesPath, 'utf8', (error, data) => {
+let versionMetadata = require(`./versionData.json`);
+versionMetadata.showNotes = true;
+fs.writeFile(`./versionData.json`, JSON.stringify(versionMetadata), 'utf8', (error) => {
     if (error) {
         console.log(error);
-    } else {
-        let versionMetadata = {};
-        Object.assign(versionMetadata, JSON.parse(data));
-        versionMetadata.showNotes = true;
-        fs.writeFile(versionNotesPath, JSON.stringify(versionMetadata), 'utf8', (error) => {
-            if (error) {
-                console.log(error);
-            }
-            console.log(`Version notes announcement enabled`);
-        })
     }
+    console.log(`Version notes announcement enabled`);
 })
 
 function runMigration(migrationName, guilds) {

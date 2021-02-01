@@ -356,15 +356,8 @@ function login() {
 					helpers.guildLocales = JSON.parse(encrypter.AES.decrypt(guildsListInput, keyInput).toString(encrypter.enc.Utf8));
 				}
 
-				fs.readFile("authentication.json", 'utf8', (error, authenticationInput) => {
-					if (error) {
-						console.log(error);
-					} else {
-						var authentication = {};
-						Object.assign(authentication, JSON.parse(authenticationInput));
-						client.login(authentication["token"]);
-					}
-				});
+				let authentication = require("./authentication.json");
+				client.login(authentication["token"]);
 			});
 		}
 	})

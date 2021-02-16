@@ -176,8 +176,7 @@
 		"summary": "You can type `@DirectoryBot help` followed by a command for more detailed information on that command",
 		"description": "This command provides details on DirectoryBot commands by either listing all commands available to you, or providing details on a specific command.",
 		"headers": [ "List all commands", "Get details on a specific command" ],
-		"texts": [ "`@DirectoryBot help`", "`@DirectoryBot help (command)`" ],
-		"errorNotManager": "You need a role with the administrator flag${role} to view manager commands."
+		"texts": [ "`@DirectoryBot help`", "`@DirectoryBot help (command)`" ]
 	},
 	"import": {
 		"names": [ "Import" ],

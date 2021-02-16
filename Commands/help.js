@@ -19,15 +19,8 @@ command.execute = (receivedMessage, state, locale) => {
 
 		if (lookedUpCommand) {
 			let commandLocale = lookedUpCommand.locale || locale;
-			if (state.botManager || !lookedUpCommand.managerCommand) {
-				receivedMessage.author.send(lookedUpCommand.help(receivedMessage.client.user.displayAvatarURL(), guildID, commandLocale, guildName, lookedUpCommand.module))
-					.catch(console.error);
-			} else {
-				// Error Message
-				receivedMessage.author.send(getString(commandLocale, command.module, "errorNotManager").addVariables({
-					"role": guildID && directories[guildID].managerRoleID ? ` or the @${receivedMessage.guild.roles.resolve(directories[guildID].managerRoleID).name} role` : ``
-				})).catch(console.error);
-			}
+			receivedMessage.author.send(lookedUpCommand.help(receivedMessage.client.user.displayAvatarURL(), guildID, commandLocale, guildName, lookedUpCommand.module))
+				.catch(console.error);
 		} else {
 			// Error Message
 			receivedMessage.author.send(getString(locale, "DirectoryBot", "errorBadCommand").addVariables({

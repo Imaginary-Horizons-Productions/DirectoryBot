@@ -152,7 +152,7 @@ client.on('ready', () => {
 })
 
 client.on('message', (receivedMessage) => {
-	if (receivedMessage.author.bot || receivedMessage.author.id == client.id) {
+	if (receivedMessage.author.bot || receivedMessage.guild.id == versionData.guildID) {
 		return;
 	}
 

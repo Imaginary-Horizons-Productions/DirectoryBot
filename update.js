@@ -1,10 +1,6 @@
 const fs = require('fs');
 const { exec } = require('child_process');
 var encrypter = require('crypto-js');
-var consoleArgs = process.argv.slice(2);
-
-// Usage
-// `node update.js (migration version number)`
 
 // Update README
 exec(`node ./readme_generator.js`, { cwd: `./` }, (error, stdout, stderr) => {
@@ -67,18 +63,14 @@ exec('npm install', (error, stdout, stderr) => {
 });
 
 // Find and run all migrations
-if (consoleArgs[0]) {
-    var migrationPattern = new RegExp(`${consoleArgs[0]}_m\\d+_`);
-    fs.readdir(`./Migrations`, (error, files) => {
-        if (error) {
-            console.log(`error in reading migration directory: ${error.message}`);
-        } else {
-            migrationFolders = files.filter(f => migrationPattern.test(f));
-            console.log(`Found the following migrations for the current version ${consoleArgs[0]}:\n${migrationFolders.join(', ')}`);
-            migrationFolders.forEach(async migration => await runMigration(migration, guilds));
-        }
-    });
-}
+fs.readdir(`./Migrations`, (error, files) => {
+    if (error) {
+        console.log(`error in reading migration directory: ${error.message}`);
+    } else {
+        console.log(`Found the following migrations for the current version:\n${files.join(', ')}`);
+        files.forEach(async migration => await runMigration(migration, guilds));
+    }
+});
 
 // Enable verison notes announcement
 let versionMetadata = require(`./versionData.json`);

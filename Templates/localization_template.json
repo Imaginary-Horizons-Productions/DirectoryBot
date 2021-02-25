@@ -176,7 +176,10 @@
 		"summary": "",
 		"description": "",
 		"headers": [],
-		"texts": []
+		"texts": [],
+		"embedTitle": "",
+		"embedDescription": ""
+
 	},
 	"import": {
 		"names": [],

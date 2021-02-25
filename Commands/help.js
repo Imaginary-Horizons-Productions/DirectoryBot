@@ -29,23 +29,33 @@ command.execute = (receivedMessage, state, locale) => {
 			})).catch(console.error);
 		}
 	} else {
-		commandSets.forEach(commandSet => {
+		var embed = new MessageEmbed().setColor('6b81eb')
+			.setAuthor("Imaginary Horizons Productions", `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `, `https://discord.gg/FJ8JGq2`)
+			.setTitle(getString(locale, command.module, "embedTitle"))
+			.setThumbnail('https://cdn.discordapp.com/attachments/545684759276421120/765059662268727326/info.png')
+			.setDescription(getString(locale, command.module, "embedDescription"))
+			.setFooter(getString(locale, "DirectoryBot", "footerText"), receivedMessage.client.user.displayAvatarURL())
+			.setTimestamp();
+		for (commandSet of commandSets) {
 			if (state.botManager || !commandSet.managerCommand) {
-				var embed = new MessageEmbed().setColor('6b81eb')
-					.setAuthor("Imaginary Horizons Productions", `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `, `https://discord.gg/FJ8JGq2`)
-					.setTitle(getString(locale, commandSet.module, "title"))
-					.setThumbnail('https://cdn.discordapp.com/attachments/545684759276421120/765059662268727326/info.png')
-					.setDescription(getString(locale, commandSet.module, "description"))
-					.setFooter(getString(locale, "DirectoryBot", "footerText"), receivedMessage.client.user.displayAvatarURL())
-					.setTimestamp();
+				let commandSetText = getString(locale, commandSet.module, "description") + "\n";
 				commandSet.fileNames.forEach(filename => {
-					embed.addField('**' + getString(locale, filename.slice(0, -3), "names").join(', ') + '**', getString(locale, filename.slice(0, -3), "summary"))
+					commandSetText += `\n__*${getString(locale, filename.slice(0, -3), "names")[0]}*__ ${getString(locale, filename.slice(0, -3), "summary")}`
 				})
-
-				receivedMessage.author.send(embed)
-					.catch(console.error);
+				if (commandSetText.length > 1024) {
+					embed = {
+						files: [{
+							attachment: "README.md",
+							name: "commands.txt"
+						}]
+					}
+				} else {
+					embed.addField(getString(locale, commandSet.module, "title"), commandSetText);
+				}
 			}
-		})
+		}
+		receivedMessage.author.send(embed)
+			.catch(console.error);
 	}
 }
 

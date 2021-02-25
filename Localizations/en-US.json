@@ -176,7 +176,9 @@
 		"summary": "You can type `@DirectoryBot help` followed by a command for more detailed information on that command",
 		"description": "This command provides details on DirectoryBot commands by either listing all commands available to you, or providing details on a specific command.",
 		"headers": [ "List all commands", "Get details on a specific command" ],
-		"texts": [ "`@DirectoryBot help`", "`@DirectoryBot help (command)`" ]
+		"texts": [ "`@DirectoryBot help`", "`@DirectoryBot help (command)`" ],
+		"embedTitle": "DirectoryBot Commands",
+		"embedDescription": "Here are all of DirectoryBot's commands that are accessible to you. Type `@DirectoryBot Help (command)` to get more information on a particular command."
 	},
 	"import": {
 		"names": [ "Import" ],

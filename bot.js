@@ -9,7 +9,15 @@ const commandDictionary = require(`./Commands/CommandsList.js`).commandDictionar
 const Directory = require('./Classes/Directory.js');
 const FriendCode = require('./Classes/FriendCode.js');
 
-const client = new Discord.Client();
+const client = new Discord.Client({
+	retryLimit: 5,
+	presence: {
+		activity: {
+			name: "for start-up errors...",
+			type: "WATCHING"
+		}
+	}
+});
 
 var versionData = require('./versionData.json');
 var antiSpam = [];
@@ -311,23 +319,6 @@ client.on('guildMemberRemove', (member) => {
 	}
 })
 
-
-client.on('disconnect', (error, code) => {
-	console.log(`Disconnect encountered (Error code ${code}):`);
-	console.log(error);
-	console.log(`---Restarting`);
-	login();
-})
-
-
-client.on('error', (error) => {
-	console.log(`Error encountered:`);
-	console.log(error);
-	console.log(`---Restarting`);
-	login();
-})
-
-
 client.on('roleUpdate', (oldRole, newRole) => {
 	if (helpers.directories[newRole.guild.id]) {
 		Object.values(helpers.directories[newRole.guild.id].platformsList).forEach(platform => {
@@ -358,8 +349,7 @@ function login() {
 					helpers.guildLocales = JSON.parse(encrypter.AES.decrypt(guildsListInput, keyInput).toString(encrypter.enc.Utf8));
 				}
 
-				let authentication = require("./authentication.json");
-				client.login(authentication["token"]);
+				client.login(require("./authentication.json").token);
 			});
 		}
 	})
@@ -367,7 +357,7 @@ function login() {
 
 
 function guildCreate(guildID, locale) {
-	return new Promise ((resolve, reject) => {
+	return new Promise((resolve, reject) => {
 		if (locale) {
 			if (!helpers.guildLocales[guildID]) {
 				helpers.guildLocales[guildID] = locale;
@@ -383,7 +373,7 @@ function guildCreate(guildID, locale) {
 				helpers.directories[guildID] = new Directory('en-US');
 			}
 		}
-	
+
 		helpers.saveObject(guildID, helpers.directories[guildID].managerRoleID, 'managerRole.txt');
 		helpers.saveObject(guildID, helpers.directories[guildID].permissionsRoleID, 'permissionsRole.txt');
 		helpers.saveObject(guildID, helpers.directories[guildID].platformsList, 'platformsList.txt');
@@ -391,22 +381,22 @@ function guildCreate(guildID, locale) {
 		helpers.saveObject(guildID, helpers.directories[guildID].blockDictionary, 'blockDictionary.txt');
 		helpers.saveObject(guildID, helpers.directories[guildID].infoLifetime, 'infoLifetime.txt');
 		saveGuildLocales();
-		resolve();		
+		resolve();
 	})
 }
 
 function guildDelete(guildID) {
-	return new Promise ((resolve, reject) => {
+	return new Promise((resolve, reject) => {
 		['data', 'backups'].forEach(fileSet => {
 			if (fs.existsSync(`./${fileSet}/${guildID}`)) {
 				fs.rmdirSync(`./${fileSet}/${guildID}`, { recursive: true });
 			}
 		})
-	
+
 		delete helpers.directories[guildID];
 		delete helpers.guildLocales[guildID];
 		saveGuildLocales();
-		resolve();	
+		resolve();
 	})
 }
 

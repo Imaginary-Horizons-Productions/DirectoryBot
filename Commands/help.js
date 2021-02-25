@@ -29,12 +29,16 @@ command.execute = (receivedMessage, state, locale) => {
 			})).catch(console.error);
 		}
 	} else {
+		let titleString = getString(locale, command.module, "embedTitle");
+		let descriptionString = getString(locale, command.module, "embedDescription");
+		let footerString = getString(locale, "DirectoryBot", "footerText");
+		let totalCharacterCount = "Imaginary Horizons Productions".length + titleString.length + descriptionString.length + footerString.length;
 		var embed = new MessageEmbed().setColor('6b81eb')
 			.setAuthor("Imaginary Horizons Productions", `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `, `https://discord.gg/FJ8JGq2`)
-			.setTitle(getString(locale, command.module, "embedTitle"))
+			.setTitle(titleString)
 			.setThumbnail('https://cdn.discordapp.com/attachments/545684759276421120/765059662268727326/info.png')
-			.setDescription(getString(locale, command.module, "embedDescription"))
-			.setFooter(getString(locale, "DirectoryBot", "footerText"), receivedMessage.client.user.displayAvatarURL())
+			.setDescription(descriptionString)
+			.setFooter(footerString, receivedMessage.client.user.displayAvatarURL())
 			.setTimestamp();
 		for (commandSet of commandSets) {
 			if (state.botManager || !commandSet.managerCommand) {
@@ -42,7 +46,9 @@ command.execute = (receivedMessage, state, locale) => {
 				commandSet.fileNames.forEach(filename => {
 					commandSetText += `\n__*${getString(locale, filename.slice(0, -3), "names")[0]}*__ ${getString(locale, filename.slice(0, -3), "summary")}`
 				})
-				if (commandSetText.length > 1024) {
+				totalCharacterCount += commandSetText.length;
+
+				if (commandSetText.length > 1024 || totalCharacterCount > 6000) {
 					embed = {
 						files: [{
 							attachment: "README.md",

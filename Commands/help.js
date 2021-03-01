@@ -55,6 +55,7 @@ command.execute = (receivedMessage, state, locale) => {
 							name: "commands.txt"
 						}]
 					}
+					break;
 				} else {
 					embed.addField(getString(locale, commandSet.module, "title"), commandSetText);
 				}

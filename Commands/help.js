@@ -1,6 +1,5 @@
 const Command = require('./../Classes/Command.js');
 const { getString } = require('./../Localizations/localization.js');
-const { directories } = require('../helpers.js');
 const { MessageEmbed } = require('discord.js');
 
 var command = new Command("help", false, false, true);
@@ -11,23 +10,25 @@ command.execute = (receivedMessage, state, locale) => {
 
 	// Provides a summary about bot commands, or details about a given command
 	if (state.messageArray.length > 0) {
-		let commandName = state.messageArray[0].toLowerCase();
-		var lookedUpCommand = commandDictionary[commandName];
-		if (receivedMessage.guild) {
-			var { id: guildID, name: guildName } = receivedMessage.guild;
-		}
-
-		if (lookedUpCommand) {
-			let commandLocale = lookedUpCommand.locale || locale;
-			receivedMessage.author.send(lookedUpCommand.help(receivedMessage.client.user.displayAvatarURL(), guildID, commandLocale, guildName, lookedUpCommand.module))
-				.catch(console.error);
-		} else {
-			// Error Message
-			receivedMessage.author.send(getString(locale, "DirectoryBot", "errorBadCommand").addVariables({
-				"commandName": state.messageArray[0],
-				"botNickname": receivedMessage.client.user
-			})).catch(console.error);
-		}
+		state.messageArray.forEach(searchTerm => {
+			searchTerm = searchTerm.toLowerCase();
+			var lookedUpCommand = commandDictionary[searchTerm];
+			if (receivedMessage.guild) {
+				var { id: guildID, name: guildName } = receivedMessage.guild;
+			}
+	
+			if (lookedUpCommand) {
+				let commandLocale = lookedUpCommand.locale || locale;
+				receivedMessage.author.send(lookedUpCommand.help(receivedMessage.client.user.displayAvatarURL(), guildID, commandLocale, guildName, lookedUpCommand.module))
+					.catch(console.error);
+			} else {
+				// Error Message
+				receivedMessage.author.send(getString(locale, "DirectoryBot", "errorBadCommand").addVariables({
+					"commandName": searchTerm,
+					"botNickname": receivedMessage.client.user
+				})).catch(console.error);
+			}	
+		})
 	} else {
 		let titleString = getString(locale, command.module, "embedTitle");
 		let descriptionString = getString(locale, command.module, "embedDescription");

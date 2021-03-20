@@ -149,7 +149,7 @@
 		"errorNoPlatform": "Please provide the platform of the information to delete."
 	},
 	"getstarted": {
-		"names": ["GetStarted"],
+		"names": ["GetStarted", "Tutorial"],
 		"summary": "Get steps for getting started with DirectoryBot",
 		"description": "This command provides steps for getting started with DirectoryBot.",
 		"headers": ["Usage"],

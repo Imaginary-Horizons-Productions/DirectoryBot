@@ -13,8 +13,8 @@ const client = new Discord.Client({
 	retryLimit: 5,
 	presence: {
 		activity: {
-			name: "for start-up errors...",
-			type: "WATCHING"
+			name: `"@DirectoryBot Tutorial"`,
+			type: "PLAYING"
 		}
 	}
 });
@@ -155,8 +155,6 @@ client.on('ready', () => {
 			})
 		}
 	})
-
-	client.user.setActivity(`"@DirectoryBot getstarted"`, { type: "LISTENING" }).catch(console.error);
 })
 
 client.on('message', (receivedMessage) => {

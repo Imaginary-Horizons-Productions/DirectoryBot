@@ -162,8 +162,6 @@
 		"rolesText": "",
 		"permissionsRole": "",
 		"permissionsRoleText": "",
-		"managerRole": "",
-		"managerRoleText": "",
 		"record": "",
 		"recordText": "",
 		"platforms": "",
@@ -205,15 +203,6 @@
 		"errorMessageOverflow": "",
 		"errorBadPlatform": "",
 		"errorNoPlatform": ""
-	},
-	"managerrole": {
-		"names": [],
-		"summary": "",
-		"description": "",
-		"headers": [],
-		"texts": [],
-		"successMessage": "",
-		"clearMessage": ""
 	},
 	"multistream": {
 		"names": [],

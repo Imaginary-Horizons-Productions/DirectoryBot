@@ -50,9 +50,8 @@ command.execute = (receivedMessage, state, locale) => {
 						}
 					} else {
 						// Error Message
-						receivedMessage.author.send(getString(locale, "delete", "errorNotManager").addVariables({
-							"role": directories[receivedMessage.guild.id].managerRoleID ? ` or the role @${receivedMessage.guild.roles.resolve(directories[receivedMessage.guild.id].managerRoleID).name}` : ""
-						})).catch(console.error);
+						receivedMessage.author.send(getString(locale, "delete", "errorNotManager"))
+							.catch(console.error);
 					}
 				} else {
 					// Error Message

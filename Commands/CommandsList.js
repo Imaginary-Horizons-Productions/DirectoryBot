@@ -12,7 +12,7 @@ let timezoneCommands = new CommandSet("timeZoneCommands", false, ['convert.js', 
 // Stream Commands: 2
 let streamCommands = new CommandSet("streamCommands", false, ['multistream.js', 'shoutout.js']);
 // Configuration Commands: 9
-let configCommands = new CommandSet("configCommands", true, ['permissionsrole.js', 'managerrole.js', 'setlocale.js', 'datalifetime.js', 'newplatform.js', 'setplatformterm.js', 'setplatformrole.js', 'removeplatform.js']);
+let configCommands = new CommandSet("configCommands", true, ['permissionsrole.js', 'setlocale.js', 'datalifetime.js', 'newplatform.js', 'setplatformterm.js', 'setplatformrole.js', 'removeplatform.js']);
 
 exports.commandSets = [
 	generalCommands,

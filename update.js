@@ -31,7 +31,7 @@ fs.readFile(`encryptionKey.txt`, `utf8`, (error, keyInput) => {
                     fs.mkdirSync(`./backups/${guildID}`);
                 }
                 let timestamp = Date.now();
-                ['managerRole.txt', 'permissionsRole.txt', 'platformsList.txt', 'blockDictionary.txt', 'infoLifetime.txt'].forEach(fileName => {
+                ['permissionsRole.txt', 'platformsList.txt', 'blockDictionary.txt', 'infoLifetime.txt'].forEach(fileName => {
                     fs.writeFile(`./backups/${guildID}/${timestamp}_${fileName}`, "placeholder", "utf8", (error) => {
                         if (error) {
                             console.error(error);

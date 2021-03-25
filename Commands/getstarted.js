@@ -27,7 +27,6 @@ function getStartedBuilder(footerURL, locale, botManager) {
 	if (botManager) {
 		embed.setDescription(getString(locale, command.module, "managerDescription"))
 			.addField(getString(locale, command.module, "permissionsRole"), getString(locale, command.module, "permissionsRoleText"))
-			.addField(getString(locale, command.module, "managerRole"), getString(locale, command.module, "managerRoleText"))
 			.addField(getString(locale, command.module, "roles"), getString(locale, command.module, "rolesText"))
 			.addField("\u200B", getString(locale, command.module, "managerDivider"));
 	} else {

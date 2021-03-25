@@ -1,6 +1,8 @@
 # DirectoryBot Change Log
 #### DirectoryBot Version 2.2.0:
- - features go here
+ - The `help` command now only returns one message
+ - The `help` command can look up multiple commands in one message
+ - Anyone with a role above all of DirectoryBot's roles is now considered a manager (obsoleted `managerrole` command removed)
 #### DirectoryBot Version 2.1.3:
  - Some commands can now be used from private messages: `convert`, `credits`, `support`, `datapolicy`, `help`, `countdown`
  - `record` command messages are now deleted even if they encounter an error

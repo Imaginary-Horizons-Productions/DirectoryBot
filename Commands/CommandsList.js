@@ -3,8 +3,8 @@ const CommandSet = require('./../Classes/CommandSet.js');
 const { getString, dictionary } = require('./../Localizations/localization.js');
 
 // Each filename array may contain a maximum of 25 commands to conform with MessageEmbed limit of 25 fields
-// General Commands: 10
-let generalCommands = new CommandSet("generalCommands", false, ['record.js', 'import.js', 'tell.js', 'lookup.js', 'mydata.js', 'whois.js', 'delete.js', 'block.js', 'platforms.js', 'raffle.js']);
+// General Commands: 11
+let generalCommands = new CommandSet("generalCommands", false, ['record.js', 'import.js', 'tell.js', 'lookup.js', 'mydata.js', 'whois.js', 'delete.js', 'block.js', 'platforms.js', 'raffle.js', "feedback.js"]);
 // Informational Commands: 6
 let infoCommands = new CommandSet("infoCommands", false, ['getstarted.js', 'about.js', 'help.js', 'support.js', 'datapolicy.js', 'version.js']);
 // Time Zone Commands: 2

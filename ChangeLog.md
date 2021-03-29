@@ -1,5 +1,6 @@
 # DirectoryBot Change Log
 #### DirectoryBot Version 2.2.0:
+ - New command: `feedback` sends a message to the test server and provides you an server invite
  - The `help` command now only returns one message
  - The `help` command can look up multiple commands in one message
  - Anyone with a role above all of DirectoryBot's roles is now considered a manager (obsoleted `managerrole` command removed)

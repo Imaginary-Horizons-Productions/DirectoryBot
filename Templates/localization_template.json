@@ -16,7 +16,6 @@
 		"directoryBotCommand": "",
 		"commandProperties": "",
 		"propertiesText": ""
-
 	},
 	"platformPossessivePronoun": {
 		"token": "",
@@ -37,7 +36,7 @@
 		"title": "",
 		"description": ""
 	},
-	"infoCommands":{
+	"infoCommands": {
 		"title": "",
 		"description": ""
 	},
@@ -114,13 +113,13 @@
 		"names": [],
 		"summary": "",
 		"description": "",
-		"headers": [ ],
+		"headers": [],
 		"texts": [],
 		"successMessage": "",
 		"errorBadNumber": ""
 	},
 	"datapolicy": {
-		"names": [""],
+		"names": [],
 		"summary": "",
 		"description": "",
 		"headers": [],
@@ -147,6 +146,14 @@
 		"errorNoDataSelf": "",
 		"errorBadPlatform": "",
 		"errorNoPlatform": ""
+	},
+	"feedback": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"feedbackMessage": ""
 	},
 	"getstarted": {
 		"names": [],
@@ -177,7 +184,6 @@
 		"texts": [],
 		"embedTitle": "",
 		"embedDescription": ""
-
 	},
 	"import": {
 		"names": [],

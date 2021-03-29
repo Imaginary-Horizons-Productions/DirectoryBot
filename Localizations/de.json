@@ -147,6 +147,14 @@
 		"errorBadPlatform": "",
 		"errorNoPlatform": ""
 	},
+	"feedback": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"feedbackMessage": ""
+	},
 	"getstarted": {
 		"names": [],
 		"summary": "",

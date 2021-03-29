@@ -148,6 +148,14 @@
 		"errorBadPlatform": "${platform} is not currently being tracked in ${server}.",
 		"errorNoPlatform": "Please provide the platform of the information to delete."
 	},
+	"feedback": {
+		"names": ["Feedback", "BugReport", "Suggestion", "Suggest"],
+		"summary": "Provide feedback (eg a bug report or suggestion) and get an invite to the test server",
+		"description": "This command posts feedback to the Imaginary Horizons Productions test server and provides you an invite to the server.",
+		"headers": ["Usage"],
+		"texts": ["`@DirectoryBot Feedback (message)`\nUsing the feedback command as the comment on an attachment can allow you to send a picture or text file with the message."],
+		"feedbackMessage": "Your feedback has been recorded! If you'd like to join the Imaginary Horizons Productions test server to chat with the devs, here's a link: "
+	},
 	"getstarted": {
 		"names": ["GetStarted", "Tutorial"],
 		"summary": "Get steps for getting started with DirectoryBot",

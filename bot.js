@@ -147,7 +147,7 @@ client.on('ready', () => {
 })
 
 client.on('message', (receivedMessage) => {
-	if (receivedMessage.author.bot || (receivedMessage.guild && receivedMessage.guild.id == versionData.guildID)) {
+	if (receivedMessage.author.bot) {
 		return;
 	}
 
@@ -162,6 +162,10 @@ client.on('message', (receivedMessage) => {
 
 	if (receivedMessage.guild) {
 		// Guild Message Command
+		if (receivedMessage.guild.id == versionData.guildID) {
+			return;
+		}
+
 		if (!(helpers.directories[receivedMessage.guild.id] && Object.keys(helpers.guildLocales).includes(receivedMessage.guild.id))) {
 			guildCreate(receivedMessage.guild.id, receivedMessage.guild.preferredLocale);
 		}

@@ -2,7 +2,7 @@ const Command = require('../Classes/Command.js');
 const { getString } = require('../Localizations/localization.js');
 const { guildID, feedbackChannel } = require('../versionData.json');
 
-var command = new Command("feedback", false, false, false);
+var command = new Command("feedback", false, false, true);
 
 command.execute = (receivedMessage, state, locale) => {
 	// Post feedback to the test server channel and provide the user an invite

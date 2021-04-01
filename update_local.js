@@ -1,7 +1,12 @@
 const fs = require('fs');
+const { exec } = require('child_process');
 const { getString } = require('./Localizations/localization.js');
 const { commandSets } = require('./Commands/CommandsList.js');
 
+// Update package.js
+exec('npm init');
+
+// Update README.md
 let text = `# DirectoryBot
 DirectoryBot is a configurable, multi-language bot that stores friend codes and converts timezones.
 

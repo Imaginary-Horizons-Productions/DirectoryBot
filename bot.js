@@ -403,7 +403,7 @@ function saveGuildLocales(backup = false) {
 			} else {
 				filePath += 'guildsList.txt';
 			}
-			fs.writeFile(filePath, encrypter.AES.encrypt(JSON.stringify(helpers.guildLocales), keyInput), 'utf8', (error) => {
+			fs.writeFile(filePath, encrypter.AES.encrypt(JSON.stringify(helpers.guildLocales).toString(), keyInput), 'utf8', (error) => {
 				if (error) {
 					console.log(error);
 				}

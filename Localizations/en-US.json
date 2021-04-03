@@ -2,7 +2,7 @@
 	"DirectoryBot": {
 		"footerText": "Support development with \"@DirectoryBot support\"",
 		"errorBadCommand": "**${commandName}** isn't a command. Please check for typos or use ${botNickname}` help`.",
-		"errorNotManager": "You need a role with the administrator flag${role} to use the **${alias}** command.",
+		"errorNotManager": "You need bot management permission (a role above DirectoryBot) to use the **${alias}** command.",
 		"errorTooManyCommands": "To prevent excessive messaging, users are unable to enter more than ${commandLimit} commands in ${duration}. You can use ${botNickname}` lookup (platform)` to look up everyone's information for the given platform at once.",
 		"errorNotPMCommand": "Please use the `${command}` command from within a server.",
 		"expirationWarning": "This message will expire in about ${time}.",
@@ -51,7 +51,7 @@
 	},
 	"configCommands": {
 		"title": "Configuration Commands",
-		"description": "The following commands can only be used by server members who have Discord administrator privledges or the role determined by `setmanagerrole`."
+		"description": "The following commands can only be used by server members who have bot management permission (a role above DirectoryBot)."
 	},
 	"about": {
 		"names": [ "About", "Credits", "Creditz" ],
@@ -148,8 +148,16 @@
 		"errorBadPlatform": "${platform} is not currently being tracked in ${server}.",
 		"errorNoPlatform": "Please provide the platform of the information to delete."
 	},
+	"feedback": {
+		"names": ["Feedback", "BugReport", "Suggestion", "Suggest"],
+		"summary": "Provide feedback (eg a bug report or suggestion) and get an invite to the test server",
+		"description": "This command posts feedback to the Imaginary Horizons Productions test server and provides you an invite to the server.",
+		"headers": ["Usage"],
+		"texts": ["`@DirectoryBot Feedback (message)`\nUsing the feedback command as the comment on an attachment can allow you to send a picture or text file with the message."],
+		"feedbackMessage": "Your feedback has been recorded! If you'd like to join the Imaginary Horizons Productions test server to chat with the devs, here's a link: "
+	},
 	"getstarted": {
-		"names": ["GetStarted"],
+		"names": ["GetStarted", "Tutorial"],
 		"summary": "Get steps for getting started with DirectoryBot",
 		"description": "This command provides steps for getting started with DirectoryBot.",
 		"headers": ["Usage"],
@@ -160,8 +168,6 @@
 		"managerDivider": "**__User Set-Up__**",
 		"permissionsRole": "Set the Permissions Role",
 		"permissionsRoleText": "Bots get a role to give them their permissions. This role is named after the bot, and it can look like DirectoryBot isn't responding if its permissions role gets mentioned instead of the bot. Inputting DirectoryBot's permissions role with the `permissionsrole` command allows DirectoryBot to respond to role mentions as well. To do this, type: `@DirectoryBot permissionsrole (role)`",
-		"managerRole": "Set the Manager Role",
-		"managerRoleText": "Some commands can only be used by bot managers. Bot managers either have Discord ADMINISTRATOR permission or the role set with the `managerrole` command. To do this, type: `@DirectoryBot managerrole (role)`.",
 		"roles": "Optional: Set-Up Automatic Roles",
 		"rolesText": "DirectoryBot can automatically grant roles to users who record data for certain platforms. Make sure DirectoryBot's permissions role is above those roles in the server settings (so it has permission to give the roles) and set a role for a platform with: `@DirectoryBot SetPlatformRole (platform) (role)`",
 		"record": "Set Your Time Zone",
@@ -177,7 +183,8 @@
 		"description": "This command provides details on DirectoryBot commands by either listing all commands available to you, or providing details on a specific command.",
 		"headers": [ "List all commands", "Get details on a specific command" ],
 		"texts": [ "`@DirectoryBot help`", "`@DirectoryBot help (command)`" ],
-		"errorNotManager": "You need a role with the administrator flag${role} to view manager commands."
+		"embedTitle": "DirectoryBot Commands",
+		"embedDescription": "Here are all of DirectoryBot's commands that are accessible to you. Type `@DirectoryBot Help (command)` to get more information on a particular command."
 	},
 	"import": {
 		"names": [ "Import" ],
@@ -203,15 +210,6 @@
 		"errorMessageOverflow": "Your lookup of ${server}'s ${platform} ${term} is too long for a single message, please limit your search (2,048 characters max).",
 		"errorBadPlatform": "${platform} is not currently being tracked in ${server}.",
 		"errorNoPlatform": "Please provide a platform in which to look up information."
-	},
-	"managerrole": {
-		"names": [ "ManagerRole", "SetManagerRole" ],
-		"summary": "Sets the bot manager role which allows the use of manager commands",
-		"description": "This command sets the manager role, which allows users to use manager-only commands without server administrator privilege. If no role is given, the set role will be cleared.",
-		"headers": [ "Set a role", "Clear manager role" ],
-		"texts": [ "`@DirectoryBot setmanagerrole (role)`", "`@DirectoryBot setmanagerrole`" ],
-		"successMessage": "The ${botNickname} manager role has been set to ${role}.",
-		"clearMessage": "The ${botNickname} manager role has been cleared."
 	},
 	"multistream": {
 		"names": [ "Multistream", "Multitwitch" ],
@@ -277,7 +275,7 @@
 		"description": "This command adds your information for given platform so people can ask the bot for it.",
 		"headers": [ "Recording data" ],
 		"texts": [ "`@DirectoryBot record (platform) (data)`\nThe message containing the command will be deleted for security purposes. Discord's spoilers markdown (|| on both sides) is removed from code entry to allow hiding entry from mobile via spoilers markdown." ],
-		"successMessage": "${author} has recorded a ${platform} ${term}. Check it with:\n\t${botNickname}` lookup `${author}` ${platform}`.",
+		"successMessage": "${author} has recorded a ${platform} ${term}. Check it with:\n\t${botNickname}` lookup ${platform} `${author}.",
 		"errorPlaceholder": "A `record` command encountered an error.",
 		"errorBadPlatform": "${platform} is not currently being tracked in ${server}.",
 		"errorNoData": "Please provide the information you would like to record.",

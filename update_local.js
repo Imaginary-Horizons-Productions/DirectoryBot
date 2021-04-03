@@ -1,7 +1,12 @@
 const fs = require('fs');
+const { exec } = require('child_process');
 const { getString } = require('./Localizations/localization.js');
 const { commandSets } = require('./Commands/CommandsList.js');
 
+// Update package.js
+exec('npm update');
+
+// Update README.md
 let text = `# DirectoryBot
 DirectoryBot is a configurable, multi-language bot that stores friend codes and converts timezones.
 
@@ -11,7 +16,6 @@ DirectoryBot is a configurable, multi-language bot that stores friend codes and 
 
 ### Optional
 * Use "@DirectoryBot setpermissionsrole (role)" to store the permissions role. This allows the bot to interpret accidental mentions of the role as command messages.
-* Use "@DirectoryBot setmanagerrole (role)" to set up a manager role. Bot managers are allowed to use manager-only commands without Discord administrator permissions.
 * Record your information for DirectoryBot's default platforms: time zone, possessive pronoun, and stream.
 * Check out the Imaginary Horizons Productions Patreon: https://www.patreon.com/imaginaryhorizonsproductions
 

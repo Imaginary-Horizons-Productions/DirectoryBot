@@ -148,6 +148,14 @@
 		"errorBadPlatform": "",
 		"errorNoPlatform": ""
 	},
+	"feedback": {
+		"names": [],
+		"summary": "",
+		"description": "",
+		"headers": [],
+		"texts": [],
+		"feedbackMessage": ""
+	},
 	"getstarted": {
 		"names": [],
 		"summary": "",
@@ -162,8 +170,6 @@
 		"rolesText": "",
 		"permissionsRole": "",
 		"permissionsRoleText": "",
-		"managerRole": "",
-		"managerRoleText": "",
 		"record": "",
 		"recordText": "",
 		"platforms": "",
@@ -177,7 +183,9 @@
 		"description": "",
 		"headers": [],
 		"texts": [],
-		"errorNotManager": ""
+		"embedTitle": "",
+		"embedDescription": ""
+
 	},
 	"import": {
 		"names": [],
@@ -203,15 +211,6 @@
 		"errorMessageOverflow": "",
 		"errorBadPlatform": "",
 		"errorNoPlatform": ""
-	},
-	"managerrole": {
-		"names": [],
-		"summary": "",
-		"description": "",
-		"headers": [],
-		"texts": [],
-		"successMessage": "",
-		"clearMessage": ""
 	},
 	"multistream": {
 		"names": [],

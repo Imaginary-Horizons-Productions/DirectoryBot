@@ -1,5 +1,6 @@
 {
     "showNotes": false,
 	"guildID": "",
-	"channelID": ""
+	"channelID": "",
+	"feedbackChannel": ""
 }

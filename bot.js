@@ -122,7 +122,7 @@ client.on('ready', () => {
 											}
 
 											setInterval(() => {
-												saveGuildLocales(true);
+												helpers.saveObject('.', helpers.guildLocales, 'guildsList.txt', true);
 												Object.keys(helpers.directories).forEach((guildID) => {
 													helpers.saveObject(guildID, helpers.directories[guildID].permissionsRoleID, 'permissionsRole.txt', true);
 													helpers.saveObject(guildID, helpers.directories[guildID].platformsList, 'platformsList.txt', true);
@@ -334,7 +334,7 @@ function login() {
 
 				if (!guildsListInput) {
 					helpers.guildLocales = {};
-					saveGuildLocales();
+					helpers.saveObject('.', helpers.guildLocales, 'guildsList.txt');
 				} else {
 					helpers.guildLocales = JSON.parse(encrypter.AES.decrypt(guildsListInput, keyInput).toString(encrypter.enc.Utf8));
 				}
@@ -369,7 +369,7 @@ function guildCreate(guildID, locale) {
 		helpers.saveObject(guildID, helpers.directories[guildID].userDictionary, 'userDictionary.txt');
 		helpers.saveObject(guildID, helpers.directories[guildID].blockDictionary, 'blockDictionary.txt');
 		helpers.saveObject(guildID, helpers.directories[guildID].infoLifetime, 'infoLifetime.txt');
-		saveGuildLocales();
+		helpers.saveObject('.', helpers.guildLocales, 'guildsList.txt');
 		resolve();
 	})
 }
@@ -384,30 +384,7 @@ function guildDelete(guildID) {
 
 		delete helpers.directories[guildID];
 		delete helpers.guildLocales[guildID];
-		saveGuildLocales();
+		helpers.saveObject('.', helpers.guildLocales, 'guildsList.txt');
 		resolve();
-	})
-}
-
-function saveGuildLocales(backup = false) {
-	fs.readFile(`encryptionKey.txt`, `utf8`, (error, keyInput) => {
-		if (error) {
-			console.log(error);
-		} else {
-			var filePath = `./`;
-			if (backup) {
-				filePath += 'backups/guildsList.txt';
-				if (!fs.existsSync('./backups')) {
-					fs.mkdirSync('./backups');
-				}
-			} else {
-				filePath += 'guildsList.txt';
-			}
-			fs.writeFile(filePath, encrypter.AES.encrypt(JSON.stringify(helpers.guildLocales).toString(), keyInput), 'utf8', (error) => {
-				if (error) {
-					console.log(error);
-				}
-			})
-		}
 	})
 }

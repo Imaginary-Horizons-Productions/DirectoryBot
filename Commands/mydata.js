@@ -23,7 +23,7 @@ command.execute = (receivedMessage, state, locale) => {
 	let explorers = ['103335856479162368'];
 	let cartographers = ['115221369339379720'];
 	let archivists = []
-	let grandArchivists = ['106122478715150336', '112785244733628416'];
+	let grandArchivists = ['694403611979153488', '106122478715150336', '112785244733628416'];
 
 	if (observers.includes(receivedMessage.author.id)) { // Observer
 		embed.setImage('https://cdn.discordapp.com/attachments/545684759276421120/734114192013000816/IH_PatreonTierImages_Observer.jpg');

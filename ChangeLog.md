@@ -1,5 +1,5 @@
 # DirectoryBot Change Log
-#### DirectoryBot Version 2.2.0:
+#### DirectoryBot Version 2.2.1:
  - New command: `feedback` sends a message to the test server and provides you an server invite
  - The `help` command now only returns one message
  - The `help` command can look up multiple commands in one message

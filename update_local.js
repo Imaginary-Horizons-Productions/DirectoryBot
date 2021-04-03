@@ -4,7 +4,7 @@ const { getString } = require('./Localizations/localization.js');
 const { commandSets } = require('./Commands/CommandsList.js');
 
 // Update package.js
-exec('npm init');
+exec('npm update');
 
 // Update README.md
 let text = `# DirectoryBot

@@ -7,7 +7,6 @@ DirectoryBot is a configurable, multi-language bot that stores friend codes and 
 
 ### Optional
 * Use "@DirectoryBot setpermissionsrole (role)" to store the permissions role. This allows the bot to interpret accidental mentions of the role as command messages.
-* Use "@DirectoryBot setmanagerrole (role)" to set up a manager role. Bot managers are allowed to use manager-only commands without Discord administrator permissions.
 * Record your information for DirectoryBot's default platforms: time zone, possessive pronoun, and stream.
 * Check out the Imaginary Horizons Productions Patreon: https://www.patreon.com/imaginaryhorizonsproductions
 
@@ -78,9 +77,15 @@ This command generates a list of users including the mentioned users, users with
 #### Select a user randomly
 `@DirectoryBot raffle (list of users, roles, or platforms)`
 
+### Feedback, BugReport, Suggestion, Suggest
+This command posts feedback to the Imaginary Horizons Productions test server and provides you an invite to the server.
+#### Usage
+`@DirectoryBot Feedback (message)`
+Using the feedback command as the comment on an attachment can allow you to send a picture or text file with the message.
+
 ## Informational Commands
 Use these commands to look up information about DirectoryBot.
-### GetStarted
+### GetStarted, Tutorial
 This command provides steps for getting started with DirectoryBot.
 #### Usage
 `@DirectoryBot GetStarted`
@@ -145,20 +150,13 @@ This command posts the given user's stream information.
 `@DirectoryBot shoutout (user)`
 
 ## Configuration Commands
-The following commands can only be used by server members who have Discord administrator privledges or the role determined by `setmanagerrole`.
+The following commands can only be used by server members who have bot management permission (a role above DirectoryBot).
 ### PermissionsRole, SetPermissionsRole
 This command updates the permissions role. This allows DirectoryBot to interpret accidental mentions of that role as command messages.
 #### Set the permissions role
 `@DirectoryBot permissionsrole (role)`
 #### Clear the permissions role
 `@DirectoryBot permissionsrole`
-
-### ManagerRole, SetManagerRole
-This command sets the manager role, which allows users to use manager-only commands without server administrator privilege. If no role is given, the set role will be cleared.
-#### Set a role
-`@DirectoryBot setmanagerrole (role)`
-#### Clear manager role
-`@DirectoryBot setmanagerrole`
 
 ### SetLocale, SetLanguage
 This command sets the default locale (language) for the server it is used in (default: en-US).

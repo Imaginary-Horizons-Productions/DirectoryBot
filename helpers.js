@@ -34,6 +34,31 @@ exports.millisecondsToHours = function (locale, milliseconds, showMinutes = fals
 	return text;
 }
 
+exports.tipBuilder = function (locale) {
+	var tipIDs = ["vote", "refer", "contribute", "social", "patron"];
+	var tip = {};
+	var tipID = tipIDs[Math.floor(Math.random() * tipIDs.length)];
+	tip.text = getString(locale, "tips", tipID);
+	switch (tipID) {
+		case "vote":
+			tip.url = "https://top.gg/bot/585336216262803456";
+			break;
+		case "refer":
+			tip.url = "https://discord.com/oauth2/authorize?client_id=585336216262803456&permissions=268446720&scope=bot";
+			break;
+		case "contribute":
+			tip.url = "https://github.com/Imaginary-Horizons-Productions/DirectoryBot";
+			break;
+		case "social":
+			tip.url = "";
+			break;
+		case "patron":
+			tip.url = "https://www.patreon.com/imaginaryhorizonsproductions";
+			break;
+	}
+	return tip;
+}
+
 exports.platformsBuilder = function (guildName, platformsList, locale) {
 	let platformTexts = [];
 	for (const platform of Object.keys(platformsList)) {
@@ -58,12 +83,13 @@ exports.versionBuilder = function (avatarURL = '') {
 	var knownIssuesStart = knownIssuesStartRegEx.exec(data).index;
 	var knownIssuesEnd = dividerRegEx.exec(data).index;
 
+	var tip = tipBuilder("en-US");
 	var embed = new MessageEmbed().setColor('6b81eb')
-		.setAuthor(`Imaginary Horizons Productions`, `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `, `https://github.com/Imaginary-Horizons-Productions `)
+		.setAuthor(tip.text, avatarURL, tip.url)
 		.setTitle(data.slice(titleStart + 5, changesStartRegEx.lastIndex))
 		.setURL(`https://discord.gg/FJ8JGq2`)
 		.setThumbnail('https://cdn.discordapp.com/attachments/545684759276421120/734099622846398565/newspaper.png')
-		.setFooter(getString("en-US", "DirectoryBot", "footerText"), avatarURL)
+		.setFooter(getString("en-US", "DirectoryBot", "footerText"), `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `)
 		.setTimestamp();
 
 	if (knownIssuesStart < knownIssuesEnd) {

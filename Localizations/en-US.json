@@ -1,6 +1,6 @@
 {
 	"DirectoryBot": {
-		"footerText": "Support development with \"@DirectoryBot support\"",
+		"footerText": "Imaginary Horizons Productions",
 		"errorBadCommand": "**${commandName}** isn't a command. Please check for typos or use ${botNickname}` help`.",
 		"errorNotManager": "You need bot management permission (a role above DirectoryBot) to use the **${alias}** command.",
 		"errorTooManyCommands": "To prevent excessive messaging, users are unable to enter more than ${commandLimit} commands in ${duration}. You can use ${botNickname}` lookup (platform)` to look up everyone's information for the given platform at once.",
@@ -17,6 +17,13 @@
 		"directoryBotCommand": "DirectoryBot Command: ",
 		"commandProperties": "Command Properties",
 		"propertiesText": "Premium: ${premium}\nUsable by Non-Managers: ${manager}\nUsable in Private Messages: ${dmCommand}"
+	},
+	"tips": {
+		"vote": "Click here to vote for DirectoryBot on top.gg!",
+		"refer": "Click here to get the DirectoryBot invite link!",
+		"contribute": "Click here to contribute to the DirectoryBot GitHub!",
+		"social": "Use the #ImaginaryHorizonsProductions hashtag!",
+		"patron": "Click here to go to Imaginary Horizons Productions Patreon!"
 	},
 	"platformPossessivePronoun": {
 		"token": "PossessivePronoun",
@@ -333,26 +340,6 @@
 		"errorNoData": "${user} has not set a stream username in this server's DirectoryBot yet.",
 		"errorBadUser": "That person isn't a member of ${server}.",
 		"errorNoPlatform": "Your `shoutout` command could not be completed. ${server} does not seem to have a \"stream\" platform."
-	},
-	"support": {
-		"names": [ "Support" ],
-		"summary": "Lists the ways to support development of DirectoryBot",
-		"description": "This command lists easy ways to support DirectoryBot development. Using `help` on this command uses the command.",
-		"headers": [ "Usage" ],
-		"texts": [ "`@DirectoryBot support`" ],
-		"supportingDirectoryBot": "Supporting DirectoryBot",
-		"embedDescription": "Thank you for using DirectoryBot! Here are some ways to support development:",
-		"vote": "Vote for us on top.gg",
-		"voteText": "top.gg is a Discord bot listing and distrabution service. Voting for DirectoryBot causes it to appear earlier in searches. [DirectoryBot's Page](https://top.gg/bot/585336216262803456)",
-		"refer": "Refer a friend",
-		"referText": "Got a friend interested in adding DirectoryBot to their server? Pass them [this link](https://discord.com/oauth2/authorize?client_id=585336216262803456&permissions=268446720&scope=bot)!",
-		"contribute": "Contribute code or localization support",
-		"contributeText": "Check out our [GitHub](https://github.com/Imaginary-Horizons-Productions/DirectoryBot) and tackle some issues!",
-		"social": "Create some social media buzz",
-		"socialText": "Use the #ImaginaryHorizonsProductions hashtag!",
-		"patron": "Become a Patron",
-		"patronText": "Chip in for server costs at the [Imaginary Horizons Productions Patreon](https://www.patreon.com/imaginaryhorizonsproductions)!",
-		"thanks": "Thanks in advanced!"
 	},
 	"tell": {
 		"names": [ "Tell", "Send" ],

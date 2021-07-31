@@ -1,16 +1,17 @@
 const Command = require('./../Classes/Command.js');
 const { getString } = require('./../Localizations/localization.js');
 const { MessageEmbed, MessageMentions } = require('discord.js');
-const { directories, millisecondsToHours, platformsBuilder } = require('./../helpers.js');
+const { directories, millisecondsToHours, platformsBuilder, tipBuilder } = require('./../helpers.js');
 
 var command = new Command("lookup", false, false, false);
 
 // Generate embed on call to add up-to-date list of platforms
 command.help = (avatarURL, guildID, locale, guildName, module) => {
-	let embed = new MessageEmbed().setAuthor("Imaginary Horizons Productions", `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `, `https://discord.gg/FJ8JGq2`)
+	var tip = tipBuilder(locale);
+	let embed = new MessageEmbed().setAuthor(tip.text, avatarURL, tip.url)
 		.setTitle(getString(locale, "DirectoryBot", "directoryBotCommand") + getString(locale, module, "names").join(', '))
 		.setDescription(getString(locale, module, "description"))
-		.setFooter(getString(locale, "DirectoryBot", "footerText"), avatarURL);
+		.setFooter(getString(locale, "DirectoryBot", "footerText"), `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `);
 
 	let headers = getString(locale, module, "headers");
 	let texts = getString(locale, module, "texts");
@@ -49,12 +50,13 @@ command.execute = (receivedMessage, state, locale) => {
 			})
 
 			if (text.length < 2049) {
+				var tip = tipBuilder(locale);
 				let embed = new MessageEmbed().setColor(`6b81eb`)
-					.setAuthor(receivedMessage.guild.name, receivedMessage.guild.iconURL())
+					.setAuthor(tip.text, receivedMessage.client.user.avatarURL(), tip.url)
 					.setTitle(`${state.command}: ${platform}`)
 					.setThumbnail('https://cdn.discordapp.com/attachments/545684759276421120/765064127793725450/bookmark.png')
 					.setDescription(text)
-					.setFooter(getString(locale, "DirectoryBot", "expirationWarning").addVariables({ "time": millisecondsToHours(locale, state.infoLifetime)}), receivedMessage.client.user.avatarURL())
+					.setFooter(receivedMessage.guild.name + " • " + getString(locale, "DirectoryBot", "expirationWarning").addVariables({ "time": millisecondsToHours(locale, state.infoLifetime)}), receivedMessage.guild.iconURL())
 					.setTimestamp();
 
 					if (directories[receivedMessage.guild.id].platformsList[platform].roleName) {

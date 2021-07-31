@@ -1,4 +1,5 @@
 const { MessageEmbed } = require('discord.js');
+const { tipBuilder } = require('../helpers.js');
 const { getString } = require('./../Localizations/localization.js');
 
 module.exports = class Command {
@@ -10,11 +11,12 @@ module.exports = class Command {
 	}
 
 	help(avatarURL, guildID, locale, guildName, module) {
-		let embed = new MessageEmbed().setAuthor("Imaginary Horizons Productions", `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `, `https://discord.gg/FJ8JGq2`)
+		var tip = tipBuilder(locale);
+		let embed = new MessageEmbed().setAuthor(tip.text, avatarURL, tip.url)
 			.setThumbnail('https://cdn.discordapp.com/attachments/545684759276421120/765061579619565588/magnifying-glass.png')
 			.setTitle(getString(locale, "DirectoryBot", "directoryBotCommand") + getString(locale, module, "names").join(', '))
 			.setDescription(getString(locale, module, "description"))
-			.setFooter(getString(locale, "DirectoryBot", "footerText"), avatarURL);
+			.setFooter(getString(locale, "DirectoryBot", "footerText"), `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `);
 
 		embed.addField(getString(locale, "DirectoryBot", "commandProperties"), getString(locale, "DirectoryBot", "propertiesText").addVariables({
 			"premium": this.premiumCommand ? ":white_check_mark:" : ":no_entry_sign:",

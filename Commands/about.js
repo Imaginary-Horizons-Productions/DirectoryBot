@@ -1,6 +1,7 @@
 const Command = require('../Classes/Command.js');
 const { getString } = require('../Localizations/localization.js');
 const { MessageEmbed } = require('discord.js');
+const { tipBuilder } = require('../helpers.js');
 
 var command = new Command("about", false, false, true);
 
@@ -18,8 +19,9 @@ command.execute = (receivedMessage, state, locale) => {
 module.exports = command;
 
 function creditsBuilder(footerURL, locale) {
+	var tip = tipBuilder(locale);
 	return new MessageEmbed().setColor(`6b81eb`)
-		.setAuthor("Imaginary Horizons Productions", `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `, `https://discord.gg/FJ8JGq2`)
+		.setAuthor(tip.text, footerURL, tip.url)
 		.setTitle(getString(locale, command.module, "creditsTitle"))
 		.setThumbnail('https://cdn.discordapp.com/attachments/545684759276421120/734097014974971924/theater-curtains.png')
 		.setURL(`https://github.com/Imaginary-Horizons-Productions/DirectoryBot `)
@@ -32,6 +34,6 @@ function creditsBuilder(footerURL, locale) {
 		.addField(getString(locale, command.module, "archivistTier"), "Victor Huang", false)
 		.addField(getString(locale, command.module, "cartographerTier"), `Ralph Beish`, false)
 		.addField(getString(locale, command.module, "explorerTier"), `Eric Hu`, false)
-		.setFooter(getString(locale, "DirectoryBot", "footerText"), footerURL)
+		.setFooter(getString(locale, "DirectoryBot", "footerText"), `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `)
 		.setTimestamp();
 }

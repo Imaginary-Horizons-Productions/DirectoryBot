@@ -1,18 +1,19 @@
 const Command = require('./../Classes/Command.js');
 const { getString } = require('./../Localizations/localization.js');
 const { MessageEmbed } = require('discord.js');
-const { directories } = require('../helpers.js');
+const { directories, tipBuilder } = require('../helpers.js');
 const patrons = require('./../patrons.json');
 
 var command = new Command("mydata", false, false, false);
 
 command.execute = (receivedMessage, state, locale) => {
 	// Sends the user all the information they've input into the bot
+	var tip = tipBuilder(locale);
 	let embed = new MessageEmbed().setColor('6b81eb')
-		.setAuthor(receivedMessage.guild.name, receivedMessage.guild.iconURL())
+		.setAuthor(tip.text, `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `, tip.url)
 		.setTitle(getString(locale, command.module, "yourData"))
 		.setThumbnail('https://cdn.discordapp.com/attachments/545684759276421120/765064823511318548/gift-of-knowledge.png')
-		.setFooter(getString(locale, "DirectoryBot", "footerText"), `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `)
+		.setFooter(receivedMessage.guild.name, receivedMessage.guild.iconURL())
 		.setTimestamp();
 	let text = '';
 	let dictionary = directories[receivedMessage.guild.id].userDictionary[receivedMessage.author.id];

@@ -25,7 +25,7 @@ function creditsBuilder(footerURL, locale) {
 		.setTitle(getString(locale, command.module, "creditsTitle"))
 		.setThumbnail('https://cdn.discordapp.com/attachments/545684759276421120/734097014974971924/theater-curtains.png')
 		.setURL(`https://github.com/Imaginary-Horizons-Productions/DirectoryBot `)
-		.addField(getString(locale, command.module, "designAndEngineering"), `Nathaniel Tseng ( <@106122478715150336> | [Twitter](https://twitter.com/Archainis) )`)
+		.addField(getString(locale, command.module, "designAndEngineering"), `Nathaniel Tseng ( <@106122478715150336> | [Twitter](https://twitter.com/Arcane_ish) )`)
 		.addField(getString(locale, command.module, "engineering"), `Lucas Ensign ( <@112785244733628416> | [Twitter](https://twitter.com/SillySalamndr) )`)
 		.addField(getString(locale, command.module, "art"), `Angela Lee ( [Website](https://www.angelasylee.com/) )`)
 		.addField(getString(locale, command.module, "localization"), `Mnemmy (fr), towoko (de), Lille (de)`)

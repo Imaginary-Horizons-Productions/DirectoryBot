@@ -1,6 +1,6 @@
 {
 	"DirectoryBot": {
-		"footerText": " Soutenir le développement avec \"@DirectoryBot support\"",
+		"footerText": "",
 		"errorBadCommand": "**${commandName}$$ n'est pas une commande. Veuillez vérifier les fautes de frappe ou utiliser $[botNickname}` help`",
 		"errorNotManager": "",
 		"errorTooManyCommands": "",
@@ -17,6 +17,13 @@
 		"commandProperties": "",
 		"propertiesText": ""
 
+	},
+	"tips": {
+		"vote": "",
+		"refer": "",
+		"contribute": "",
+		"social": "",
+		"patron": ""
 	},
 	"platformPossessivePronoun": {
 		"token": "",
@@ -334,26 +341,6 @@
 		"errorNoData": "",
 		"errorBadUser": "",
 		"errorNoPlatform": ""
-	},
-	"support": {
-		"names": [],
-		"summary": "",
-		"description": "",
-		"headers": [],
-		"texts": [],
-		"supportingDirectoryBot": "",
-		"embedDescription": "",
-		"vote": "",
-		"voteText": "",
-		"refer": "",
-		"referText": "",
-		"contribute": "",
-		"contributeText": "",
-		"social": "",
-		"socialText": "",
-		"patron": "",
-		"patronText": "",
-		"thanks": ""
 	},
 	"tell": {
 		"names": [],

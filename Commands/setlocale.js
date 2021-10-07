@@ -1,17 +1,18 @@
 const Command = require('./../Classes/Command.js');
 const { MessageEmbed } = require('discord.js');
 const { getString, supportedLocales } = require('./../Localizations/localization.js');
-const { guildLocales } = require('./../helpers.js');
+const { guildLocales, tipBuilder } = require('./../helpers.js');
 
 var command = new Command("setlocale", true, false, false);
 
 // Overload help command to add supported locales to field on execute
 command.help = (avatarURL, guildID, locale, guildName, module) => {
-	let embed = new MessageEmbed().setAuthor("Imaginary Horizons Productions", `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `, `https://discord.gg/FJ8JGq2`)
+	var tip = tipBuilder(locale);
+	let embed = new MessageEmbed().setAuthor(tip.text, avatarURL, tip.url)
 		.setTitle(getString(locale, "DirectoryBot", "directoryBotCommand") + getString(locale, command.module, "names").join(', '))
 		.setThumbnail('https://cdn.discordapp.com/attachments/545684759276421120/765061579619565588/magnifying-glass.png')
 		.setDescription(getString(locale, command.module, "description"))
-		.setFooter(getString(locale, "DirectoryBot", "footerText"), avatarURL);
+		.setFooter(getString(locale, "DirectoryBot", "footerText"), `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `);
 
 	let headers = getString(locale, command.module, "headers");
 	let texts = getString(locale, command.module, "texts");

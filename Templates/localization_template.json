@@ -17,6 +17,13 @@
 		"commandProperties": "",
 		"propertiesText": ""
 	},
+	"tips": {
+		"vote": "",
+		"refer": "",
+		"contribute": "",
+		"social": "",
+		"patron": ""
+	},
 	"platformPossessivePronoun": {
 		"token": "",
 		"term": "",
@@ -332,26 +339,6 @@
 		"errorNoData": "",
 		"errorBadUser": "",
 		"errorNoPlatform": ""
-	},
-	"support": {
-		"names": [],
-		"summary": "",
-		"description": "",
-		"headers": [],
-		"texts": [],
-		"supportingDirectoryBot": "",
-		"embedDescription": "",
-		"vote": "",
-		"voteText": "",
-		"refer": "",
-		"referText": "",
-		"contribute": "",
-		"contributeText": "",
-		"social": "",
-		"socialText": "",
-		"patron": "",
-		"patronText": "",
-		"thanks": ""
 	},
 	"tell": {
 		"names": [],

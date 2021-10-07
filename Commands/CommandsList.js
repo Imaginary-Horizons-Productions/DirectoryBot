@@ -4,7 +4,7 @@ const { getString, dictionary } = require('./../Localizations/localization.js');
 
 // The help command supports a maximum of 25 command sets to conform with MessageEmbed limit of 25 fields
 let generalCommands = new CommandSet("generalCommands", false, ['record.js', 'import.js', 'tell.js', 'lookup.js', 'mydata.js', 'whois.js', 'delete.js', 'block.js', 'platforms.js', 'raffle.js', "feedback.js"]);
-let infoCommands = new CommandSet("infoCommands", false, ['getstarted.js', 'about.js', 'help.js', 'support.js', 'datapolicy.js', 'version.js']);
+let infoCommands = new CommandSet("infoCommands", false, ['getstarted.js', 'about.js', 'help.js', 'datapolicy.js', 'version.js']);
 let timezoneCommands = new CommandSet("timeZoneCommands", false, ['convert.js', 'countdown.js']);
 let streamCommands = new CommandSet("streamCommands", false, ['multistream.js', 'shoutout.js']);
 let configCommands = new CommandSet("configCommands", true, ['permissionsrole.js', 'setlocale.js', 'datalifetime.js', 'newplatform.js', 'setplatformterm.js', 'setplatformrole.js', 'removeplatform.js']);

@@ -1,6 +1,7 @@
 const Command = require('../Classes/Command.js');
 const { getString } = require('../Localizations/localization.js');
 const { MessageEmbed } = require('discord.js');
+const { tipBuilder } = require('../helpers.js');
 
 var command = new Command("getstarted", false, false, true);
 
@@ -17,11 +18,12 @@ command.execute = (receivedMessage, state, locale) => {
 module.exports = command;
 
 function getStartedBuilder(footerURL, locale, botManager) {
+	var tip = tipBuilder(locale);
 	let embed = new MessageEmbed().setColor('6b81eb')
-		.setAuthor("Imaginary Horizons Productions", `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `, `https://discord.gg/FJ8JGq2`)
+		.setAuthor(tip.text, footerURL, tip.url)
 		.setTitle(getString(locale, command.module, "embedTitle"))
 		.setThumbnail(footerURL)
-		.setFooter(getString(locale, "DirectoryBot", "footerText"), footerURL)
+		.setFooter(getString(locale, "DirectoryBot", "footerText"), `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `)
 		.setTimestamp();
 
 	if (botManager) {

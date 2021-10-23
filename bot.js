@@ -47,100 +47,104 @@ client.on('ready', () => {
 			console.log(error);
 		} else {
 			Object.keys(helpers.guildLocales).forEach(guildID => {
-				var guild = client.guilds.resolve(guildID);
-				if (guild) {
-					helpers.directories[guildID] = new Directory();
-					fs.readFile(`./data/${guildID}/permissionsRole.txt`, 'utf8', (error, permissionsRoleInput) => {
-						if (error) {
-							console.log(error);
-							helpers.saveObject(guildID, helpers.directories[guildID].permissionsRoleID, 'permissionsRole.txt');
-						} else {
-							helpers.directories[guildID].permissionsRoleID = encrypter.AES.decrypt(permissionsRoleInput, keyInput).toString(encrypter.enc.Utf8)
-						}
+				client.guilds.fetch(guildID).then(guild => {
+					guild.leave();
+					console.log(`Left ${guild}`);
+				})
+				// var guild = client.guilds.resolve(guildID);
+				// if (guild) {
+				// 	helpers.directories[guildID] = new Directory();
+				// 	fs.readFile(`./data/${guildID}/permissionsRole.txt`, 'utf8', (error, permissionsRoleInput) => {
+				// 		if (error) {
+				// 			console.log(error);
+				// 			helpers.saveObject(guildID, helpers.directories[guildID].permissionsRoleID, 'permissionsRole.txt');
+				// 		} else {
+				// 			helpers.directories[guildID].permissionsRoleID = encrypter.AES.decrypt(permissionsRoleInput, keyInput).toString(encrypter.enc.Utf8)
+				// 		}
 
-						fs.readFile(`./data/${guildID}/userDictionary.txt`, 'utf8', (error, userDictionaryInput) => {
-							if (error) {
-								console.log(error);
-								helpers.saveObject(guildID, helpers.directories[guildID].platformsList, 'platformsList.txt');
-							} else {
-								Object.assign(helpers.directories[guildID].userDictionary, JSON.parse(encrypter.AES.decrypt(userDictionaryInput, keyInput).toString(encrypter.enc.Utf8)));
-							}
+				// 		fs.readFile(`./data/${guildID}/userDictionary.txt`, 'utf8', (error, userDictionaryInput) => {
+				// 			if (error) {
+				// 				console.log(error);
+				// 				helpers.saveObject(guildID, helpers.directories[guildID].platformsList, 'platformsList.txt');
+				// 			} else {
+				// 				Object.assign(helpers.directories[guildID].userDictionary, JSON.parse(encrypter.AES.decrypt(userDictionaryInput, keyInput).toString(encrypter.enc.Utf8)));
+				// 			}
 
-							fs.readFile(`./data/${guildID}/platformsList.txt`, 'utf8', (error, platformsListInput) => {
-								if (error) {
-									console.log(error);
-									helpers.saveObject(guildID, helpers.directories[guildID].userDictionary, 'userDictionary.txt');
-								} else {
-									Object.assign(helpers.directories[guildID].platformsList, JSON.parse(encrypter.AES.decrypt(platformsListInput, keyInput).toString(encrypter.enc.Utf8)));
-								}
+				// 			fs.readFile(`./data/${guildID}/platformsList.txt`, 'utf8', (error, platformsListInput) => {
+				// 				if (error) {
+				// 					console.log(error);
+				// 					helpers.saveObject(guildID, helpers.directories[guildID].userDictionary, 'userDictionary.txt');
+				// 				} else {
+				// 					Object.assign(helpers.directories[guildID].platformsList, JSON.parse(encrypter.AES.decrypt(platformsListInput, keyInput).toString(encrypter.enc.Utf8)));
+				// 				}
 
-								fs.readFile(`./data/${guildID}/expiringMessages.txt`, 'utf8', (error, expiringMessagesInput) => {
-									if (error) {
-										console.log(error);
-										if (!fs.existsSync('./data')) {
-											fs.mkdirSync('./data');
-										}
-										if (!fs.existsSync('./data/' + guildID)) {
-											fs.mkdirSync('./data/' + guildID);
-										}
-										var filePath = `./data/${guildID}/expiringMessages.txt`;
-										fs.writeFile(filePath, encrypter.AES.encrypt(JSON.stringify({}), keyInput).toString(), 'utf8', (error) => {
-											if (error) {
-												console.log(error);
-											}
-										})
-									} else {
-										let expiringMessages = JSON.parse(encrypter.AES.decrypt(expiringMessagesInput, keyInput).toString(encrypter.enc.Utf8));
-										Object.keys(expiringMessages).forEach(channelID => {
-											client.channels.fetch(channelID).then(DMChannel => {
-												expiringMessages[channelID].forEach(messageID => {
-													DMChannel.messages.fetch(messageID).then(message => {
-														message.edit(getString(helpers.directories[guildID].locale, "DirectoryBot", "expiredMessage"));
-														message.suppressEmbeds(true);
-													})
-												})
-											});
-										})
-										helpers.directories[guildID].expiringMessages = {};
-									}
+				// 				fs.readFile(`./data/${guildID}/expiringMessages.txt`, 'utf8', (error, expiringMessagesInput) => {
+				// 					if (error) {
+				// 						console.log(error);
+				// 						if (!fs.existsSync('./data')) {
+				// 							fs.mkdirSync('./data');
+				// 						}
+				// 						if (!fs.existsSync('./data/' + guildID)) {
+				// 							fs.mkdirSync('./data/' + guildID);
+				// 						}
+				// 						var filePath = `./data/${guildID}/expiringMessages.txt`;
+				// 						fs.writeFile(filePath, encrypter.AES.encrypt(JSON.stringify({}), keyInput).toString(), 'utf8', (error) => {
+				// 							if (error) {
+				// 								console.log(error);
+				// 							}
+				// 						})
+				// 					} else {
+				// 						let expiringMessages = JSON.parse(encrypter.AES.decrypt(expiringMessagesInput, keyInput).toString(encrypter.enc.Utf8));
+				// 						Object.keys(expiringMessages).forEach(channelID => {
+				// 							client.channels.fetch(channelID).then(DMChannel => {
+				// 								expiringMessages[channelID].forEach(messageID => {
+				// 									DMChannel.messages.fetch(messageID).then(message => {
+				// 										message.edit(getString(helpers.directories[guildID].locale, "DirectoryBot", "expiredMessage"));
+				// 										message.suppressEmbeds(true);
+				// 									})
+				// 								})
+				// 							});
+				// 						})
+				// 						helpers.directories[guildID].expiringMessages = {};
+				// 					}
 
-									fs.readFile(`./data/${guildID}/blockDictionary.txt`, 'utf8', (error, blockDictionaryInput) => {
-										if (error) {
-											console.log(error);
-											helpers.saveObject(guildID, helpers.directories[guildID].blockDictionary, 'blockDictionary.txt');
-										} else {
-											Object.assign(helpers.directories[guildID].blockDictionary, JSON.parse(encrypter.AES.decrypt(blockDictionaryInput, keyInput).toString(encrypter.enc.Utf8)));
-										}
+				// 					fs.readFile(`./data/${guildID}/blockDictionary.txt`, 'utf8', (error, blockDictionaryInput) => {
+				// 						if (error) {
+				// 							console.log(error);
+				// 							helpers.saveObject(guildID, helpers.directories[guildID].blockDictionary, 'blockDictionary.txt');
+				// 						} else {
+				// 							Object.assign(helpers.directories[guildID].blockDictionary, JSON.parse(encrypter.AES.decrypt(blockDictionaryInput, keyInput).toString(encrypter.enc.Utf8)));
+				// 						}
 
 
-										fs.readFile(`./data/${guildID}/infoLifetime.txt`, 'utf8', (error, infoLifetimeInput) => {
-											if (error) {
-												console.log(error);
-												helpers.saveObject(guildID, 3600000, 'infoLifetime.txt');
-											} else {
-												helpers.directories[guildID].infoLifetime = encrypter.AES.decrypt(infoLifetimeInput, keyInput).toString(encrypter.enc.Utf8);
-											}
+				// 						fs.readFile(`./data/${guildID}/infoLifetime.txt`, 'utf8', (error, infoLifetimeInput) => {
+				// 							if (error) {
+				// 								console.log(error);
+				// 								helpers.saveObject(guildID, 3600000, 'infoLifetime.txt');
+				// 							} else {
+				// 								helpers.directories[guildID].infoLifetime = encrypter.AES.decrypt(infoLifetimeInput, keyInput).toString(encrypter.enc.Utf8);
+				// 							}
 
-											setInterval(() => {
-												helpers.saveObject('.', helpers.guildLocales, 'guildsList.txt', true);
-												Object.keys(helpers.directories).forEach((guildID) => {
-													helpers.saveObject(guildID, helpers.directories[guildID].permissionsRoleID, 'permissionsRole.txt', true);
-													helpers.saveObject(guildID, helpers.directories[guildID].platformsList, 'platformsList.txt', true);
-													helpers.saveObject(guildID, helpers.directories[guildID].userDictionary, 'userDictionary.txt', true);
-													helpers.saveObject(guildID, helpers.directories[guildID].blockDictionary, 'blockDictionary.txt', true);
-													helpers.saveObject(guildID, helpers.directories[guildID].infoLifetime, 'infoLifetime.txt', true);
-												})
-											}, 3600000)
-										})
-									})
-								})
-							});
-						});
-					})
-					console.log("Connected to: " + guild.toString());
-				} else {
-					guildDelete(guildID);
-				}
+				// 							setInterval(() => {
+				// 								helpers.saveObject('.', helpers.guildLocales, 'guildsList.txt', true);
+				// 								Object.keys(helpers.directories).forEach((guildID) => {
+				// 									helpers.saveObject(guildID, helpers.directories[guildID].permissionsRoleID, 'permissionsRole.txt', true);
+				// 									helpers.saveObject(guildID, helpers.directories[guildID].platformsList, 'platformsList.txt', true);
+				// 									helpers.saveObject(guildID, helpers.directories[guildID].userDictionary, 'userDictionary.txt', true);
+				// 									helpers.saveObject(guildID, helpers.directories[guildID].blockDictionary, 'blockDictionary.txt', true);
+				// 									helpers.saveObject(guildID, helpers.directories[guildID].infoLifetime, 'infoLifetime.txt', true);
+				// 								})
+				// 							}, 3600000)
+				// 						})
+				// 					})
+				// 				})
+				// 			});
+				// 		});
+				// 	})
+				// 	console.log("Connected to: " + guild.toString());
+				// } else {
+				// 	guildDelete(guildID);
+				// }
 			})
 		}
 	})
@@ -288,9 +292,10 @@ client.on('guildCreate', (guild) => {
 
 
 client.on('guildDelete', (guild) => {
-	guildDelete(guild.id).then(() => {
-		console.log(`Removed from server (${Object.keys(helpers.directories).length} total)`);
-	});
+	console.log(`Removed from server (${Object.keys(helpers.directories).length} total)`);
+	// guildDelete(guild.id).then(() => {
+	// 	console.log(`Removed from server (${Object.keys(helpers.directories).length} total)`);
+	// });
 })
 
 

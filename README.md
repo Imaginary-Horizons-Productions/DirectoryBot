@@ -1,6 +1,8 @@
 # DirectoryBot
 DirectoryBot is a configurable, multi-language bot that stores friend codes and converts timezones.
 
+This project is archived.
+
 ## Set-Up
 1. Add DirectoryBot to your server from this link: https://discord.com/api/oauth2/authorize?client_id=585336216262803456&permissions=27648&scope=bot
 2. Move the DirectoryBot role above any roles you'd like it to be able to automatically add (new roles get added at the bottom)
